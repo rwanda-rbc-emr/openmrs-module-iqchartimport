@@ -1,0 +1,229 @@
+/**
+ * The contents of this file are subject to the OpenMRS Public License
+ * Version 1.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://license.openmrs.org
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations
+ * under the License.
+ *
+ * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
+ */
+
+package org.openmrs.module.iqchartimport;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.iqchartimport.obs.IQCD4Obs;
+import org.openmrs.module.iqchartimport.obs.IQHeightObs;
+import org.openmrs.module.iqchartimport.obs.IQObs;
+import org.openmrs.module.iqchartimport.obs.IQWeightObs;
+
+import com.healthmarketscience.jackcess.Cursor;
+import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.Table;
+
+/**
+ * Provides access to data in an IQChart database
+ */
+public class IQChartSession {
+
+	protected static final Log log = LogFactory.getLog(IQChartSession.class);
+	
+	/**
+	 * Table names
+	 */
+	private static final String TABLE_PATIENT = "mst_ptn";
+	private static final String TABLE_CD4 = "dtl_CD4";
+	private static final String TABLE_HEIGHT = "dtl_height";
+	private static final String TABLE_WEIGHT = "dtl_weight";
+
+	/**
+	 * Key names
+	 */
+	private static final String PATIENT_KEY = "TRACNetID";
+	
+	private Database database;
+	
+	/**
+	 * Opens the given file as an IQChart database
+	 * @param path the MDB file path to open
+	 * @throws IOException if unable to open file
+	 */
+	public IQChartSession(IQChartDatabase database) throws IOException {
+		this.database = Database.open(new File(database.getPath()));
+	}
+	
+	/**
+	 * Gets the number of patients
+	 * @return the number or -1 if error occurred
+	 */
+	public int getNumPatients() {
+		try {
+			Table patTable = database.getTable(TABLE_PATIENT);
+			return patTable.getRowCount();
+		} catch (IOException e) {
+			return -1;
+		}
+	}
+	
+	/**
+	 * Loads all patients from the database
+	 * @return the patients or null if error occurred
+	 */
+	public List<IQPatient> getPatients() {
+		List<IQPatient> patients = new ArrayList<IQPatient>();
+		try {
+			Table table = database.getTable(TABLE_PATIENT);
+			for (Map<String, Object> row : table) {
+				IQPatient patient = patientFromRow(row);
+				patients.add(patient);
+			}
+			return patients;
+			
+		} catch (IOException e) {		
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets a patient by TracNet ID 
+	 * @param tracnetID the TracNet ID
+	 * @return the patient or null
+	 */
+	public IQPatient getPatient(int tracnetID) {
+		try {
+			Table table = database.getTable(TABLE_PATIENT);
+			Map<String, Object> row = Cursor.findRow(table, Collections.singletonMap("TRACNetID", (Object)new Integer(tracnetID)));
+			if (row != null)
+				return patientFromRow(row);
+			
+		} catch (IOException e) {
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets all the obs for the given patient
+	 * @param patient the patient
+	 * @return the obs
+	 */
+	public List<IQObs> getPatientObs(IQPatient patient) {
+		List<IQObs> allObs = new ArrayList<IQObs>();
+		allObs.addAll(getPatientCD4Obs(patient));
+		allObs.addAll(getPatientHeightObs(patient));
+		allObs.addAll(getPatientWeightObs(patient));
+		
+		Collections.sort(allObs);
+		return allObs;
+	}
+	
+	/**
+	 * Gets all the CD4 obs for the given patient
+	 * @param patient the patient
+	 * @return the obs
+	 */
+	public List<IQCD4Obs> getPatientCD4Obs(IQPatient patient) {
+		List<IQCD4Obs> obslist = new ArrayList<IQCD4Obs>();
+		try {
+			Table table = database.getTable(TABLE_CD4);
+			
+			for (Map<String, Object> row : table) {
+				if ((Integer)row.get("TRACNetID") == patient.getTracnetID()) {
+					IQCD4Obs obs = new IQCD4Obs((Date)row.get("date"), (Short)row.get("CD4count"));
+					obs.setTestType((String)row.get("TestType"));
+					obslist.add(obs);
+				}
+			}
+			return obslist;
+			
+		} catch (IOException e) {		
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets all the height obs for the given patient
+	 * @param patient the patient
+	 * @return the obs
+	 */
+	public List<IQHeightObs> getPatientHeightObs(IQPatient patient) {
+		List<IQHeightObs> obslist = new ArrayList<IQHeightObs>();
+		try {
+			Table table = database.getTable(TABLE_HEIGHT);
+			
+			for (Map<String, Object> row : table) {
+				if ((Integer)row.get(PATIENT_KEY) == patient.getTracnetID()) {
+					obslist.add(new IQHeightObs((Date)row.get("date"), (Short)row.get("Height")));
+				}
+			}
+			return obslist;
+			
+		} catch (IOException e) {		
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets all the weight obs for the given patient
+	 * @param patient the patient
+	 * @return the obs
+	 */
+	public List<IQWeightObs> getPatientWeightObs(IQPatient patient) {
+		List<IQWeightObs> obslist = new ArrayList<IQWeightObs>();
+		try {
+			Table table = database.getTable(TABLE_WEIGHT);
+			
+			for (Map<String, Object> row : table) {
+				if ((Integer)row.get("TRACNetID") == patient.getTracnetID()) {
+					obslist.add(new IQWeightObs((Date)row.get("date"), (Short)row.get("weight")));
+				}
+			}
+			return obslist;
+			
+		} catch (IOException e) {		
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets a patient from a row
+	 * @param row the row
+	 * @return the patient
+	 */
+	private static IQPatient patientFromRow(Map<String, Object> row) {
+		int tracnetID = (Integer)row.get("TRACNetID");				
+		IQPatient patient = new IQPatient(tracnetID);
+		
+		patient.setHospitalID((String)row.get("hospitalID"));
+		patient.setLastName((String)row.get("lastName"));
+		patient.setFirstName((String)row.get("firstName"));
+		patient.setDob((Date)row.get("DOB"));
+		patient.setDobEstimated((Boolean)row.get("dobEstimated"));
+		patient.setSexCode((Byte)row.get("sexCode"));
+		patient.setStatusCode((Byte)row.get("StatusCode"));
+		patient.setEnrollDate((Date)row.get("enrollDate"));
+		patient.setExitDate((Date)row.get("ExitDate"));
+		patient.setExitCode((Byte)row.get("ExitCode"));
+		patient.setExitReasonOther((String)row.get("ExitReasonOther"));
+		return patient;
+	}
+	
+	/**
+	 * Closes the database
+	 * @throws IOException
+	 */
+	public void close() throws IOException {
+		database.close();
+	}
+}
