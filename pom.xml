@@ -8,7 +8,7 @@
 	<packaging>pom</packaging>
 	<name>IQChart Import</name>
 	<description>Imports IQChart data into OpenMRS</description>
-	<url>https://wiki.openmrs.org/display/docs/IQChart+Import+Module+Module</url>
+	<url>https://wiki.openmrs.org/display/docs/IQChart+Import+Module</url>
 	
 	<developers>
 		<developer>
