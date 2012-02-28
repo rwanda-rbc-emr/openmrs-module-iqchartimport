@@ -205,14 +205,17 @@ public class IQChartSession {
 		int tracnetID = (Integer)row.get("TRACNetID");				
 		IQPatient patient = new IQPatient(tracnetID);
 		
-		patient.setHospitalID((String)row.get("hospitalID"));
 		patient.setLastName((String)row.get("lastName"));
 		patient.setFirstName((String)row.get("firstName"));
+		patient.setHospitalID((String)row.get("hospitalID"));
+		patient.setEnrollDate((Date)row.get("enrollDate"));
+		patient.setSexCode((Byte)row.get("sexCode"));
 		patient.setDob((Date)row.get("DOB"));
 		patient.setDobEstimated((Boolean)row.get("dobEstimated"));
-		patient.setSexCode((Byte)row.get("sexCode"));
+		patient.setCellule((String)row.get("cellule"));
+		patient.setSector((String)row.get("sector"));
+		patient.setDistrict((String)row.get("district"));
 		patient.setStatusCode((Byte)row.get("StatusCode"));
-		patient.setEnrollDate((Date)row.get("enrollDate"));
 		patient.setExitDate((Date)row.get("ExitDate"));
 		patient.setExitCode((Byte)row.get("ExitCode"));
 		patient.setExitReasonOther((String)row.get("ExitReasonOther"));

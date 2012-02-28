@@ -33,7 +33,7 @@
 			</tr>
 		</table>
 	
-		<input type="button" value="<spring:message code="@MODULE_ID@.general.review" />..." onclick="location.href='patients.list'" />
+		<input type="button" value="<spring:message code="@MODULE_ID@.general.preview" />..." onclick="location.href='preview.list'" />
 		<input type="button" value="<spring:message code="@MODULE_ID@.general.import" />..." onclick="location.href='import.form'" />
 		
 		<c:if test="${not empty parseerror}">

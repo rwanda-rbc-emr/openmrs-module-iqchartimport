@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.openmrs.module.Extension;
+import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.web.extension.AdministrationSectionExt;
 
 /**
@@ -44,7 +45,8 @@ public class AdminList extends AdministrationSectionExt {
 	 */
 	public Map<String, String> getLinks() {
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-		map.put("/module/iqchartimport/upload.form", "iqchartimport.adminlink.uploadDatabase");
+		map.put("/module/iqchartimport/upload.form", Constants.MODULE_ID + ".menu.uploadDatabase");
+		map.put("/module/iqchartimport/options.form", Constants.MODULE_ID + ".menu.options");
 		return map;
 	}
 	

@@ -21,5 +21,8 @@ public class Constants {
 	
 	public static final String MODULE_ID = "iqchartimport";
 	
+	public static final String PROP_TRACNET_ID_TYPE_ID = MODULE_ID + ".tracnetIDTypeId";
+
 	public static final String SESSION_ATTR_DATABASE = "iqchartimport_database";
+	public static final String TRACNET_ID_TYPE_NAME = "TRACnet Identifier";
 }

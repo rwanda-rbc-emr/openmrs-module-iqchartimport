@@ -16,6 +16,11 @@
 		<point>org.openmrs.admin.list</point>
 		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.AdminList</class>
 	</extension>
+	<globalProperty>
+		<property>${project.parent.artifactId}.tracnetIDTypeId</property>
+		<defaultValue>0</defaultValue>
+		<description>The TRACnet identifier type id</description>
+	</globalProperty>
 	<messages>
 		<lang>en</lang>
 		<file>messages.properties</file>

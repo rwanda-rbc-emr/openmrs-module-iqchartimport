@@ -33,14 +33,26 @@ public class IQPatient {
 	public static final int EXITCODE_LOST = 3;
 	
 	private int tracnetID;
-	private String hospitalID;
 	private String firstName;
 	private String lastName;
+	private String hospitalID;
+	private Date enrollDate;
+	private Byte sexCode;
 	private Date dob;
 	private Boolean dobEstimated;
-	private Byte sexCode;
+	private String cellule;
+	private String sector;
+	private String district;
+	
+	// == Fields not imported currently ==
+	// private maritalStatus
+	// private hivStatusPartCode
+	// private modeCode
+	// private String modeAdmissionOther
+	// private newTransfer
+	// private arvStartDate
+	
 	private Byte statusCode;
-	private Date enrollDate;
 	private Date exitDate;
 	private Byte exitCode;
 	private String exitReasonOther;
@@ -69,14 +81,6 @@ public class IQPatient {
 		this.tracnetID = tracnetID;
 	}
 	
-	public String getHospitalID() {
-		return hospitalID;
-	}
-
-	public void setHospitalID(String hospitalID) {
-		this.hospitalID = hospitalID;
-	}
-	
 	public String getFirstName() {
 		return firstName;
 	}
@@ -91,6 +95,30 @@ public class IQPatient {
 	
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+	
+	public String getHospitalID() {
+		return hospitalID;
+	}
+
+	public void setHospitalID(String hospitalID) {
+		this.hospitalID = hospitalID;
+	}
+	
+	public Date getEnrollDate() {
+		return enrollDate;
+	}
+
+	public void setEnrollDate(Date enrollDate) {
+		this.enrollDate = enrollDate;
+	}
+	
+	public Byte getSexCode() {
+		return sexCode;
+	}
+
+	public void setSexCode(Byte sexCode) {
+		this.sexCode = sexCode;
 	}
 	
 	public Date getDob() {
@@ -109,12 +137,28 @@ public class IQPatient {
 		this.dobEstimated = dobEstimated;
 	}
 
-	public Byte getSexCode() {
-		return sexCode;
+	public String getCellule() {
+		return cellule;
 	}
 
-	public void setSexCode(Byte sexCode) {
-		this.sexCode = sexCode;
+	public void setCellule(String cellule) {
+		this.cellule = cellule;
+	}
+
+	public String getSector() {
+		return sector;
+	}
+
+	public void setSector(String sector) {
+		this.sector = sector;
+	}
+
+	public String getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(String district) {
+		this.district = district;
 	}
 
 	public Byte getStatusCode() {
@@ -123,14 +167,6 @@ public class IQPatient {
 
 	public void setStatusCode(Byte statusCode) {
 		this.statusCode = statusCode;
-	}
-
-	public Date getEnrollDate() {
-		return enrollDate;
-	}
-
-	public void setEnrollDate(Date enrollDate) {
-		this.enrollDate = enrollDate;
 	}
 
 	public Date getExitDate() {
