@@ -22,8 +22,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.Program;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.iqchartimport.Mapping;
+import org.openmrs.module.iqchartimport.Mappings;
 import org.openmrs.module.iqchartimport.Utils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -32,13 +33,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * Controller for module options page
+ * Controller for mappings page
  */
-@Controller("iqChartImportMappingController")
-@RequestMapping("/module/iqchartimport/mapping")
-public class MappingController {
+@Controller("iqChartImportMappingsController")
+@RequestMapping("/module/iqchartimport/mappings")
+public class MappingsController {
 
-	protected static final Log log = LogFactory.getLog(MappingController.class);
+	protected static final Log log = LogFactory.getLog(MappingsController.class);
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -46,19 +47,21 @@ public class MappingController {
 		Utils.checkSuperUser();
 		
 		List<PatientIdentifierType> idTypes = Context.getPatientService().getAllPatientIdentifierTypes(false);
+		List<Program> programs = Context.getProgramWorkflowService().getAllPrograms();
 		
 		model.put("idTypes", idTypes);
-		model.put("mapping", Mapping.getInstance());
+		model.put("programs", programs);
+		model.put("mappings", Mappings.getInstance());
 		
-		return "/module/iqchartimport/mapping";
+		return "/module/iqchartimport/mappings";
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public String handleSubmit(@ModelAttribute("mapping") Mapping mapping) {
+	public String handleSubmit(@ModelAttribute("mappings") Mappings mappings) {
 		Utils.checkSuperUser();
 		
-		mapping.save();
+		mappings.save();
 		
-		return "redirect:mapping.form";
+		return "redirect:mappings.form";
 	}
 }

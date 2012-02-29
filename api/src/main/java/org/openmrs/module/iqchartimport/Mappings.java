@@ -21,16 +21,17 @@ import org.openmrs.api.context.Context;
 /**
  * Holds the mapping options
  */
-public class Mapping {
+public class Mappings {
 	
-	protected static Mapping mapping;
+	protected static Mappings mapping;
 	
 	protected int tracnetIDTypeId;
+	protected int hivProgramId;
 	
 	/**
 	 * The default constructor
 	 */
-	protected Mapping() {
+	protected Mappings() {
 		load(); 
 	}
 	
@@ -38,9 +39,9 @@ public class Mapping {
 	 * Gets the singleton instance of this class
 	 * @return the config instance
 	 */
-	public static Mapping getInstance() {
+	public static Mappings getInstance() {
 		if (mapping == null)
-			mapping = new Mapping();
+			mapping = new Mappings();
 		return mapping;
 	}
 	
@@ -48,7 +49,8 @@ public class Mapping {
 	 * Loads the options from global properties
 	 */
 	public void load() {
-		tracnetIDTypeId = loadIntOption(Constants.PROP_TRACNET_ID_TYPE_ID, 0);
+		tracnetIDTypeId = loadIntOption(Constants.PROP_TRACNET_ID_TYPE_ID, -1);
+		hivProgramId = loadIntOption(Constants.PROP_HIV_PROGRAM_ID, -1);
 	}
 	
 	/**
@@ -56,6 +58,7 @@ public class Mapping {
 	 */
 	public void save() {
 		saveOption(Constants.PROP_TRACNET_ID_TYPE_ID, tracnetIDTypeId);
+		saveOption(Constants.PROP_HIV_PROGRAM_ID, hivProgramId);
 	}
 
 	/**
@@ -72,6 +75,14 @@ public class Mapping {
 	 */
 	public void setTracnetIDTypeId(int tracnetIDTypeId) {
 		this.tracnetIDTypeId = tracnetIDTypeId;
+	}
+
+	public int getHivProgramId() {
+		return hivProgramId;
+	}
+
+	public void setHivProgramId(int hivProgramId) {
+		this.hivProgramId = hivProgramId;
 	}
 
 	/**

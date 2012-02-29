@@ -24,10 +24,11 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.module.iqchartimport.obs.IQCD4Obs;
-import org.openmrs.module.iqchartimport.obs.IQHeightObs;
-import org.openmrs.module.iqchartimport.obs.IQObs;
-import org.openmrs.module.iqchartimport.obs.IQWeightObs;
+import org.openmrs.module.iqchartimport.iqmodel.IQCD4Obs;
+import org.openmrs.module.iqchartimport.iqmodel.IQHeightObs;
+import org.openmrs.module.iqchartimport.iqmodel.BaseIQObs;
+import org.openmrs.module.iqchartimport.iqmodel.IQPatient;
+import org.openmrs.module.iqchartimport.iqmodel.IQWeightObs;
 
 import com.healthmarketscience.jackcess.Cursor;
 import com.healthmarketscience.jackcess.Database;
@@ -118,8 +119,8 @@ public class IQChartSession {
 	 * @param patient the patient
 	 * @return the obs
 	 */
-	public List<IQObs> getPatientObs(IQPatient patient) {
-		List<IQObs> allObs = new ArrayList<IQObs>();
+	public List<BaseIQObs> getPatientObs(IQPatient patient) {
+		List<BaseIQObs> allObs = new ArrayList<BaseIQObs>();
 		allObs.addAll(getPatientCD4Obs(patient));
 		allObs.addAll(getPatientHeightObs(patient));
 		allObs.addAll(getPatientWeightObs(patient));

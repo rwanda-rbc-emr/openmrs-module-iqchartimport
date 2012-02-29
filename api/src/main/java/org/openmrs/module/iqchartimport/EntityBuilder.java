@@ -19,13 +19,19 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
+import org.openmrs.Location;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.PatientProgram;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
+import org.openmrs.Program;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.iqchartimport.iqmodel.IQPatient;
 
 /**
  * Builder which creates OpenMRS entities from IQChart objects equivalents
@@ -48,17 +54,19 @@ public class EntityBuilder {
 	 * Gets the TRACnetID identifier type to use for imported patients. Depending on module
 	 * options this will load existing identifier type or create a new one.
 	 * @return the identifier type
-	 * @throws IncompleteMappingException if mapping is not configured properly
+	 * @throws IncompleteMappingException if mappings are not configured properly
 	 */
 	public PatientIdentifierType getTRACnetIDType() {
-		int tracnetIDTypeId = Mapping.getInstance().getTracnetIDTypeId();
+		int tracnetIDTypeId = Mappings.getInstance().getTracnetIDTypeId();
 		if (tracnetIDTypeId > 0) {
 			return Context.getPatientService().getPatientIdentifierType(tracnetIDTypeId);	
 		}
 		else if (tracnetIDTypeId == 0) {
 			PatientIdentifierType tracnetIDType = new PatientIdentifierType();
-			tracnetIDType.setName(Constants.TRACNET_ID_TYPE_NAME); // TODO get TRACnet ID specification
-			//tracnetIDType.setFormat("%d");
+			tracnetIDType.setName(Constants.NEW_TRACNET_ID_TYPE_NAME);
+			tracnetIDType.setDescription(Constants.NEW_TRACNET_ID_TYPE_NAME);
+			tracnetIDType.setFormat(Constants.NEW_TRACNET_ID_TYPE_FORMAT);
+			tracnetIDType.setFormatDescription(Constants.NEW_TRACNET_ID_TYPE_FORMAT_DESC);
 			return tracnetIDType;
 		}
 		else {
@@ -89,6 +97,82 @@ public class EntityBuilder {
 		}
 		
 		return patients;
+	}
+	
+	/**
+	 * Gets the HIV program to use for imported patients
+	 * @return the HIV program
+	 * @throws IncompleteMappingException if mappings are not configured properly
+	 */
+	public Program getHIVProgram() {
+		int hivProgramId = Mappings.getInstance().getHivProgramId();
+		if (hivProgramId > 0) {
+			return Context.getProgramWorkflowService().getProgram(hivProgramId);	
+		}
+		else {
+			throw new IncompleteMappingException();
+		}
+	}
+	
+	/**
+	 * Gets the patient's programs
+	 * @param tracnetID the patient TRACnet ID
+	 * @return the patient programs
+	 */
+	public List<PatientProgram> getPatientPrograms(int tracnetID) {		
+		List<PatientProgram> patientPrograms = new ArrayList<PatientProgram>();
+		IQPatient iqPatient = session.getPatient(tracnetID);
+		
+		if (iqPatient.getEnrollDate() != null) {
+			// Get HIV program to use
+			Program hivProgram = getHIVProgram();
+			
+			PatientProgram hivPatientProgram = new PatientProgram();
+			hivPatientProgram.setProgram(hivProgram);
+			hivPatientProgram.setDateEnrolled(iqPatient.getEnrollDate());
+			hivPatientProgram.setDateCompleted(iqPatient.getExitDate());
+			patientPrograms.add(hivPatientProgram);
+		}
+		
+		return patientPrograms;
+	}
+	
+	public List<Obs> getPatientNonEncounterObs(Patient patient, int tracnetID) {
+		List<Obs> obs = new ArrayList<Obs>();
+		IQPatient iqPatient = session.getPatient(tracnetID);
+		
+		if (iqPatient.getStatusCode() != null && iqPatient.getStatusCode() == IQPatient.STATUSCODE_EXITED && iqPatient.getExitCode() != null) {
+			// Make exit reason obs
+			String codProp = Context.getAdministrationService().getGlobalProperty("concept.reasonExitedCare");
+			Concept reasonConcept = Context.getConceptService().getConcept(codProp);
+			
+			if (reasonConcept != null) {
+				Concept causeConcept = null;	
+				if (iqPatient.getExitCode() == IQPatient.EXITCODE_DECEASED) {
+					codProp = Context.getAdministrationService().getGlobalProperty("concept.patientDied");
+					causeConcept = Context.getConceptService().getConcept(codProp);
+				}
+				else if (iqPatient.getExitCode() == IQPatient.EXITCODE_TRANSFERRED) {
+					// TODO load concepts from mappings?
+					causeConcept = Context.getConceptService().getConcept("PATIENT TRANSFERRED OUT");
+				}
+				else if (iqPatient.getExitCode() == IQPatient.EXITCODE_LOST) {
+					causeConcept = Context.getConceptService().getConcept("PATIENT DEFAULTED");
+				}
+				
+				if (causeConcept != null) {
+					Obs obsExit = new Obs();
+					obsExit.setPerson(patient);
+					obsExit.setConcept(reasonConcept);
+					obsExit.setLocation(Context.getLocationService().getDefaultLocation());
+					obsExit.setObsDatetime(iqPatient.getExitDate());
+					obsExit.setValueCoded(causeConcept);
+					obs.add(obsExit);
+				}
+			}
+		}
+		
+		return obs;
 	}
 	
 	/**

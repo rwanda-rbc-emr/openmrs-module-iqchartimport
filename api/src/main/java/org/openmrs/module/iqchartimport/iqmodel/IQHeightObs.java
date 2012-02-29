@@ -1,8 +1,8 @@
-package org.openmrs.module.iqchartimport.obs;
+package org.openmrs.module.iqchartimport.iqmodel;
 
 import java.util.Date;
 
-public class IQHeightObs extends IQObs {
+public class IQHeightObs extends BaseIQObs {
 
 	private short height;
 	

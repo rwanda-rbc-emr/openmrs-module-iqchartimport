@@ -26,7 +26,7 @@ $(document).ready(function() {
 			<c:forEach items="${patients}" var="patient" varStatus="status">
 				<tr  
 					onclick="location.href='patient.form?tracnetID=${patient.patientIdentifier.identifier}'"
-					style="cursor: pointer;"
+					style="cursor: pointer; ${patient.dead ? 'color: #900' : ''}"
 					class="<c:choose><c:when test="${status.index % 2 == 0}">evenRow</c:when><c:otherwise>oddRow</c:otherwise></c:choose>"
 				>
 					<td>${patient.patientIdentifier.identifier}</td>

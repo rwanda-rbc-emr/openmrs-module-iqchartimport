@@ -1,8 +1,8 @@
-package org.openmrs.module.iqchartimport.obs;
+package org.openmrs.module.iqchartimport.iqmodel;
 
 import java.util.Date;
 
-public class IQCD4Obs extends IQObs {
+public class IQCD4Obs extends BaseIQObs {
 
 	private short cd4Count;
 	private String testType;

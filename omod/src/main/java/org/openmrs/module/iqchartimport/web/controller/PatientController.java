@@ -21,10 +21,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.iqchartimport.Constants;
+import org.openmrs.module.iqchartimport.EntityBuilder;
 import org.openmrs.module.iqchartimport.IQChartSession;
 import org.openmrs.module.iqchartimport.IQChartDatabase;
-import org.openmrs.module.iqchartimport.IQPatient;
+import org.openmrs.module.iqchartimport.IncompleteMappingException;
 import org.openmrs.module.iqchartimport.Utils;
+import org.openmrs.web.WebConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,15 +52,19 @@ public class PatientController {
 			return "redirect:upload.form";
 		
 		model.put("database", database);
-
-		IQChartSession iqChartDB = new IQChartSession(database);	
-		IQPatient patient = iqChartDB.getPatient(tracnetID);
+		IQChartSession session = new IQChartSession(database);
 			
-		model.put("patient", patient);
-		model.put("patientObs", iqChartDB.getPatientObs(patient));
-			
-		iqChartDB.close();
-		
-		return "/module/iqchartimport/patient";
+		try {
+			EntityBuilder builder = new EntityBuilder(session);		
+			model.put("patient", builder.getPatient(tracnetID));
+			return "/module/iqchartimport/patient";
+		}
+		catch (IncompleteMappingException ex) {
+			request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, "Incomplete entity mappings");
+			return "redirect:mappings.form";
+		}
+		finally {
+			session.close();
+		}
 	}
 }

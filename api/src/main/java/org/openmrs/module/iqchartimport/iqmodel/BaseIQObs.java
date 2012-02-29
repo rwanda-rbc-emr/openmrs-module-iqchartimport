@@ -12,27 +12,38 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport.obs;
+package org.openmrs.module.iqchartimport.iqmodel;
 
 import java.util.Date;
 
 /**
  * Base class for IQChart recorded obs
  */
-public abstract class IQObs implements Comparable<IQObs> {
+public abstract class BaseIQObs implements Comparable<BaseIQObs> {
 	
 	private Date date;
 	
-	public IQObs(Date date) {
+	/**
+	 * Constructs a base obs
+	 * @param date the date
+	 */
+	public BaseIQObs(Date date) {
 		this.date = date;
 	}
 
+	/**
+	 * Gets the date
+	 * @return the date
+	 */
 	public Date getDate() {
 		return date;
 	}
 
+	/**
+	 * @see java.lang.Comparable
+	 */
 	@Override
-	public int compareTo(IQObs obs) {
+	public int compareTo(BaseIQObs obs) {
 		return this.date.compareTo(obs.date);
 	}
 }

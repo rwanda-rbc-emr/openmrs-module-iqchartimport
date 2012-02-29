@@ -19,7 +19,12 @@
 	<globalProperty>
 		<property>${project.parent.artifactId}.tracnetIDTypeId</property>
 		<defaultValue>-1</defaultValue>
-		<description>The TRACnet identifier type id</description>
+		<description>TRACnet identifier type id for imported patients</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.hivProgramId</property>
+		<defaultValue>-1</defaultValue>
+		<description>HIV program id for imported patients</description>
 	</globalProperty>
 	<messages>
 		<lang>en</lang>

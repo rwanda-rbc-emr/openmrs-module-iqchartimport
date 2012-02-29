@@ -60,7 +60,7 @@ public class PreviewController {
 		}
 		catch (IncompleteMappingException ex) {
 			request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, "Incomplete entity mappings");
-			return "redirect:mapping.form";
+			return "redirect:mappings.form";
 		}
 		finally {
 			session.close();

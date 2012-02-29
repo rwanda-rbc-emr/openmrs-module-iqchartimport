@@ -20,9 +20,14 @@ package org.openmrs.module.iqchartimport;
 public class Constants {
 	
 	public static final String MODULE_ID = "iqchartimport";
-	
-	public static final String PROP_TRACNET_ID_TYPE_ID = MODULE_ID + ".tracnetIDTypeId";
-
 	public static final String SESSION_ATTR_DATABASE = "iqchartimport_database";
-	public static final String TRACNET_ID_TYPE_NAME = "TRACnet Identifier";
+	public static final String NEW_TRACNET_ID_TYPE_NAME = "TRACnet ID";
+	public static final String NEW_TRACNET_ID_TYPE_FORMAT = "\\d{6}";
+	public static final String NEW_TRACNET_ID_TYPE_FORMAT_DESC = "Six digit number (123456)";
+	
+	/**
+	 * Global properties
+	 */
+	public static final String PROP_TRACNET_ID_TYPE_ID = MODULE_ID + ".tracnetIDTypeId";
+	public static final String PROP_HIV_PROGRAM_ID = MODULE_ID + ".hivProgramId";
 }
