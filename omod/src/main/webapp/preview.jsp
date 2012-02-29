@@ -8,13 +8,9 @@ $(document).ready(function() {
     $('#iqpatients').dataTable();
 });
 </script>
-
-<div style="margin-bottom: 20px">
-	<input type="button" value="<spring:message code="general.back" />" onclick="location.href='upload.form'" />
-</div>
 		
 <b class="boxHeader">
-	<spring:message code="@MODULE_ID@.general.database" /> &gt; <spring:message code="@MODULE_ID@.general.patients" />
+	<spring:message code="@MODULE_ID@.general.patients" />
 </b>
 <div class="box">
 	<table id="iqpatients" width="100%" cellspacing="0">

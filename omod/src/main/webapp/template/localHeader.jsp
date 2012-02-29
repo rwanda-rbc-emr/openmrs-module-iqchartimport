@@ -12,9 +12,14 @@
 
 <ul id="menu">
 	<li class="first<c:if test='<%= request.getRequestURI().contains("upload") %>'> active</c:if>">
-		<a href="upload.form"><spring:message code="@MODULE_ID@.menu.uploadDatabase"/></a>
+		<a href="upload.form"><spring:message code="@MODULE_ID@.menu.upload"/></a>
 	</li>
-	<li <c:if test='<%= request.getRequestURI().contains("/preview") %>'>class="active"</c:if>>
-		<a href="options.form"><spring:message code="@MODULE_ID@.menu.options"/></a>
+	<li <c:if test='<%= request.getRequestURI().contains("/mapping") %>'>class="active"</c:if>>
+		<a href="mapping.form"><spring:message code="@MODULE_ID@.menu.mapping"/></a>
 	</li>
+	<c:if test="${not empty sessionScope['iqchartimport_database']}">
+		<li <c:if test='<%= request.getRequestURI().contains("/preview") %>'>class="active"</c:if>>
+			<a href="preview.form"><spring:message code="@MODULE_ID@.menu.preview"/></a>
+		</li>
+	</c:if>
 </ul>

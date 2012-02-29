@@ -45,8 +45,7 @@ public class AdminList extends AdministrationSectionExt {
 	 */
 	public Map<String, String> getLinks() {
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-		map.put("/module/iqchartimport/upload.form", Constants.MODULE_ID + ".menu.uploadDatabase");
-		map.put("/module/iqchartimport/options.form", Constants.MODULE_ID + ".menu.options");
+		map.put("/module/iqchartimport/upload.form", Constants.MODULE_ID + ".adminList.uploadDatabase");
 		return map;
 	}
 	

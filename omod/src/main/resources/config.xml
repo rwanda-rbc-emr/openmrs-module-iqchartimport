@@ -18,7 +18,7 @@
 	</extension>
 	<globalProperty>
 		<property>${project.parent.artifactId}.tracnetIDTypeId</property>
-		<defaultValue>0</defaultValue>
+		<defaultValue>-1</defaultValue>
 		<description>The TRACnet identifier type id</description>
 	</globalProperty>
 	<messages>

@@ -24,7 +24,7 @@ import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.iqchartimport.EntityBuilder;
 import org.openmrs.module.iqchartimport.IQChartSession;
 import org.openmrs.module.iqchartimport.IQChartDatabase;
-import org.openmrs.module.iqchartimport.ModuleNotConfiguredException;
+import org.openmrs.module.iqchartimport.IncompleteMappingException;
 import org.openmrs.module.iqchartimport.Utils;
 import org.openmrs.web.WebConstants;
 import org.springframework.stereotype.Controller;
@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 /**
  * Patients page controller
  */
-@Controller
+@Controller("iqChartImportPreviewController")
 @RequestMapping("/module/iqchartimport/preview")
 public class PreviewController {
 	
@@ -58,9 +58,9 @@ public class PreviewController {
 			model.put("patients", builder.getPatients());
 			return "/module/iqchartimport/preview";
 		}
-		catch (ModuleNotConfiguredException ex) {
-			request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Module not configured properly");
-			return "redirect:options.form";
+		catch (IncompleteMappingException ex) {
+			request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, "Incomplete entity mappings");
+			return "redirect:mapping.form";
 		}
 		finally {
 			session.close();

@@ -34,9 +34,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * Patients page controller
  */
-@Controller
+@Controller("iqChartImportPatientController")
 @RequestMapping("/module/iqchartimport/patient")
-public class PatientFormController {
+public class PatientController {
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	
@@ -59,6 +59,6 @@ public class PatientFormController {
 			
 		iqChartDB.close();
 		
-		return "/module/iqchartimport/patientForm";
+		return "/module/iqchartimport/patient";
 	}
 }

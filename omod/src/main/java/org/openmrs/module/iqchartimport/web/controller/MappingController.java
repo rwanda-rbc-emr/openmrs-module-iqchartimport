@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.iqchartimport.Options;
+import org.openmrs.module.iqchartimport.Mapping;
 import org.openmrs.module.iqchartimport.Utils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -34,11 +34,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 /**
  * Controller for module options page
  */
-@Controller
-@RequestMapping("/module/iqchartimport/options")
-public class OptionsController {
+@Controller("iqChartImportMappingController")
+@RequestMapping("/module/iqchartimport/mapping")
+public class MappingController {
 
-	protected static final Log log = LogFactory.getLog(OptionsController.class);
+	protected static final Log log = LogFactory.getLog(MappingController.class);
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -48,15 +48,17 @@ public class OptionsController {
 		List<PatientIdentifierType> idTypes = Context.getPatientService().getAllPatientIdentifierTypes(false);
 		
 		model.put("idTypes", idTypes);
-		model.put("options", Options.getInstance());
+		model.put("mapping", Mapping.getInstance());
 		
-		return "/module/iqchartimport/options";
+		return "/module/iqchartimport/mapping";
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public String handleSubmit(@ModelAttribute("options") Options options) {
-		options.save();
+	public String handleSubmit(@ModelAttribute("mapping") Mapping mapping) {
+		Utils.checkSuperUser();
 		
-		return "redirect:upload.form";
+		mapping.save();
+		
+		return "redirect:mapping.form";
 	}
 }

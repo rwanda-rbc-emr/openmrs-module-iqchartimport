@@ -11,6 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
+
 package org.openmrs.module.iqchartimport;
 
 import org.openmrs.GlobalProperty;
@@ -18,18 +19,18 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 
 /**
- * Holds the configuration options for this module
+ * Holds the mapping options
  */
-public class Options {
+public class Mapping {
 	
-	protected static Options config;
+	protected static Mapping mapping;
 	
 	protected int tracnetIDTypeId;
 	
 	/**
 	 * The default constructor
 	 */
-	protected Options() {
+	protected Mapping() {
 		load(); 
 	}
 	
@@ -37,10 +38,10 @@ public class Options {
 	 * Gets the singleton instance of this class
 	 * @return the config instance
 	 */
-	public static Options getInstance() {
-		if (config == null)
-			config = new Options();
-		return config;
+	public static Mapping getInstance() {
+		if (mapping == null)
+			mapping = new Mapping();
+		return mapping;
 	}
 	
 	/**

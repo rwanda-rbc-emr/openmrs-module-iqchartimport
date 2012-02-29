@@ -36,7 +36,7 @@ import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequ
 /**
  * Upload page controller
  */
-@Controller
+@Controller("iqChartImportUploadController")
 @RequestMapping("/module/iqchartimport/upload")
 public class UploadController {
 	

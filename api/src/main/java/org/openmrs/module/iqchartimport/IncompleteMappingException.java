@@ -19,7 +19,7 @@ import org.openmrs.api.APIException;
 /**
  * Exception class thrown if user tries to run import before configuring module 
  */
-public class ModuleNotConfiguredException extends APIException {
+public class IncompleteMappingException extends APIException {
 
 	private static final long serialVersionUID = -6015638770411118185L;
 }
