@@ -33,8 +33,6 @@
 			</tr>
 		</table>
 	
-		<input type="button" value="<spring:message code="@MODULE_ID@.general.import" />..." onclick="location.href='import.form'" />
-		
 		<c:if test="${not empty parseerror}">
 			<span class="error"><c:out value="${parseerror}" /></span>
 		</c:if>

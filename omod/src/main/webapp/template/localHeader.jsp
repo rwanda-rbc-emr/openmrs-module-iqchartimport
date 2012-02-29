@@ -21,5 +21,8 @@
 		<li <c:if test='<%= request.getRequestURI().contains("/preview") %>'>class="active"</c:if>>
 			<a href="preview.form"><spring:message code="@MODULE_ID@.menu.preview"/></a>
 		</li>
+		<li <c:if test='<%= request.getRequestURI().contains("/import") %>'>class="active"</c:if>>
+			<a href="import.form"><spring:message code="@MODULE_ID@.menu.import"/></a>
+		</li>
 	</c:if>
 </ul>
