@@ -20,8 +20,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
-import org.openmrs.Encounter;
-import org.openmrs.EncounterType;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -33,6 +31,8 @@ import org.openmrs.Program;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.iqmodel.IQPatient;
+import org.openmrs.module.iqchartimport.iqmodel.code.SexCode;
+import org.openmrs.module.iqchartimport.iqmodel.code.StatusCode;
 
 /**
  * Builder which creates OpenMRS entities from IQChart objects equivalents
@@ -142,7 +142,7 @@ public class EntityBuilder {
 		List<Obs> obs = new ArrayList<Obs>();
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		
-		if (iqPatient.getStatusCode() != null && iqPatient.getStatusCode() == IQPatient.STATUS_EXITED && iqPatient.getExitCode() != null) {
+		if (iqPatient.getStatusCode() != null && iqPatient.getStatusCode() == StatusCode.EXITED && iqPatient.getExitCode() != null) {
 			// Make exit reason obs
 			String codProp = Context.getAdministrationService().getGlobalProperty("concept.reasonExitedCare");
 			Concept reasonConcept = Context.getConceptService().getConcept(codProp);
@@ -210,9 +210,9 @@ public class EntityBuilder {
 		
 		// Set patient gender
 		if (iqPatient.getSexCode() != null) {
-			if (iqPatient.getSexCode() == IQPatient.SEX_MALE)
+			if (iqPatient.getSexCode() == SexCode.MALE)
 				patient.setGender("M");
-			else if (iqPatient.getSexCode() == IQPatient.SEX_FEMALE)
+			else if (iqPatient.getSexCode() == SexCode.FEMALE)
 				patient.setGender("F");
 		}
 		

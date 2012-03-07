@@ -16,31 +16,18 @@ package org.openmrs.module.iqchartimport.iqmodel;
 
 import java.util.Date;
 
+import org.openmrs.module.iqchartimport.iqmodel.code.HIVStatusCode;
+import org.openmrs.module.iqchartimport.iqmodel.code.MaritalCode;
+import org.openmrs.module.iqchartimport.iqmodel.code.SexCode;
+import org.openmrs.module.iqchartimport.iqmodel.code.StatusCode;
+
 /**
  * A patient in an IQChart database
  */
 public class IQPatient {
 	
-	public static final byte SEX_MALE = 0;
-	public static final byte SEX_FEMALE = 1;
-	
-	public static final byte MARITALSTATUS_SINGLE = 0;
-	public static final byte MARITALSTATUS_MARRIED = 1;
-	public static final byte MARITALSTATUS_WIDOWED = 2;
-	public static final byte MARITALSTATUS_DIVORCED = 3;
-	public static final byte MARITALSTATUS_LIVINGWITHPARTNER = 4;
-	public static final byte MARITALSTATUS_OTHER = 5;
-	
-	public static final byte HIVSTATUS_NEGATIVE = 0;
-	public static final byte HIVSTATUS_POSITIVE = 1;
-	public static final byte HIVSTATUS_UNKNOWN = 2;
-	public static final byte HIVSTATUS_UNTESTED = 3;
-	
 	public static final byte NEWTRANSFER_NO = 0;
 	public static final byte NEWTRANSFER_YES = 1;
-	
-	public static final byte STATUS_EXITED = 0;
-	public static final byte STATUS_ACTIVE = 1;
 	
 	public static final byte EXIT_OTHER = 0;
 	public static final byte EXIT_TRANSFERRED = 1;
@@ -52,19 +39,19 @@ public class IQPatient {
 	private String lastName;
 	private String hospitalID;
 	private Date enrollDate;
-	private Byte sexCode;
+	private SexCode sexCode;
 	private Date dob;
 	private Boolean dobEstimated;
 	private String cellule;
 	private String sector;
 	private String district;
-	private Byte maritalStatusCode;
-	private Byte hivStatusPartCode;
+	private MaritalCode maritalStatusCode;
+	private HIVStatusCode hivStatusPartCode;
 	private Byte modeCode;
 	private String modeAdmissionOther;
 	private Byte newTransfer;
 	private Date arvStartDate;
-	private Byte statusCode;
+	private StatusCode statusCode;
 	private Date exitDate;
 	private Byte exitCode;
 	private String exitReasonOther;
@@ -125,11 +112,11 @@ public class IQPatient {
 		this.enrollDate = enrollDate;
 	}
 	
-	public Byte getSexCode() {
+	public SexCode getSexCode() {
 		return sexCode;
 	}
 
-	public void setSexCode(Byte sexCode) {
+	public void setSexCode(SexCode sexCode) {
 		this.sexCode = sexCode;
 	}
 	
@@ -173,19 +160,19 @@ public class IQPatient {
 		this.district = district;
 	}
 	
-	public Byte getMaritalStatusCode() {
+	public MaritalCode getMaritalStatusCode() {
 		return maritalStatusCode;
 	}
 
-	public void setMaritalStatusCode(Byte maritalStatusCode) {
+	public void setMaritalStatusCode(MaritalCode maritalStatusCode) {
 		this.maritalStatusCode = maritalStatusCode;
 	}
 
-	public Byte getHIVStatusPartCode() {
+	public HIVStatusCode getHIVStatusPartCode() {
 		return hivStatusPartCode;
 	}
 
-	public void setHIVStatusPartCode(Byte hivStatusPartCode) {
+	public void setHIVStatusPartCode(HIVStatusCode hivStatusPartCode) {
 		this.hivStatusPartCode = hivStatusPartCode;
 	}
 
@@ -221,11 +208,11 @@ public class IQPatient {
 		this.arvStartDate = arvStartDate;
 	}
 
-	public Byte getStatusCode() {
+	public StatusCode getStatusCode() {
 		return statusCode;
 	}
 
-	public void setStatusCode(Byte statusCode) {
+	public void setStatusCode(StatusCode statusCode) {
 		this.statusCode = statusCode;
 	}
 
