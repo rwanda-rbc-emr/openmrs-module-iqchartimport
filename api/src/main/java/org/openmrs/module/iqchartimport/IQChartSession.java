@@ -216,6 +216,12 @@ public class IQChartSession {
 		patient.setCellule((String)row.get("cellule"));
 		patient.setSector((String)row.get("sector"));
 		patient.setDistrict((String)row.get("district"));
+		patient.setMaritalStatusCode((Byte)row.get("maritalStatusCode"));
+		patient.setHIVStatusPartCode((Byte)row.get("HIVStatusPartCode"));
+		patient.setModeCode((Byte)row.get("ModeCode"));
+		patient.setModeAdmissionOther((String)row.get("ModeAdmissionOther"));
+		patient.setNewTransfer((Byte)row.get("NewTransfer"));
+		patient.setARVStartDate((Date)row.get("ARVStartDate"));
 		patient.setStatusCode((Byte)row.get("StatusCode"));
 		patient.setExitDate((Date)row.get("ExitDate"));
 		patient.setExitCode((Byte)row.get("ExitCode"));

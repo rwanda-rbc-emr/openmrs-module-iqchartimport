@@ -21,16 +21,31 @@ import java.util.Date;
  */
 public class IQPatient {
 	
-	public static final int SEXCODE_MALE = 0;
-	public static final int SEXCODE_FEMALE = 1;
+	public static final byte SEX_MALE = 0;
+	public static final byte SEX_FEMALE = 1;
 	
-	public static final int STATUSCODE_ACTIVE = 0;
-	public static final int STATUSCODE_EXITED = 1;
+	public static final byte MARITALSTATUS_SINGLE = 0;
+	public static final byte MARITALSTATUS_MARRIED = 1;
+	public static final byte MARITALSTATUS_WIDOWED = 2;
+	public static final byte MARITALSTATUS_DIVORCED = 3;
+	public static final byte MARITALSTATUS_LIVINGWITHPARTNER = 4;
+	public static final byte MARITALSTATUS_OTHER = 5;
 	
-	public static final int EXITCODE_OTHER = 0;
-	public static final int EXITCODE_TRANSFERRED = 1;
-	public static final int EXITCODE_DECEASED = 2;
-	public static final int EXITCODE_LOST = 3;
+	public static final byte HIVSTATUS_NEGATIVE = 0;
+	public static final byte HIVSTATUS_POSITIVE = 1;
+	public static final byte HIVSTATUS_UNKNOWN = 2;
+	public static final byte HIVSTATUS_UNTESTED = 3;
+	
+	public static final byte NEWTRANSFER_NO = 0;
+	public static final byte NEWTRANSFER_YES = 1;
+	
+	public static final byte STATUS_EXITED = 0;
+	public static final byte STATUS_ACTIVE = 1;
+	
+	public static final byte EXIT_OTHER = 0;
+	public static final byte EXIT_TRANSFERRED = 1;
+	public static final byte EXIT_DECEASED = 2;
+	public static final byte EXIT_LOST = 3;
 	
 	private int tracnetID;
 	private String firstName;
@@ -43,15 +58,12 @@ public class IQPatient {
 	private String cellule;
 	private String sector;
 	private String district;
-	
-	// == Fields not imported currently ==
-	// private maritalStatus
-	// private hivStatusPartCode
-	// private modeCode
-	// private String modeAdmissionOther
-	// private newTransfer
-	// private arvStartDate
-	
+	private Byte maritalStatusCode;
+	private Byte hivStatusPartCode;
+	private Byte modeCode;
+	private String modeAdmissionOther;
+	private Byte newTransfer;
+	private Date arvStartDate;
 	private Byte statusCode;
 	private Date exitDate;
 	private Byte exitCode;
@@ -159,6 +171,54 @@ public class IQPatient {
 
 	public void setDistrict(String district) {
 		this.district = district;
+	}
+	
+	public Byte getMaritalStatusCode() {
+		return maritalStatusCode;
+	}
+
+	public void setMaritalStatusCode(Byte maritalStatusCode) {
+		this.maritalStatusCode = maritalStatusCode;
+	}
+
+	public Byte getHIVStatusPartCode() {
+		return hivStatusPartCode;
+	}
+
+	public void setHIVStatusPartCode(Byte hivStatusPartCode) {
+		this.hivStatusPartCode = hivStatusPartCode;
+	}
+
+	public Byte getModeCode() {
+		return modeCode;
+	}
+
+	public void setModeCode(Byte modeCode) {
+		this.modeCode = modeCode;
+	}
+
+	public String getModeAdmissionOther() {
+		return modeAdmissionOther;
+	}
+
+	public void setModeAdmissionOther(String modeAdmissionOther) {
+		this.modeAdmissionOther = modeAdmissionOther;
+	}
+
+	public Byte getNewTransfer() {
+		return newTransfer;
+	}
+
+	public void setNewTransfer(Byte newTransfer) {
+		this.newTransfer = newTransfer;
+	}
+
+	public Date getARVStartDate() {
+		return arvStartDate;
+	}
+
+	public void setARVStartDate(Date arvStartDate) {
+		this.arvStartDate = arvStartDate;
 	}
 
 	public Byte getStatusCode() {
