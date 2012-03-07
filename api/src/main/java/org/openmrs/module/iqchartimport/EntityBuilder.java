@@ -20,7 +20,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
-import org.openmrs.Location;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -141,22 +142,22 @@ public class EntityBuilder {
 		List<Obs> obs = new ArrayList<Obs>();
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		
-		if (iqPatient.getStatusCode() != null && iqPatient.getStatusCode() == IQPatient.STATUSCODE_EXITED && iqPatient.getExitCode() != null) {
+		if (iqPatient.getStatusCode() != null && iqPatient.getStatusCode() == IQPatient.STATUS_EXITED && iqPatient.getExitCode() != null) {
 			// Make exit reason obs
 			String codProp = Context.getAdministrationService().getGlobalProperty("concept.reasonExitedCare");
 			Concept reasonConcept = Context.getConceptService().getConcept(codProp);
 			
 			if (reasonConcept != null) {
 				Concept causeConcept = null;	
-				if (iqPatient.getExitCode() == IQPatient.EXITCODE_DECEASED) {
+				if (iqPatient.getExitCode() == IQPatient.EXIT_DECEASED) {
 					codProp = Context.getAdministrationService().getGlobalProperty("concept.patientDied");
 					causeConcept = Context.getConceptService().getConcept(codProp);
 				}
-				else if (iqPatient.getExitCode() == IQPatient.EXITCODE_TRANSFERRED) {
+				else if (iqPatient.getExitCode() == IQPatient.EXIT_TRANSFERRED) {
 					// TODO load concepts from mappings?
 					causeConcept = Context.getConceptService().getConcept("PATIENT TRANSFERRED OUT");
 				}
-				else if (iqPatient.getExitCode() == IQPatient.EXITCODE_LOST) {
+				else if (iqPatient.getExitCode() == IQPatient.EXIT_LOST) {
 					causeConcept = Context.getConceptService().getConcept("PATIENT DEFAULTED");
 				}
 				
@@ -209,9 +210,9 @@ public class EntityBuilder {
 		
 		// Set patient gender
 		if (iqPatient.getSexCode() != null) {
-			if (iqPatient.getSexCode() == IQPatient.SEXCODE_MALE)
+			if (iqPatient.getSexCode() == IQPatient.SEX_MALE)
 				patient.setGender("M");
-			else if (iqPatient.getSexCode() == IQPatient.SEXCODE_FEMALE)
+			else if (iqPatient.getSexCode() == IQPatient.SEX_FEMALE)
 				patient.setGender("F");
 		}
 		
@@ -219,7 +220,7 @@ public class EntityBuilder {
 		patient.setBirthdate(iqPatient.getDob());
 		patient.setBirthdateEstimated(iqPatient.getDobEstimated());
 		
-		if (iqPatient.getExitCode() != null && iqPatient.getExitCode() == IQPatient.EXITCODE_DECEASED)
+		if (iqPatient.getExitCode() != null && iqPatient.getExitCode() == IQPatient.EXIT_DECEASED)
 			patient.setDead(true);
 		
 		return patient;
