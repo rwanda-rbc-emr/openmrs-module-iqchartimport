@@ -29,8 +29,10 @@ import org.openmrs.module.iqchartimport.iqmodel.IQHeightObs;
 import org.openmrs.module.iqchartimport.iqmodel.BaseIQObs;
 import org.openmrs.module.iqchartimport.iqmodel.IQPatient;
 import org.openmrs.module.iqchartimport.iqmodel.IQWeightObs;
+import org.openmrs.module.iqchartimport.iqmodel.code.ExitCode;
 import org.openmrs.module.iqchartimport.iqmodel.code.HIVStatusCode;
 import org.openmrs.module.iqchartimport.iqmodel.code.MaritalCode;
+import org.openmrs.module.iqchartimport.iqmodel.code.ModeCode;
 import org.openmrs.module.iqchartimport.iqmodel.code.SexCode;
 import org.openmrs.module.iqchartimport.iqmodel.code.StatusCode;
 
@@ -222,13 +224,13 @@ public class IQChartSession {
 		patient.setDistrict((String)row.get("district"));
 		patient.setMaritalStatusCode(MaritalCode.fromByte((Byte)row.get("maritalStatusCode")));
 		patient.setHIVStatusPartCode(HIVStatusCode.fromByte((Byte)row.get("HIVStatusPartCode")));
-		patient.setModeCode((Byte)row.get("ModeCode"));
+		patient.setModeCode(ModeCode.fromByte((Byte)row.get("ModeCode")));
 		patient.setModeAdmissionOther((String)row.get("ModeAdmissionOther"));
-		patient.setNewTransfer((Byte)row.get("NewTransfer"));
+		patient.setNewTransfer((Byte)row.get("NewTransfer") > 0);
 		patient.setARVStartDate((Date)row.get("ARVStartDate"));
 		patient.setStatusCode(StatusCode.fromByte((Byte)row.get("StatusCode")));
 		patient.setExitDate((Date)row.get("ExitDate"));
-		patient.setExitCode((Byte)row.get("ExitCode"));
+		patient.setExitCode(ExitCode.fromByte((Byte)row.get("ExitCode")));
 		patient.setExitReasonOther((String)row.get("ExitReasonOther"));
 		return patient;
 	}

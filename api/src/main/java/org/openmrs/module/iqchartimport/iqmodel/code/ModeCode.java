@@ -15,18 +15,23 @@
 package org.openmrs.module.iqchartimport.iqmodel.code;
 
 /**
- * Patient sex code
+ * Patient admission mode code
  */
-public enum SexCode {
-	MALE,
-	FEMALE;
+public enum ModeCode {
+	OTHER,
+	VCT,
+	PMTCT,
+	HOSPITALIZATION,
+	CONSULTATION,
+	CONSULTATION_TB,
+	PIT;
 	
 	/**
 	 * Converts a Byte value to an enum value
 	 * @param val the Byte value
 	 * @return the enum value or null if byte value is null
 	 */
-	public static SexCode fromByte(Byte val) {
+	public static ModeCode fromByte(Byte val) {
 		return val != null ? values()[val] : null;
 	}
 }

@@ -31,6 +31,7 @@ import org.openmrs.Program;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.iqmodel.IQPatient;
+import org.openmrs.module.iqchartimport.iqmodel.code.ExitCode;
 import org.openmrs.module.iqchartimport.iqmodel.code.SexCode;
 import org.openmrs.module.iqchartimport.iqmodel.code.StatusCode;
 
@@ -149,15 +150,15 @@ public class EntityBuilder {
 			
 			if (reasonConcept != null) {
 				Concept causeConcept = null;	
-				if (iqPatient.getExitCode() == IQPatient.EXIT_DECEASED) {
+				if (iqPatient.getExitCode() == ExitCode.DECEASED) {
 					codProp = Context.getAdministrationService().getGlobalProperty("concept.patientDied");
 					causeConcept = Context.getConceptService().getConcept(codProp);
 				}
-				else if (iqPatient.getExitCode() == IQPatient.EXIT_TRANSFERRED) {
+				else if (iqPatient.getExitCode() == ExitCode.TRANSFERRED) {
 					// TODO load concepts from mappings?
 					causeConcept = Context.getConceptService().getConcept("PATIENT TRANSFERRED OUT");
 				}
-				else if (iqPatient.getExitCode() == IQPatient.EXIT_LOST) {
+				else if (iqPatient.getExitCode() == ExitCode.LOST) {
 					causeConcept = Context.getConceptService().getConcept("PATIENT DEFAULTED");
 				}
 				
@@ -218,9 +219,9 @@ public class EntityBuilder {
 		
 		// Set patient birth date
 		patient.setBirthdate(iqPatient.getDob());
-		patient.setBirthdateEstimated(iqPatient.getDobEstimated());
+		patient.setBirthdateEstimated(iqPatient.isDobEstimated());
 		
-		if (iqPatient.getExitCode() != null && iqPatient.getExitCode() == IQPatient.EXIT_DECEASED)
+		if (iqPatient.getExitCode() != null && iqPatient.getExitCode() == ExitCode.DECEASED)
 			patient.setDead(true);
 		
 		return patient;

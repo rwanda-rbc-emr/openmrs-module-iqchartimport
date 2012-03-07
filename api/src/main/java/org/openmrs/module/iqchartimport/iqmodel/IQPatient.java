@@ -16,8 +16,10 @@ package org.openmrs.module.iqchartimport.iqmodel;
 
 import java.util.Date;
 
+import org.openmrs.module.iqchartimport.iqmodel.code.ExitCode;
 import org.openmrs.module.iqchartimport.iqmodel.code.HIVStatusCode;
 import org.openmrs.module.iqchartimport.iqmodel.code.MaritalCode;
+import org.openmrs.module.iqchartimport.iqmodel.code.ModeCode;
 import org.openmrs.module.iqchartimport.iqmodel.code.SexCode;
 import org.openmrs.module.iqchartimport.iqmodel.code.StatusCode;
 
@@ -26,14 +28,6 @@ import org.openmrs.module.iqchartimport.iqmodel.code.StatusCode;
  */
 public class IQPatient {
 	
-	public static final byte NEWTRANSFER_NO = 0;
-	public static final byte NEWTRANSFER_YES = 1;
-	
-	public static final byte EXIT_OTHER = 0;
-	public static final byte EXIT_TRANSFERRED = 1;
-	public static final byte EXIT_DECEASED = 2;
-	public static final byte EXIT_LOST = 3;
-	
 	private int tracnetID;
 	private String firstName;
 	private String lastName;
@@ -41,19 +35,19 @@ public class IQPatient {
 	private Date enrollDate;
 	private SexCode sexCode;
 	private Date dob;
-	private Boolean dobEstimated;
+	private boolean dobEstimated;
 	private String cellule;
 	private String sector;
 	private String district;
 	private MaritalCode maritalStatusCode;
 	private HIVStatusCode hivStatusPartCode;
-	private Byte modeCode;
+	private ModeCode modeCode;
 	private String modeAdmissionOther;
-	private Byte newTransfer;
+	private boolean newTransfer;
 	private Date arvStartDate;
 	private StatusCode statusCode;
 	private Date exitDate;
-	private Byte exitCode;
+	private ExitCode exitCode;
 	private String exitReasonOther;
 	
 	/**
@@ -128,11 +122,11 @@ public class IQPatient {
 		this.dob = dob;
 	}
 
-	public Boolean getDobEstimated() {
+	public boolean isDobEstimated() {
 		return dobEstimated;
 	}
 
-	public void setDobEstimated(Boolean dobEstimated) {
+	public void setDobEstimated(boolean dobEstimated) {
 		this.dobEstimated = dobEstimated;
 	}
 
@@ -176,11 +170,11 @@ public class IQPatient {
 		this.hivStatusPartCode = hivStatusPartCode;
 	}
 
-	public Byte getModeCode() {
+	public ModeCode getModeCode() {
 		return modeCode;
 	}
 
-	public void setModeCode(Byte modeCode) {
+	public void setModeCode(ModeCode modeCode) {
 		this.modeCode = modeCode;
 	}
 
@@ -192,11 +186,11 @@ public class IQPatient {
 		this.modeAdmissionOther = modeAdmissionOther;
 	}
 
-	public Byte getNewTransfer() {
+	public boolean isNewTransfer() {
 		return newTransfer;
 	}
 
-	public void setNewTransfer(Byte newTransfer) {
+	public void setNewTransfer(boolean newTransfer) {
 		this.newTransfer = newTransfer;
 	}
 
@@ -224,11 +218,11 @@ public class IQPatient {
 		this.exitDate = exitDate;
 	}
 
-	public Byte getExitCode() {
+	public ExitCode getExitCode() {
 		return exitCode;
 	}
 
-	public void setExitCode(Byte exitCode) {
+	public void setExitCode(ExitCode exitCode) {
 		this.exitCode = exitCode;
 	}
 

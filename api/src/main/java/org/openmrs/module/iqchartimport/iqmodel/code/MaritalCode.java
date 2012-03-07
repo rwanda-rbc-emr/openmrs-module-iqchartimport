@@ -25,6 +25,11 @@ public enum MaritalCode {
 	LIVINGWITHPARTNER,
 	OTHER;
 	
+	/**
+	 * Converts a Byte value to an enum value
+	 * @param val the Byte value
+	 * @return the enum value or null if byte value is null
+	 */
 	public static MaritalCode fromByte(Byte val) {
 		return val != null ? values()[val] : null;
 	}

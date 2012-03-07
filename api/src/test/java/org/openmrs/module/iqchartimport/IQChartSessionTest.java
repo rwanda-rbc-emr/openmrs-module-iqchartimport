@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.openmrs.module.iqchartimport.iqmodel.IQPatient;
 import org.openmrs.module.iqchartimport.iqmodel.code.HIVStatusCode;
 import org.openmrs.module.iqchartimport.iqmodel.code.MaritalCode;
+import org.openmrs.module.iqchartimport.iqmodel.code.ModeCode;
 import org.openmrs.module.iqchartimport.iqmodel.code.SexCode;
 import org.openmrs.module.iqchartimport.iqmodel.code.StatusCode;
 
@@ -79,15 +80,15 @@ public class IQChartSessionTest {
 		Assert.assertEquals(new GregorianCalendar(2004, GregorianCalendar.SEPTEMBER, 29).getTime(), patient.getEnrollDate());
 		Assert.assertEquals(SexCode.FEMALE, patient.getSexCode());
 		Assert.assertEquals(new GregorianCalendar(1972, GregorianCalendar.JANUARY, 1).getTime(), patient.getDob());
-		Assert.assertEquals(Boolean.TRUE, patient.getDobEstimated());
+		Assert.assertTrue(patient.isDobEstimated());
 		Assert.assertEquals("Unknown", patient.getCellule());
 		Assert.assertEquals("Unknown", patient.getSector());
 		Assert.assertEquals("Unknown", patient.getDistrict());
 		Assert.assertEquals(MaritalCode.MARRIED, patient.getMaritalStatusCode());
 		Assert.assertEquals(HIVStatusCode.UNKNOWN, patient.getHIVStatusPartCode());
-		//Assert.assertEquals((Byte)IQPatient.MODECODE_, patient.getModeCode());
-		//Assert.assertNull(patient.getModeAdmissionOther());
-		Assert.assertEquals((Byte)IQPatient.NEWTRANSFER_NO, patient.getNewTransfer());
+		Assert.assertEquals(ModeCode.VCT, patient.getModeCode());
+		Assert.assertEquals("", patient.getModeAdmissionOther());
+		Assert.assertFalse(patient.isNewTransfer());
 		Assert.assertEquals(new GregorianCalendar(2007, GregorianCalendar.AUGUST, 28).getTime(), patient.getARVStartDate());
 		Assert.assertEquals(StatusCode.ACTIVE, patient.getStatusCode());
 		Assert.assertNull(patient.getExitDate());

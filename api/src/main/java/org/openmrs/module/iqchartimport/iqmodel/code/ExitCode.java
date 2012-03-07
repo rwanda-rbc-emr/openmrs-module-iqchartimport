@@ -15,18 +15,22 @@
 package org.openmrs.module.iqchartimport.iqmodel.code;
 
 /**
- * Patient sex code
+ * Patient program exit code
  */
-public enum SexCode {
-	MALE,
-	FEMALE;
+public enum ExitCode {
+	OTHER,
+	TRANSFERRED,
+	DECEASED,
+	LOST,
+	STOPPED_BY_DOCTOR,
+	STOPPED_BY_PATIENT;
 	
 	/**
 	 * Converts a Byte value to an enum value
 	 * @param val the Byte value
 	 * @return the enum value or null if byte value is null
 	 */
-	public static SexCode fromByte(Byte val) {
+	public static ExitCode fromByte(Byte val) {
 		return val != null ? values()[val] : null;
 	}
 }

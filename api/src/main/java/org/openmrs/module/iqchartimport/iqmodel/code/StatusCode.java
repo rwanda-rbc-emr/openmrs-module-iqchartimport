@@ -21,6 +21,11 @@ public enum StatusCode {
 	EXITED,
 	ACTIVE;
 	
+	/**
+	 * Converts a Byte value to an enum value
+	 * @param val the Byte value
+	 * @return the enum value or null if byte value is null
+	 */
 	public static StatusCode fromByte(Byte val) {
 		return val != null ? values()[val] : null;
 	}
