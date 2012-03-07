@@ -15,10 +15,13 @@
 package org.openmrs.module.iqchartimport;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 /**
  * Utility methods for testing
@@ -26,31 +29,66 @@ import java.io.OutputStream;
 public class TestingUtils {
 	
 	/**
-	 * Copies a resource in a JAR to a temporary file
-	 * @param resource the resource path
-	 * @param suffix the suffix
+	 * Extracts a resource to a temporary file for testing
+	 * @param path the database resource path
 	 * @return the temporary file
 	 * @throws Exception
 	 */
-	public static File copyResourceToTempFile(String resource, String suffix) throws Exception {
-		InputStream in;
-		File resFile = new File(resource);
-		if (resFile.exists())
-			in = new FileInputStream(resFile);
-		else
-			in = TestingUtils.class.getClassLoader().getResourceAsStream(resource);
+	public static File copyResource(String path) throws IOException {
+		InputStream in = TestingUtils.class.getResourceAsStream(path);
+		if (in == null)
+			throw new IOException("Unable to open resource: " + path);
+
+		File tempFile = File.createTempFile("temp", "." + getExtension(path));
 		
-		File tempFile = File.createTempFile(resFile.getName(), suffix);
-		OutputStream out = new FileOutputStream(tempFile);
-		
-		// Copy byte by byte
-		byte[] buf = new byte[1024];
-		int len;
-		while ((len = in.read(buf)) > 0)
-			out.write(buf, 0, len);
+		copyStream(in, new FileOutputStream(tempFile));
 		
 		in.close();
-		out.close();
 		return tempFile;
+	}
+	
+	/**
+	 * Extracts an item from a zip file into a temporary file
+	 * @param zipFile the zip file
+	 * @param entryName the name of the item to extract
+	 * @return the item temp file
+	 * @throws ZipException
+	 * @throws IOException
+	 */
+	public static File extractZipEntry(File zipFile, String entryName) throws ZipException, IOException {
+		ZipFile zip = new ZipFile(zipFile);
+		ZipEntry entry = zip.getEntry(entryName);
+		InputStream in = zip.getInputStream(entry);
+		
+		File tempFile = File.createTempFile("temp", "." + getExtension(entryName));
+		
+		copyStream(in, new FileOutputStream(tempFile));
+		
+		in.close();
+		return tempFile;
+	}
+	
+	/**
+	 * Copies all data from one stream to another
+	 * @param in the input stream
+	 * @param out the output stream
+	 * @throws IOException
+	 */
+	public static void copyStream(InputStream in, OutputStream out) throws IOException {
+		byte[] buf = new byte[256];
+		int len;
+		while ((len = in.read(buf)) >= 0)
+			out.write(buf, 0, len);
+		out.close();
+	}
+	
+	/**
+	 * Gets the extension of a file path
+	 * @param path the file path
+	 * @return the extension
+	 */
+	public static String getExtension(String path) {
+		int index = path.lastIndexOf('.');
+		return index >= 0 ? path.substring(index + 1) : null;
 	}
 }

@@ -31,21 +31,24 @@ public class IQChartSessionTest {
 	
 	protected static final Log log = LogFactory.getLog(IQChartSessionTest.class);
 
-	private File tempDBFile;
+	private File tempZipFile, tempMdbFile;
 	private IQChartSession session;
 	
 	@Before
 	public void setup() throws Exception {
-		tempDBFile = TestingUtils.copyResourceToTempFile("test.mdb", ".mdb");
-		log.info("Copied database to temp file: " + tempDBFile.getAbsolutePath());
-		
-		IQChartDatabase database = new IQChartDatabase("test.mdb", tempDBFile.getAbsolutePath());
+		// Extract embedded test database
+		tempZipFile = TestingUtils.copyResource("/HIVData.mdb.zip");
+		tempMdbFile = TestingUtils.extractZipEntry(tempZipFile, "HIVData.mdb");
+			
+		IQChartDatabase database = new IQChartDatabase("HIVData.mdb", tempMdbFile.getAbsolutePath());
 		session = new IQChartSession(database);
 	}
 	
 	@After
 	public void cleanup() {
-		//tempDBFile.delete();
+		// Delete temporary files
+		tempMdbFile.delete();
+		tempZipFile.delete();
 	}
 	
 	@Test
