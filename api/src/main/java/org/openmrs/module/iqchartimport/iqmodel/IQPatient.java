@@ -46,6 +46,7 @@ public class IQPatient {
 	private boolean newTransfer;
 	private Date arvStartDate;
 	private StatusCode statusCode;
+
 	private Date exitDate;
 	private ExitCode exitCode;
 	private String exitReasonOther;
