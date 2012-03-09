@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
@@ -78,5 +79,27 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 		PatientIdentifierType tracnetIdType = builder.getTRACnetIDType();
 		Assert.assertEquals(new Integer(1), tracnetIdType.getId());
 		Assert.assertEquals("OpenMRS Identification Number", tracnetIdType.getName());
+	}
+	
+	@Test
+	public void getPatient() {
+		PatientIdentifierType tracnetIDType = builder.getTRACnetIDType();
+		
+		Patient patient = builder.getPatient(235001);
+		Assert.assertNull(patient.getPatientId());
+		Assert.assertEquals(1, patient.getIdentifiers().size());
+		Assert.assertEquals("235001", patient.getPatientIdentifier().getIdentifier());
+		Assert.assertEquals(tracnetIDType, patient.getPatientIdentifier().getIdentifierType());
+		Assert.assertEquals(1, patient.getNames().size());
+		Assert.assertEquals("Jane", patient.getPersonName().getGivenName());
+		Assert.assertEquals("Doe", patient.getPersonName().getFamilyName());
+		
+		Assert.assertNull(patient.getPersonAddress().getAddress1()); // Umudugudu
+		Assert.assertNull(patient.getPersonAddress().getAddress2()); // Not used
+		Assert.assertEquals("Unknown", patient.getPersonAddress().getNeighborhoodCell()); // Cell
+		Assert.assertEquals("Unknown", patient.getPersonAddress().getCityVillage()); // Sector
+		Assert.assertEquals("Unknown", patient.getPersonAddress().getCountyDistrict()); // District
+		Assert.assertNull(patient.getPersonAddress().getStateProvince()); // Province
+		Assert.assertNull(patient.getPersonAddress().getCountry()); // Country	
 	}
 }

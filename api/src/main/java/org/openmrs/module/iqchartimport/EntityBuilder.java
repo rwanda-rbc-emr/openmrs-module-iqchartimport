@@ -203,11 +203,12 @@ public class EntityBuilder {
 		name.setFamilyName(iqPatient.getLastName());
 		patient.addName(name);
 		
-		// Create address object
+		// Create address object using AddressHierarchRwanda mappings
 		PersonAddress address = new PersonAddress();
-		address.setAddress1(iqPatient.getCellule()); // TODO mapping
-		address.setAddress2(iqPatient.getSector());
+		address.setNeighborhoodCell(iqPatient.getCellule());
+		address.setCityVillage(iqPatient.getSector());
 		address.setCountyDistrict(iqPatient.getDistrict());
+		// TODO Add province and country
 		patient.addAddress(address);
 		
 		// Set patient gender
