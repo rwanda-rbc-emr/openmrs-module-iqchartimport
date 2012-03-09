@@ -223,6 +223,7 @@ public class EntityBuilder {
 		patient.setBirthdate(iqPatient.getDob());
 		patient.setBirthdateEstimated(iqPatient.isDobEstimated());
 		
+		// Set living/dead
 		if (iqPatient.getExitCode() != null && iqPatient.getExitCode() == ExitCode.DECEASED)
 			patient.setDead(true);
 		

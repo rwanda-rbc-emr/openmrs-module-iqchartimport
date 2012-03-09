@@ -16,6 +16,7 @@ package org.openmrs.module.iqchartimport;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.GregorianCalendar;
 
 import junit.framework.Assert;
 
@@ -87,13 +88,19 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 		
 		Patient patient = builder.getPatient(235001);
 		Assert.assertNull(patient.getPatientId());
+		
+		// Check ID
 		Assert.assertEquals(1, patient.getIdentifiers().size());
 		Assert.assertEquals("235001", patient.getPatientIdentifier().getIdentifier());
 		Assert.assertEquals(tracnetIDType, patient.getPatientIdentifier().getIdentifierType());
+		
+		// Check name
 		Assert.assertEquals(1, patient.getNames().size());
 		Assert.assertEquals("Jane", patient.getPersonName().getGivenName());
+		Assert.assertNull(patient.getPersonName().getMiddleName());
 		Assert.assertEquals("Doe", patient.getPersonName().getFamilyName());
 		
+		// Check address
 		Assert.assertNull(patient.getPersonAddress().getAddress1()); // Umudugudu
 		Assert.assertNull(patient.getPersonAddress().getAddress2()); // Not used
 		Assert.assertEquals("Unknown", patient.getPersonAddress().getNeighborhoodCell()); // Cell
@@ -101,5 +108,15 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 		Assert.assertEquals("Unknown", patient.getPersonAddress().getCountyDistrict()); // District
 		Assert.assertNull(patient.getPersonAddress().getStateProvince()); // Province
 		Assert.assertNull(patient.getPersonAddress().getCountry()); // Country	
+		
+		// Check gender
+		Assert.assertEquals("F", patient.getGender());
+		
+		// Check birth date
+		Assert.assertEquals(new GregorianCalendar(1972, GregorianCalendar.JANUARY, 1).getTime(), patient.getBirthdate());
+		Assert.assertTrue(patient.isBirthdateEstimated());
+		
+		// Check living/dead
+		Assert.assertFalse(patient.isDead());
 	}
 }
