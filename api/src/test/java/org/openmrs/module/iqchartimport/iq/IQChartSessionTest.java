@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport;
+package org.openmrs.module.iqchartimport.iq;
 
 import java.io.File;
 import java.util.GregorianCalendar;
@@ -25,12 +25,15 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.module.iqchartimport.iqmodel.IQPatient;
-import org.openmrs.module.iqchartimport.iqmodel.code.HIVStatusCode;
-import org.openmrs.module.iqchartimport.iqmodel.code.MaritalCode;
-import org.openmrs.module.iqchartimport.iqmodel.code.ModeCode;
-import org.openmrs.module.iqchartimport.iqmodel.code.SexCode;
-import org.openmrs.module.iqchartimport.iqmodel.code.StatusCode;
+import org.openmrs.module.iqchartimport.TestingUtils;
+import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
+import org.openmrs.module.iqchartimport.iq.IQChartSession;
+import org.openmrs.module.iqchartimport.iq.code.ExitCode;
+import org.openmrs.module.iqchartimport.iq.code.HIVStatusCode;
+import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
+import org.openmrs.module.iqchartimport.iq.code.ModeCode;
+import org.openmrs.module.iqchartimport.iq.code.SexCode;
+import org.openmrs.module.iqchartimport.iq.code.StatusCode;
 
 /**
  * Test class for IQChartSession
@@ -93,6 +96,29 @@ public class IQChartSessionTest {
 		Assert.assertEquals(StatusCode.ACTIVE, patient.getStatusCode());
 		Assert.assertNull(patient.getExitDate());
 		Assert.assertNull(patient.getExitCode());
+		Assert.assertNull(patient.getExitReasonOther());
+		
+		patient = session.getPatient(185568);
+		Assert.assertEquals(185568, patient.getTracnetID());
+		Assert.assertEquals("Jane", patient.getFirstName());
+		Assert.assertEquals("Doe", patient.getLastName());
+		Assert.assertEquals("2040", patient.getHospitalID());
+		Assert.assertEquals(new GregorianCalendar(2007, GregorianCalendar.DECEMBER, 24).getTime(), patient.getEnrollDate());
+		Assert.assertEquals(SexCode.FEMALE, patient.getSexCode());
+		Assert.assertEquals(new GregorianCalendar(1987, GregorianCalendar.FEBRUARY, 16).getTime(), patient.getDob());
+		Assert.assertFalse(patient.isDobEstimated());
+		Assert.assertEquals("Unknown", patient.getCellule());
+		Assert.assertEquals("Unknown", patient.getSector());
+		Assert.assertEquals("Unknown", patient.getDistrict());
+		Assert.assertEquals(MaritalCode.LIVINGWITHPARTNER, patient.getMaritalStatusCode());
+		Assert.assertNull(patient.getHIVStatusPartCode());
+		Assert.assertEquals(ModeCode.VCT, patient.getModeCode());
+		Assert.assertEquals("", patient.getModeAdmissionOther());
+		Assert.assertTrue(patient.isNewTransfer());
+		Assert.assertEquals(new GregorianCalendar(2006, GregorianCalendar.AUGUST, 1).getTime(), patient.getARVStartDate());
+		Assert.assertEquals(StatusCode.EXITED, patient.getStatusCode());
+		Assert.assertEquals(new GregorianCalendar(2009, GregorianCalendar.AUGUST, 14).getTime(), patient.getExitDate());
+		Assert.assertEquals(ExitCode.TRANSFERRED, patient.getExitCode());
 		Assert.assertNull(patient.getExitReasonOther());
 	}
 }

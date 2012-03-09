@@ -30,10 +30,11 @@ import org.openmrs.PersonName;
 import org.openmrs.Program;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.iqchartimport.iqmodel.IQPatient;
-import org.openmrs.module.iqchartimport.iqmodel.code.ExitCode;
-import org.openmrs.module.iqchartimport.iqmodel.code.SexCode;
-import org.openmrs.module.iqchartimport.iqmodel.code.StatusCode;
+import org.openmrs.module.iqchartimport.iq.IQChartSession;
+import org.openmrs.module.iqchartimport.iq.IQPatient;
+import org.openmrs.module.iqchartimport.iq.code.ExitCode;
+import org.openmrs.module.iqchartimport.iq.code.SexCode;
+import org.openmrs.module.iqchartimport.iq.code.StatusCode;
 
 /**
  * Builder which creates OpenMRS entities from IQChart objects equivalents

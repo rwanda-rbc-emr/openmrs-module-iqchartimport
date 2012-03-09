@@ -12,16 +12,16 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport.iqmodel;
+package org.openmrs.module.iqchartimport.iq;
 
 import java.util.Date;
 
-import org.openmrs.module.iqchartimport.iqmodel.code.ExitCode;
-import org.openmrs.module.iqchartimport.iqmodel.code.HIVStatusCode;
-import org.openmrs.module.iqchartimport.iqmodel.code.MaritalCode;
-import org.openmrs.module.iqchartimport.iqmodel.code.ModeCode;
-import org.openmrs.module.iqchartimport.iqmodel.code.SexCode;
-import org.openmrs.module.iqchartimport.iqmodel.code.StatusCode;
+import org.openmrs.module.iqchartimport.iq.code.ExitCode;
+import org.openmrs.module.iqchartimport.iq.code.HIVStatusCode;
+import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
+import org.openmrs.module.iqchartimport.iq.code.ModeCode;
+import org.openmrs.module.iqchartimport.iq.code.SexCode;
+import org.openmrs.module.iqchartimport.iq.code.StatusCode;
 
 /**
  * A patient in an IQChart database

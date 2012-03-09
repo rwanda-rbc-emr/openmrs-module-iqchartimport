@@ -1,4 +1,4 @@
-package org.openmrs.module.iqchartimport.iqmodel;
+package org.openmrs.module.iqchartimport.iq.obs;
 
 import java.util.Date;
 

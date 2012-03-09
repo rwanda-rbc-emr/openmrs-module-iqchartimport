@@ -12,23 +12,38 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport.iqmodel.code;
+package org.openmrs.module.iqchartimport.iq.obs;
+
+import java.util.Date;
 
 /**
- * Patient HIV status code
+ * Base class for IQChart recorded obs
  */
-public enum HIVStatusCode {
-	NEGATIVE,
-	POSITIVE,
-	UNKNOWN,
-	NOTTESTED;
+public abstract class BaseIQObs implements Comparable<BaseIQObs> {
+	
+	private Date date;
 	
 	/**
-	 * Converts a Byte value to an enum value
-	 * @param val the Byte value
-	 * @return the enum value or null if byte value is null
+	 * Constructs a base obs
+	 * @param date the date
 	 */
-	public static HIVStatusCode fromByte(Byte val) {
-		return val != null ? values()[val] : null;
+	public BaseIQObs(Date date) {
+		this.date = date;
+	}
+
+	/**
+	 * Gets the date
+	 * @return the date
+	 */
+	public Date getDate() {
+		return date;
+	}
+
+	/**
+	 * @see java.lang.Comparable
+	 */
+	@Override
+	public int compareTo(BaseIQObs obs) {
+		return this.date.compareTo(obs.date);
 	}
 }

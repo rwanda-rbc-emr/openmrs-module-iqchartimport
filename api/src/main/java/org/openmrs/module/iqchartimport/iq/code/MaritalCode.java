@@ -12,21 +12,25 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport.iqmodel.code;
+package org.openmrs.module.iqchartimport.iq.code;
 
 /**
- * Patient sex code
+ * Patient marital status code
  */
-public enum SexCode {
-	MALE,
-	FEMALE;
+public enum MaritalCode {
+	SINGLE,
+	MARRIED,
+	WIDOWED,
+	DIVORCED,
+	LIVINGWITHPARTNER,
+	OTHER;
 	
 	/**
 	 * Converts a Byte value to an enum value
 	 * @param val the Byte value
 	 * @return the enum value or null if byte value is null
 	 */
-	public static SexCode fromByte(Byte val) {
+	public static MaritalCode fromByte(Byte val) {
 		return val != null ? values()[val] : null;
 	}
 }

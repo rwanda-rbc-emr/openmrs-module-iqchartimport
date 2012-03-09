@@ -12,26 +12,21 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport.iqmodel.code;
+package org.openmrs.module.iqchartimport.iq.code;
 
 /**
- * Patient admission mode code
+ * Patient sex code
  */
-public enum ModeCode {
-	OTHER,
-	VCT,
-	PMTCT,
-	HOSPITALIZATION,
-	CONSULTATION,
-	CONSULTATION_TB,
-	PIT;
+public enum SexCode {
+	MALE,
+	FEMALE;
 	
 	/**
 	 * Converts a Byte value to an enum value
 	 * @param val the Byte value
 	 * @return the enum value or null if byte value is null
 	 */
-	public static ModeCode fromByte(Byte val) {
+	public static SexCode fromByte(Byte val) {
 		return val != null ? values()[val] : null;
 	}
 }

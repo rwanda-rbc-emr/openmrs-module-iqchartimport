@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport.iqmodel.code;
+package org.openmrs.module.iqchartimport.iq.code;
 
 /**
  * Patient program status code
