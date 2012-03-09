@@ -15,6 +15,7 @@
 package org.openmrs.module.iqchartimport.iq;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -56,10 +57,12 @@ public class IQChartSessionTest {
 	}
 	
 	@After
-	public void cleanup() {
+	public void cleanup() throws IOException {
 		// Delete temporary files
 		tempMdbFile.delete();
 		tempZipFile.delete();
+		
+		session.close();
 	}
 	
 	@Test

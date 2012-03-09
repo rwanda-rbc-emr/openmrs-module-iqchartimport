@@ -84,12 +84,24 @@
 			</resource>
 		</resources>
 
-		<testResources>
-			<testResource>
-				<directory>src/test/resources</directory>
-				<filtering>true</filtering>
-			</testResource>
-		</testResources>
+	<testResources>
+		<!-- All non-zip file resources should be filtered -->
+		<testResource>
+			<directory>src/test/resources</directory>
+			<filtering>true</filtering>
+			<excludes>
+				<exclude>**/*.zip</exclude>
+			</excludes>
+		</testResource>
+		<!-- All zip file resources should not be filtered -->
+		<testResource>
+			<directory>src/test/resources</directory>
+			<filtering>false</filtering>
+			<includes>
+				<include>**/*.zip</include>
+			</includes>
+		</testResource>
+	</testResources>
 
 		<pluginManagement>
 			<plugins>

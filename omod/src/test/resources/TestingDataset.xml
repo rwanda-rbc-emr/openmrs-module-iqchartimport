@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<global_property 
+		property="iqchartimport.tracnetIDTypeId" 
+		property_value="0" 
+		description="The TRACnet identifier type id" 
+		uuid="f7b4ba5a-f30d-4170-8cf8-92c243281fe0" 
+	/>
+	<patient_identifier_type 
+		patient_identifier_type_id="1"
+		name="OpenMRS Identification Number"
+		description="Unique number used in OpenMRS"
+		format=""
+		check_digit="1"
+		creator="1"
+		date_created="2005-09-22 00:00:00"
+		required="0"
+		format_description="[NULL]"
+		validator="org.openmrs.patient.impl.LuhnIdentifierValidator"
+		retired="0"
+		retired_by="[NULL]"
+		date_retired="[NULL]"
+		retire_reason="[NULL]"
+		uuid="8d793bee-c2cc-11de-8d13-0010c6dffd0f"
+	/>	
+</dataset>
