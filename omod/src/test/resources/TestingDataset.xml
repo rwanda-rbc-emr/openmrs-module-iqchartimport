@@ -3,8 +3,12 @@
 	<global_property 
 		property="iqchartimport.tracnetIDTypeId" 
 		property_value="0" 
-		description="The TRACnet identifier type id" 
 		uuid="f7b4ba5a-f30d-4170-8cf8-92c243281fe0" 
+	/>
+	<global_property
+		property="iqchartimport.country" 
+		property_value="Rwanda" 
+		uuid="8d793bee-c2cc-11de-8d13-0010c6dffd0f" 
 	/>
 	<patient_identifier_type 
 		patient_identifier_type_id="1"

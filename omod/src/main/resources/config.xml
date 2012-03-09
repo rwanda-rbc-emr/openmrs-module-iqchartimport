@@ -17,6 +17,11 @@
 		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.AdminList</class>
 	</extension>
 	<globalProperty>
+		<property>${project.parent.artifactId}.country</property>
+		<defaultValue>Rwanda</defaultValue>
+		<description>Country used for imported addresses</description>
+	</globalProperty>
+	<globalProperty>
 		<property>${project.parent.artifactId}.tracnetIDTypeId</property>
 		<defaultValue>-1</defaultValue>
 		<description>TRACnet identifier type id for imported patients</description>

@@ -107,7 +107,7 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 		Assert.assertEquals("Unknown", patient.getPersonAddress().getCityVillage()); // Sector
 		Assert.assertEquals("Unknown", patient.getPersonAddress().getCountyDistrict()); // District
 		Assert.assertNull(patient.getPersonAddress().getStateProvince()); // Province
-		Assert.assertNull(patient.getPersonAddress().getCountry()); // Country	
+		Assert.assertEquals("Rwanda", patient.getPersonAddress().getCountry()); // Country	
 		
 		// Check gender
 		Assert.assertEquals("F", patient.getGender());

@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.GlobalProperty;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -208,7 +209,10 @@ public class EntityBuilder {
 		address.setNeighborhoodCell(iqPatient.getCellule());
 		address.setCityVillage(iqPatient.getSector());
 		address.setCountyDistrict(iqPatient.getDistrict());
-		// TODO Add province and country
+		// TODO Add province
+		
+		String country = Context.getAdministrationService().getGlobalProperty(Constants.MODULE_ID + ".country");
+		address.setCountry(country);
 		patient.addAddress(address);
 		
 		// Set patient gender
