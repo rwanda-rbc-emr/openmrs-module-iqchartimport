@@ -16,7 +16,7 @@ package org.openmrs.module.iqchartimport;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.GregorianCalendar;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -27,9 +27,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.PatientProgram;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
+import org.openmrs.module.iqchartimport.iq.IQPatient;
+import org.openmrs.module.iqchartimport.iq.code.ExitCode;
+import org.openmrs.module.iqchartimport.iq.code.SexCode;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
+
+import static junit.framework.Assert.*;
 
 /**
  * Test class for EntityBuilder
@@ -41,6 +47,9 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 	private File tempZipFile, tempMdbFile;
 	private IQChartSession session;
 	private EntityBuilder builder;
+	
+	// IDs of patients from test DB to check
+	private int[] testIDs = { 235001, 185568 };
 	
 	@Before
 	public void setup() throws Exception {
@@ -80,45 +89,64 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 		Mappings.getInstance().load();
 		
 		PatientIdentifierType tracnetIdType = builder.getTRACnetIDType();
-		Assert.assertEquals(new Integer(1), tracnetIdType.getId());
-		Assert.assertEquals("Test ID Type", tracnetIdType.getName());
+		assertEquals(new Integer(1), tracnetIdType.getId());
+		assertEquals("Test ID Type", tracnetIdType.getName());
 	}
 	
 	@Test
-	public void getPatient() {
-		PatientIdentifierType tracnetIDType = builder.getTRACnetIDType();
-		
-		Patient patient = builder.getPatient(235001);
-		Assert.assertNull(patient.getPatientId());
-		
-		// Check ID
-		Assert.assertEquals(1, patient.getIdentifiers().size());
-		Assert.assertEquals("235001", patient.getPatientIdentifier().getIdentifier());
-		Assert.assertEquals(tracnetIDType, patient.getPatientIdentifier().getIdentifierType());
-		
-		// Check name
-		Assert.assertEquals(1, patient.getNames().size());
-		Assert.assertEquals("Jane", patient.getPersonName().getGivenName());
-		Assert.assertNull(patient.getPersonName().getMiddleName());
-		Assert.assertEquals("Doe", patient.getPersonName().getFamilyName());
-		
-		// Check address
-		Assert.assertNull(patient.getPersonAddress().getAddress1()); // Umudugudu
-		Assert.assertNull(patient.getPersonAddress().getAddress2()); // Not used
-		Assert.assertEquals("Unknown", patient.getPersonAddress().getNeighborhoodCell()); // Cell
-		Assert.assertEquals("Unknown", patient.getPersonAddress().getCityVillage()); // Sector
-		Assert.assertEquals("Unknown", patient.getPersonAddress().getCountyDistrict()); // District
-		Assert.assertEquals("Testern", patient.getPersonAddress().getStateProvince()); // Province
-		Assert.assertEquals("Testland", patient.getPersonAddress().getCountry()); // Country	
-		
-		// Check gender
-		Assert.assertEquals("F", patient.getGender());
-		
-		// Check birth date
-		Assert.assertEquals(new GregorianCalendar(1972, GregorianCalendar.JANUARY, 1).getTime(), patient.getBirthdate());
-		Assert.assertTrue(patient.isBirthdateEstimated());
-		
-		// Check living/dead
-		Assert.assertFalse(patient.isDead());
+	public void getPatient() {	
+		for (int tracnetID : testIDs ) {
+			IQPatient iqPatient = session.getPatient(tracnetID);
+			Patient patient = builder.getPatient(tracnetID);
+			
+			assertNull(patient.getPatientId());
+			
+			// Check ID
+			assertEquals(1, patient.getIdentifiers().size());
+			assertEquals(iqPatient.getTracnetID() + "", patient.getPatientIdentifier().getIdentifier());
+			PatientIdentifierType tracnetIDType = builder.getTRACnetIDType();
+			assertEquals(tracnetIDType, patient.getPatientIdentifier().getIdentifierType());
+			
+			// Check name
+			assertEquals(1, patient.getNames().size());
+			assertEquals(iqPatient.getFirstName(), patient.getPersonName().getGivenName());
+			assertNull(patient.getPersonName().getMiddleName());
+			assertEquals(iqPatient.getLastName(), patient.getPersonName().getFamilyName());
+			
+			// Check address
+			assertNull(patient.getPersonAddress().getAddress1()); // Umudugudu
+			assertNull(patient.getPersonAddress().getAddress2()); // Not used
+			assertEquals(iqPatient.getCellule(), patient.getPersonAddress().getNeighborhoodCell());
+			assertEquals(iqPatient.getSector(), patient.getPersonAddress().getCityVillage()); 
+			assertEquals(iqPatient.getDistrict(), patient.getPersonAddress().getCountyDistrict());
+			assertEquals("Testern", patient.getPersonAddress().getStateProvince()); // Province
+			assertEquals("Testland", patient.getPersonAddress().getCountry()); // Country	
+			
+			// Check gender
+			assertEquals(iqPatient.getSexCode() == SexCode.MALE ? "M" : "F", patient.getGender());
+			
+			// Check birth date
+			assertEquals(iqPatient.getDob(), patient.getBirthdate());
+			assertEquals(new Boolean(iqPatient.isDobEstimated()), patient.isBirthdateEstimated());
+			
+			// Check living/dead
+			Boolean isDead = iqPatient.getExitCode() != null && iqPatient.getExitCode() == ExitCode.DECEASED;
+			assertEquals(isDead, patient.isDead());
+		}
+	}
+	
+	@Test
+	public void getPatientPrograms() {	
+		for (int tracnetID : testIDs ) {
+			IQPatient iqPatient = session.getPatient(tracnetID);
+			List<PatientProgram> programs = builder.getPatientPrograms(tracnetID);
+			
+			// Check for single program
+			assertEquals(1, programs.size());
+			assertEquals(new Integer(1), programs.get(0).getProgram().getProgramId());
+			assertEquals("Test program", programs.get(0).getProgram().getName());
+			assertEquals(iqPatient.getEnrollDate(), programs.get(0).getDateEnrolled());
+			assertEquals(iqPatient.getExitDate(), programs.get(0).getDateCompleted());
+		}
 	}
 }

@@ -17,14 +17,19 @@
 		retire_reason="[NULL]"
 		uuid="8d793bee-c2cc-11de-8d13-0010c6df0000"
 	/>
-	<global_property 
-		property="iqchartimport.addressCountry"
-		property_value="Testland"
-		uuid="8d793bee-c2cc-11de-8d13-0010c6df0001"
-	/>	
-	<global_property 
-		property="iqchartimport.addressProvince"
-		property_value="Testern"
-		uuid="8d793bee-c2cc-11de-8d13-0010c6df0002"
+	<program
+		program_id="1"
+		concept_id="[NULL]"
+		creator="1"
+		date_created="2012-03-12 16:42:03"
+		changed_by="[NULL]"
+		date_changed="[NULL]"
+		retired="0"
+		name="Test program"
+		description="Test program"
+		uuid="fcb5b435-f00b-462a-882e-063a0b673db5"
 	/>
+	<global_property property="iqchartimport.addressCountry" property_value="Testland" uuid="8d793bee-c2cc-11de-8d13-0010c6df0001" />	
+	<global_property property="iqchartimport.addressProvince" property_value="Testern" uuid="8d793bee-c2cc-11de-8d13-0010c6df0002" />
+	<global_property property="iqchartimport.hivProgramId" property_value="1" uuid="8d793bee-c2cc-11de-8d13-0010c6df0003" />
 </dataset>
