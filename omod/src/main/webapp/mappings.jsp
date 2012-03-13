@@ -15,8 +15,8 @@
 		    			<sform:option value="-1" label="" />
 		    		</c:if>
 		    		<sform:option value="0">&lt;<spring:message code="@MODULE_ID@.mappings.createNew" />&gt;</sform:option>
-					<c:forEach items="${idTypes}" var="idType">
-						<sform:option value="${idType.patientIdentifierTypeId}" label="${idType.name}" />
+					<c:forEach items="${identifierTypes}" var="identifierType">
+						<sform:option value="${identifierType.patientIdentifierTypeId}" label="${identifierType.name}" />
 					</c:forEach>
 				</sform:select>
 	    	</td>
@@ -30,8 +30,6 @@
 						<sform:option value="${province}" label="${province}" />
 					</c:forEach>
 				</sform:select>
-				
-				=${mappings.addressProvince}
 	    	</td>
 	    </tr>
 	    <tr>
@@ -48,6 +46,33 @@
 				<c:if test="${fn:length(programs) == 0}">
 					<span class="error"><spring:message code="@MODULE_ID@.mappings.noExistingPrograms" /></span>
 				</c:if>
+	    	</td>
+	    </tr>
+	    <tr>
+	    	<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.mappings.encounterType" /></td>
+	    	<td>
+	    		<sform:select path="encounterTypeId">
+	    			<c:if test="${mappings.encounterTypeId == -1}">
+		    			<sform:option value="-1" label="" />
+		    		</c:if>
+		    		<sform:option value="0">&lt;<spring:message code="@MODULE_ID@.mappings.createNew" />&gt;</sform:option>
+					<c:forEach items="${encounterTypes}" var="encounterType">
+						<sform:option value="${encounterType.encounterTypeId}" label="${encounterType.name}" />
+					</c:forEach>
+				</sform:select>
+	    	</td>
+	    </tr>
+	    <tr>
+	    	<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.mappings.encounterLocation" /></td>
+	    	<td>
+	    		<sform:select path="encounterLocationId">
+	    			<c:if test="${mappings.encounterLocationId == -1}">
+		    			<sform:option value="-1" label="" />
+		    		</c:if>
+		    		<c:forEach items="${locations}" var="location">
+						<sform:option value="${location.locationId}" label="${location.name}" />
+					</c:forEach>
+				</sform:select>
 	    	</td>
 	    </tr>
 	</table>

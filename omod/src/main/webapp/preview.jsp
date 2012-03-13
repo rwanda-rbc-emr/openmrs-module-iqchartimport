@@ -5,7 +5,7 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-    $('#iqpatients').dataTable();
+    $('#patients').dataTable();
 });
 </script>
 		
@@ -13,7 +13,7 @@ $(document).ready(function() {
 	<spring:message code="@MODULE_ID@.general.patients" />
 </b>
 <div class="box">
-	<table id="iqpatients" width="100%" cellspacing="0">
+	<table id="patients" width="100%" cellspacing="0">
 		<thead>
 			<tr>
 				<th><spring:message code="@MODULE_ID@.general.tracnetID" /></th>
@@ -27,7 +27,6 @@ $(document).ready(function() {
 				<tr  
 					onclick="location.href='patient.form?tracnetID=${patient.patientIdentifier.identifier}'"
 					style="cursor: pointer; ${patient.dead ? 'color: #900' : ''}"
-					class="<c:choose><c:when test="${status.index % 2 == 0}">evenRow</c:when><c:otherwise>oddRow</c:otherwise></c:choose>"
 				>
 					<td>${patient.patientIdentifier.identifier}</td>
 					<td><c:out value="${patient.personName.familyName}" />, <c:out value="${patient.personName.givenName}" /></td>

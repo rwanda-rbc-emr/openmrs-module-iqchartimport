@@ -3,6 +3,12 @@
 
 <%@ include file="template/localHeader.jsp"%>
 
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#encounters').dataTable();
+});
+</script>
+
 <div style="margin-bottom: 20px">
 	<input type="button" value="<spring:message code="general.back" />" onclick="location.href='preview.form'" />
 </div>
@@ -51,7 +57,19 @@
 </div>
 
 <b class="boxHeader">
-	<spring:message code="@MODULE_ID@.patient.programs" />
+	<spring:message code="patientDashboard.overview" />
+</b>
+<div class="box" style="margin-bottom: 20px">
+	<table width="100%" cellspacing="0">
+		<tr>
+			<td style="font-"></td>
+			<td></td>
+		</tr>
+	</table>
+</div>
+
+<b class="boxHeader">
+	<spring:message code="Program.header" />
 </b>
 <div class="box" style="margin-bottom: 20px">
 	<table width="100%" cellspacing="0">
@@ -82,33 +100,29 @@
 </div>
 
 <b class="boxHeader">
-	<spring:message code="@MODULE_ID@.patient.encounters" />
+	<spring:message code="Encounter.header" />
 </b>
 <div class="box">
-<%--
-	<table id="iqobs" width="100%" cellspacing="0">
+	<table id="encounters" width="100%" cellspacing="0">
 		<thead>
 			<tr>
-				<th><spring:message code="general.dateCreated" /></th>
-				<th><spring:message code="@MODULE_ID@.patient.obsType" /></th>
+				<th><spring:message code="Encounter.datetime"/></th>
+				<th><spring:message code="Encounter.type"/></th>
+				<th><spring:message code="Encounter.location"/></th>
+				<th><spring:message code="Encounter.enterer"/></th>
 			</tr>
 		</thead>
 		<tbody>
-			<c:forEach items="${patientObs}" var="obs" varStatus="status">
-				<tr class="<c:choose><c:when test="${status.index % 2 == 0}">evenRow</c:when><c:otherwise>oddRow</c:otherwise></c:choose>">
-					<td><openmrs:formatDate date="${obs.date}" /></td>
-					<td>
-						<c:choose>
-							<c:when test="${obs['class'].simpleName == 'IQCD4Obs'}">CD4</c:when>
-							<c:when test="${obs['class'].simpleName == 'IQHeightObs'}">Height</c:when>
-							<c:when test="${obs['class'].simpleName == 'IQWeightObs'}">Weight</c:when>
-						</c:choose>
-					</td>
+			<c:forEach items="${encounters}" var="encounter">
+				<tr>
+					<td><openmrs:formatDate date="${encounter.encounterDatetime}" type="small" /></td>
+					<td>${encounter.encounterType.name}</td>
+					<td>${encounter.location.name}</td>
+					<td>${encounter.creator.personName}</td>
 				</tr>
 			</c:forEach>
 		</tbody>
 	</table>
---%>
 </div>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>

@@ -28,6 +28,8 @@ public class Mappings {
 	protected int tracnetIDTypeId;
 	protected String addressProvince;
 	protected int hivProgramId;
+	protected int encounterTypeId;
+	protected int encounterLocationId;
 	
 	/**
 	 * The default constructor
@@ -53,6 +55,8 @@ public class Mappings {
 		tracnetIDTypeId = loadIntOption(Constants.PROP_TRACNET_ID_TYPE_ID, -1);
 		addressProvince = loadStringOption(Constants.PROP_ADDRESS_PROVINCE, null);
 		hivProgramId = loadIntOption(Constants.PROP_HIV_PROGRAM_ID, -1);
+		encounterTypeId = loadIntOption(Constants.PROP_ENCOUNTER_TYPE_ID, -1);
+		encounterLocationId = loadIntOption(Constants.PROP_ENCOUNTER_LOCATION_ID, -1);
 	}
 	
 	/**
@@ -62,6 +66,8 @@ public class Mappings {
 		saveOption(Constants.PROP_TRACNET_ID_TYPE_ID, tracnetIDTypeId);
 		saveOption(Constants.PROP_ADDRESS_PROVINCE, addressProvince);
 		saveOption(Constants.PROP_HIV_PROGRAM_ID, hivProgramId);
+		saveOption(Constants.PROP_ENCOUNTER_TYPE_ID, encounterTypeId);
+		saveOption(Constants.PROP_ENCOUNTER_LOCATION_ID, encounterLocationId);
 	}
 
 	/**
@@ -80,20 +86,68 @@ public class Mappings {
 		this.tracnetIDTypeId = tracnetIDTypeId;
 	}
 	
+	/**
+	 * Gets the address province
+	 * @return the province
+	 */
 	public String getAddressProvince() {
 		return addressProvince;
 	}
 
+	/**
+	 * Sets the address province
+	 * @param addressProvince the province
+	 */
 	public void setAddressProvince(String addressProvince) {
 		this.addressProvince = addressProvince;
 	}
-
+	
+	/**
+	 * Gets the HIV program id
+	 * @return the program id
+	 */
 	public int getHivProgramId() {
 		return hivProgramId;
 	}
 
+	/**
+	 * Sets the HIV program id
+	 * @param hivProgramId the program id
+	 */
 	public void setHivProgramId(int hivProgramId) {
 		this.hivProgramId = hivProgramId;
+	}
+	
+	/**
+	 * Gets the encounter type id
+	 * @return the type id
+	 */
+	public int getEncounterTypeId() {
+		return encounterTypeId;
+	}
+
+	/**
+	 * Sets the encounter type id
+	 * @param encounterTypeId the type id
+	 */
+	public void setEncounterTypeId(int encounterTypeId) {
+		this.encounterTypeId = encounterTypeId;
+	}
+	
+	/**
+	 * Gets the encounter location id
+	 * @return the location id
+	 */
+	public int getEncounterLocationId() {
+		return encounterLocationId;
+	}
+
+	/**
+	 * Sets the encounter location id
+	 * @param encounterLocationId the location id
+	 */
+	public void setEncounterLocationId(int encounterLocationId) {
+		this.encounterLocationId = encounterLocationId;
 	}
 
 	/**

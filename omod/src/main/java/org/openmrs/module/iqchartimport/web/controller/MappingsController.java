@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.EncounterType;
+import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
@@ -49,15 +51,19 @@ public class MappingsController {
 	public String showPage(HttpServletRequest request, ModelMap model) throws IOException {
 		Utils.checkSuperUser();
 		
-		List<PatientIdentifierType> idTypes = Context.getPatientService().getAllPatientIdentifierTypes(false);
+		List<PatientIdentifierType> identifierTypes = Context.getPatientService().getAllPatientIdentifierTypes();
 		List<Program> programs = Context.getProgramWorkflowService().getAllPrograms();
+		List<EncounterType> encounterTypes = Context.getEncounterService().getAllEncounterTypes();
+		List<Location> locations = Context.getLocationService().getAllLocations();
 		
 		String provList = Context.getAdministrationService().getGlobalProperty(Constants.PROP_ADDRESS_ALL_PROVINCES);
 		String[] allProvinces = provList != null ? provList.split(",") : new String[]{};
 		
-		model.put("idTypes", idTypes);
-		model.put("programs", programs);
+		model.put("identifierTypes", identifierTypes);
 		model.put("allProvinces", allProvinces);
+		model.put("programs", programs);
+		model.put("encounterTypes", encounterTypes);
+		model.put("locations", locations);
 		model.put("mappings", Mappings.getInstance());
 		
 		return "/module/iqchartimport/mappings";

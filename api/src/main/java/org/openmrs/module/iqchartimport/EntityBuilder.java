@@ -15,11 +15,19 @@
 package org.openmrs.module.iqchartimport;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
+import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -78,6 +86,57 @@ public class EntityBuilder {
 	}
 	
 	/**
+	 * Gets the HIV program to use for imported patients
+	 * @return the HIV program
+	 * @throws IncompleteMappingException if mappings are not configured properly
+	 */
+	public Program getHIVProgram() {
+		int hivProgramId = Mappings.getInstance().getHivProgramId();
+		if (hivProgramId > 0) {
+			return Context.getProgramWorkflowService().getProgram(hivProgramId);	
+		}
+		else {
+			throw new IncompleteMappingException();
+		}
+	}
+	
+	/**
+	 * Gets the visit encounter type to use for imported obs
+	 * @return the encounter type
+	 * @throws IncompleteMappingException if mappings are not configured properly
+	 */
+	public EncounterType getEncounterType() {
+		int visitEncounterTypeId = Mappings.getInstance().getEncounterTypeId();
+		if (visitEncounterTypeId > 0) {
+			return Context.getEncounterService().getEncounterType(visitEncounterTypeId);	
+		}
+		else if (visitEncounterTypeId == 0) {
+			EncounterType encounterType = new EncounterType();
+			encounterType.setName(Constants.NEW_VISIT_ENCOUNTER_NAME);
+			encounterType.setDescription(Constants.NEW_VISIT_ENCOUNTER_DESCRIPTION);
+			return encounterType;
+		}
+		else {
+			throw new IncompleteMappingException();
+		}
+	}
+	
+	/**
+	 * Gets the location for imported encounters
+	 * @return the location
+	 * @throws IncompleteMappingException if mappings are not configured properly
+	 */
+	public Location getEncounterLocation() {
+		int encounterLocationId = Mappings.getInstance().getEncounterLocationId();
+		if (encounterLocationId > 0) {
+			return Context.getLocationService().getLocation(encounterLocationId);	
+		}
+		else {
+			throw new IncompleteMappingException();
+		}
+	}
+	
+	/**
 	 * Gets a patient by TRACnet ID
 	 * @param tracnetID the TRACnet ID
 	 * @return the patient
@@ -103,21 +162,6 @@ public class EntityBuilder {
 	}
 	
 	/**
-	 * Gets the HIV program to use for imported patients
-	 * @return the HIV program
-	 * @throws IncompleteMappingException if mappings are not configured properly
-	 */
-	public Program getHIVProgram() {
-		int hivProgramId = Mappings.getInstance().getHivProgramId();
-		if (hivProgramId > 0) {
-			return Context.getProgramWorkflowService().getProgram(hivProgramId);	
-		}
-		else {
-			throw new IncompleteMappingException();
-		}
-	}
-	
-	/**
 	 * Gets the patient's programs
 	 * @param tracnetID the patient TRACnet ID
 	 * @return the patient programs
@@ -140,8 +184,39 @@ public class EntityBuilder {
 		return patientPrograms;
 	}
 	
-	public List<Obs> getPatientNonEncounterObs(Patient patient, int tracnetID) {
-		List<Obs> obs = new ArrayList<Obs>();
+	public List<Encounter> getPatientEncounters(Patient patient, int tracnetID) {
+		Set<Encounter> encounters = new HashSet<Encounter>();
+		IQPatient iqPatient = session.getPatient(tracnetID);
+		
+		// Create initial encounter
+		
+		// Create obs encounters
+		
+		// Create exit encounter
+		if (iqPatient.getExitDate() != null) {
+			Encounter encounter = getEncounterForDate(encounters, patient, iqPatient.getExitDate());
+			encounter.addObs(getPatientExitObs(patient, tracnetID));
+			encounters.add(encounter);
+		}
+		
+		// Copy encounters into a list and sort by date
+		List<Encounter> encountersSorted = new ArrayList<Encounter>(encounters);
+		Collections.sort(encountersSorted, new Comparator<Encounter>() {
+			@Override
+			public int compare(Encounter enc1, Encounter enc2) {
+				return enc1.getEncounterDatetime().compareTo(enc2.getEncounterDatetime());
+			}
+		});
+		return encountersSorted;
+	}
+	
+	/**
+	 * Gets the exit reason obs for the given patient
+	 * @param patient the patient
+	 * @param tracnetID the TRACnet ID
+	 * @return
+	 */
+	public Obs getPatientExitObs(Patient patient, int tracnetID) {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		
 		if (iqPatient.getStatusCode() != null && iqPatient.getStatusCode() == StatusCode.EXITED && iqPatient.getExitCode() != null) {
@@ -170,12 +245,12 @@ public class EntityBuilder {
 					obsExit.setLocation(Context.getLocationService().getDefaultLocation());
 					obsExit.setObsDatetime(iqPatient.getExitDate());
 					obsExit.setValueCoded(causeConcept);
-					obs.add(obsExit);
+					return obsExit;
 				}
 			}
 		}
 		
-		return obs;
+		return null;
 	}
 	
 	/**
@@ -231,5 +306,27 @@ public class EntityBuilder {
 			patient.setDead(true);
 		
 		return patient;
+	}
+	
+	/**
+	 * Gets an encounter for the given day - if one exists it is returned
+	 * @param encounters the existing encounters
+	 * @param date the day
+	 * @return the encounter
+	 */
+	private Encounter getEncounterForDate(Set<Encounter> encounters, Patient patient, Date date) {
+		// Search for existing one
+		for (Encounter enc : encounters) {
+			if (enc.getEncounterDatetime().equals(date))
+				return enc;
+		}
+		
+		// Create new one
+		Encounter encounter = new Encounter();
+		encounter.setEncounterType(getEncounterType());
+		encounter.setLocation(getEncounterLocation());
+		encounter.setEncounterDatetime(date);
+		encounter.setPatient(patient);
+		return encounter;
 	}
 }

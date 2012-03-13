@@ -15,11 +15,16 @@
 package org.openmrs.module.iqchartimport.web.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
+import org.openmrs.PatientProgram;
 import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.iqchartimport.EntityBuilder;
 import org.openmrs.module.iqchartimport.IncompleteMappingException;
@@ -55,9 +60,16 @@ public class PatientController {
 		IQChartSession session = new IQChartSession(database);
 			
 		try {
-			EntityBuilder builder = new EntityBuilder(session);		
-			model.put("patient", builder.getPatient(tracnetID));
-			model.put("patientPrograms", builder.getPatientPrograms(tracnetID));		
+			EntityBuilder builder = new EntityBuilder(session);
+			Patient patient = builder.getPatient(tracnetID);
+			List<PatientProgram> patientPrograms = builder.getPatientPrograms(tracnetID);
+			Obs patientExitObs = builder.getPatientExitObs(patient, tracnetID);
+			List<Encounter> encounters = builder.getPatientEncounters(patient, tracnetID);
+			
+			model.put("patient", patient);
+			model.put("patientPrograms", patientPrograms);
+			model.put("patientExitObs", patientExitObs);
+			model.put("encounters", encounters);
 			
 			return "/module/iqchartimport/patient";
 		}
