@@ -57,6 +57,8 @@ public class PatientController {
 		try {
 			EntityBuilder builder = new EntityBuilder(session);		
 			model.put("patient", builder.getPatient(tracnetID));
+			model.put("patientPrograms", builder.getPatientPrograms(tracnetID));		
+			
 			return "/module/iqchartimport/patient";
 		}
 		catch (IncompleteMappingException ex) {

@@ -54,29 +54,31 @@
 	<spring:message code="@MODULE_ID@.patient.programs" />
 </b>
 <div class="box" style="margin-bottom: 20px">
-<%--
 	<table width="100%" cellspacing="0">
 		<tr>
-			<td style="font-weight: bold" width="300"><spring:message code="Program.dateEnrolled" /></td>
-			<td><openmrs:formatDate date="${patient.enrollDate}" /></td>
+			<th><spring:message code="Program.program"/></th>
+			<th><spring:message code="Program.dateEnrolled" /></th>
+			<th><spring:message code="Program.dateEnrolled" /></th>
+			<th><spring:message code="Program.state" /></th>
 		</tr>
-		<tr>
-			<td style="font-weight: bold"><spring:message code="Program.dateCompleted" /></td>
-			<td><openmrs:formatDate date="${patient.exitDate}" /></td>
-		</tr>
-		<tr>
-			<td style="font-weight: bold"><spring:message code="@MODULE_ID@.patient.exitReason" /></td>
-			<td>
-				<c:choose>
-					<c:when test="${patient.exitCode == 1}">Transferred</c:when>
-					<c:when test="${patient.exitCode == 2}">Deceased</c:when>
-					<c:when test="${patient.exitCode == 3}">Lost</c:when>
-					<c:otherwise><c:out value="${patient.exitReasonOther}" /></c:otherwise>
-				</c:choose>
-			</td>
-		</tr>
+		<c:forEach items="${patientPrograms}" var="program">
+			<tr>
+				<td><openmrs_tag:concept conceptId="${program.program.concept.conceptId}"/></td>
+				<td><openmrs:formatDate date="${program.dateEnrolled}" type="medium" /></td>
+				<td>			
+					<c:choose>
+						<c:when test="${not empty program.dateCompleted}">
+							<openmrs:formatDate date="${program.dateCompleted}" type="medium" />
+						</c:when>
+						<c:otherwise>
+							<i><spring:message code="Program.stillEnrolled"/></i>
+						</c:otherwise>								
+					</c:choose>
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+		</c:forEach>
 	</table>
---%>
 </div>
 
 <b class="boxHeader">
