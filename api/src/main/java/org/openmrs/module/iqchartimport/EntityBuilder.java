@@ -20,7 +20,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
-import org.openmrs.GlobalProperty;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -205,13 +204,13 @@ public class EntityBuilder {
 		patient.addName(name);
 		
 		// Create address object using AddressHierarchRwanda mappings
+		String province = Mappings.getInstance().getAddressProvince();
+		String country = Context.getAdministrationService().getGlobalProperty(Constants.PROP_ADDRESS_COUNTRY);
 		PersonAddress address = new PersonAddress();
 		address.setNeighborhoodCell(iqPatient.getCellule());
 		address.setCityVillage(iqPatient.getSector());
 		address.setCountyDistrict(iqPatient.getDistrict());
-		// TODO Add province
-		
-		String country = Context.getAdministrationService().getGlobalProperty(Constants.MODULE_ID + ".country");
+		address.setStateProvince(province);
 		address.setCountry(country);
 		patient.addAddress(address);
 		

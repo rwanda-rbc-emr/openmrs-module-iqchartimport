@@ -1,18 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-	<global_property 
-		property="iqchartimport.tracnetIDTypeId" 
-		property_value="0" 
-		uuid="f7b4ba5a-f30d-4170-8cf8-92c243281fe0" 
-	/>
-	<global_property
-		property="iqchartimport.country" 
-		property_value="Rwanda" 
-		uuid="8d793bee-c2cc-11de-8d13-0010c6dffd0f" 
-	/>
 	<patient_identifier_type 
 		patient_identifier_type_id="1"
-		name="OpenMRS Identification Number"
+		name="Test ID Type"
 		description="Unique number used in OpenMRS"
 		format=""
 		check_digit="1"
@@ -25,6 +15,16 @@
 		retired_by="[NULL]"
 		date_retired="[NULL]"
 		retire_reason="[NULL]"
-		uuid="8d793bee-c2cc-11de-8d13-0010c6dffd0f"
+		uuid="8d793bee-c2cc-11de-8d13-0010c6df0000"
+	/>
+	<global_property 
+		property="iqchartimport.addressCountry"
+		property_value="Testland"
+		uuid="8d793bee-c2cc-11de-8d13-0010c6df0001"
 	/>	
+	<global_property 
+		property="iqchartimport.addressProvince"
+		property_value="Testern"
+		uuid="8d793bee-c2cc-11de-8d13-0010c6df0002"
+	/>
 </dataset>

@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.iqchartimport.Mappings;
 import org.openmrs.module.iqchartimport.Utils;
 import org.springframework.stereotype.Controller;
@@ -31,12 +32,14 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
  * Controller for mappings page
  */
 @Controller("iqChartImportMappingsController")
 @RequestMapping("/module/iqchartimport/mappings")
+@SessionAttributes({"mappings"})
 public class MappingsController {
 
 	protected static final Log log = LogFactory.getLog(MappingsController.class);
@@ -49,8 +52,12 @@ public class MappingsController {
 		List<PatientIdentifierType> idTypes = Context.getPatientService().getAllPatientIdentifierTypes(false);
 		List<Program> programs = Context.getProgramWorkflowService().getAllPrograms();
 		
+		String provList = Context.getAdministrationService().getGlobalProperty(Constants.PROP_ADDRESS_ALL_PROVINCES);
+		String[] allProvinces = provList != null ? provList.split(",") : new String[]{};
+		
 		model.put("idTypes", idTypes);
 		model.put("programs", programs);
+		model.put("allProvinces", allProvinces);
 		model.put("mappings", Mappings.getInstance());
 		
 		return "/module/iqchartimport/mappings";
@@ -59,7 +66,7 @@ public class MappingsController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String handleSubmit(@ModelAttribute("mappings") Mappings mappings) {
 		Utils.checkSuperUser();
-		
+
 		mappings.save();
 		
 		return "redirect:mappings.form";

@@ -22,6 +22,19 @@
 	    	</td>
 	    </tr>
 	    <tr>
+	    	<td style="font-weight: bold"><spring:message code="@MODULE_ID@.mappings.addressProvince" /></td>
+	    	<td>
+	    		<sform:select path="addressProvince">
+	    			<sform:option value="">&lt;<spring:message code="general.none" />&gt;</sform:option>
+		    		<c:forEach items="${allProvinces}" var="province">
+						<sform:option value="${province}" label="${province}" />
+					</c:forEach>
+				</sform:select>
+				
+				=${mappings.addressProvince}
+	    	</td>
+	    </tr>
+	    <tr>
 	    	<td style="font-weight: bold""><spring:message code="@MODULE_ID@.mappings.hivProgram" /></td>
 	    	<td>
 	    		<sform:select path="hivProgramId">

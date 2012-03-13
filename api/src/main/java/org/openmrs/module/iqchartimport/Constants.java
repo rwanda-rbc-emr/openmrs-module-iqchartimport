@@ -30,4 +30,7 @@ public class Constants {
 	 */
 	public static final String PROP_TRACNET_ID_TYPE_ID = MODULE_ID + ".tracnetIDTypeId";
 	public static final String PROP_HIV_PROGRAM_ID = MODULE_ID + ".hivProgramId";
+	public static final String PROP_ADDRESS_COUNTRY = MODULE_ID + ".addressCountry";
+	public static final String PROP_ADDRESS_PROVINCE = MODULE_ID + ".addressProvince";
+	public static final String PROP_ADDRESS_ALL_PROVINCES = MODULE_ID + ".addressAllProvinces";
 }

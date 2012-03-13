@@ -26,6 +26,7 @@ public class Mappings {
 	protected static Mappings mapping;
 	
 	protected int tracnetIDTypeId;
+	protected String addressProvince;
 	protected int hivProgramId;
 	
 	/**
@@ -50,6 +51,7 @@ public class Mappings {
 	 */
 	public void load() {
 		tracnetIDTypeId = loadIntOption(Constants.PROP_TRACNET_ID_TYPE_ID, -1);
+		addressProvince = loadStringOption(Constants.PROP_ADDRESS_PROVINCE, null);
 		hivProgramId = loadIntOption(Constants.PROP_HIV_PROGRAM_ID, -1);
 	}
 	
@@ -58,6 +60,7 @@ public class Mappings {
 	 */
 	public void save() {
 		saveOption(Constants.PROP_TRACNET_ID_TYPE_ID, tracnetIDTypeId);
+		saveOption(Constants.PROP_ADDRESS_PROVINCE, addressProvince);
 		saveOption(Constants.PROP_HIV_PROGRAM_ID, hivProgramId);
 	}
 
@@ -76,6 +79,14 @@ public class Mappings {
 	public void setTracnetIDTypeId(int tracnetIDTypeId) {
 		this.tracnetIDTypeId = tracnetIDTypeId;
 	}
+	
+	public String getAddressProvince() {
+		return addressProvince;
+	}
+
+	public void setAddressProvince(String addressProvince) {
+		this.addressProvince = addressProvince;
+	}
 
 	public int getHivProgramId() {
 		return hivProgramId;
@@ -91,7 +102,6 @@ public class Mappings {
 	 * @param def the default value if global property is invalid
 	 * @return the string value
 	 */
-	@SuppressWarnings("unused")
 	private static String loadStringOption(String name, String def) {
 		AdministrationService svc = Context.getAdministrationService();
 		String s = svc.getGlobalProperty(name);
@@ -138,9 +148,14 @@ public class Mappings {
 	 * @param value the value of the global property
 	 */
 	private static void saveOption(String name, Object value) {
-		AdministrationService svc = (AdministrationService)Context.getAdministrationService();
-		GlobalProperty property = svc.getGlobalPropertyObject(name);
-		property.setPropertyValue(String.valueOf(value));
-		svc.saveGlobalProperty(property);
+		GlobalProperty property = Context.getAdministrationService().getGlobalPropertyObject(name);
+		String val = value != null ? value.toString() : null;
+				
+		if (property == null)
+			property = new GlobalProperty(name, val);
+		else
+			property.setPropertyValue(val);
+		
+		Context.getAdministrationService().saveGlobalProperty(property);
 	}
 }

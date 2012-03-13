@@ -47,11 +47,12 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 		
 		executeDataSet("TestingDataset.xml");
 		
+		TestingUtils.setGlobalProperty(Constants.PROP_TRACNET_ID_TYPE_ID, 0);
+		
 		// Extract embedded test database
 		tempZipFile = TestingUtils.copyResource("/HIVData.mdb.zip");
 		tempMdbFile = TestingUtils.extractZipEntry(tempZipFile, "HIVData.mdb");
 		
-	
 		IQChartDatabase database = new IQChartDatabase("HIVData.mdb", tempMdbFile.getAbsolutePath());
 		session = new IQChartSession(database);
 		builder = new EntityBuilder(session);
@@ -75,11 +76,12 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void getTRACnetIDType_shouldReturnExistingIfMapped() {
-		Mappings.getInstance().setTracnetIDTypeId(1);
+		TestingUtils.setGlobalProperty(Constants.PROP_TRACNET_ID_TYPE_ID, 1);
+		Mappings.getInstance().load();
 		
 		PatientIdentifierType tracnetIdType = builder.getTRACnetIDType();
 		Assert.assertEquals(new Integer(1), tracnetIdType.getId());
-		Assert.assertEquals("OpenMRS Identification Number", tracnetIdType.getName());
+		Assert.assertEquals("Test ID Type", tracnetIdType.getName());
 	}
 	
 	@Test
@@ -106,8 +108,8 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 		Assert.assertEquals("Unknown", patient.getPersonAddress().getNeighborhoodCell()); // Cell
 		Assert.assertEquals("Unknown", patient.getPersonAddress().getCityVillage()); // Sector
 		Assert.assertEquals("Unknown", patient.getPersonAddress().getCountyDistrict()); // District
-		Assert.assertNull(patient.getPersonAddress().getStateProvince()); // Province
-		Assert.assertEquals("Rwanda", patient.getPersonAddress().getCountry()); // Country	
+		Assert.assertEquals("Testern", patient.getPersonAddress().getStateProvince()); // Province
+		Assert.assertEquals("Testland", patient.getPersonAddress().getCountry()); // Country	
 		
 		// Check gender
 		Assert.assertEquals("F", patient.getGender());

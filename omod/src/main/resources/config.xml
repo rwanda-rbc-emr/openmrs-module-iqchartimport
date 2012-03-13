@@ -17,19 +17,14 @@
 		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.AdminList</class>
 	</extension>
 	<globalProperty>
-		<property>${project.parent.artifactId}.country</property>
+		<property>${project.parent.artifactId}.addressCountry</property>
 		<defaultValue>Rwanda</defaultValue>
-		<description>Country used for imported addresses</description>
+		<description>Name of country for imported patient addresses</description>
 	</globalProperty>
 	<globalProperty>
-		<property>${project.parent.artifactId}.tracnetIDTypeId</property>
-		<defaultValue>-1</defaultValue>
-		<description>TRACnet identifier type id for imported patients</description>
-	</globalProperty>
-	<globalProperty>
-		<property>${project.parent.artifactId}.hivProgramId</property>
-		<defaultValue>-1</defaultValue>
-		<description>HIV program id for imported patients</description>
+		<property>${project.parent.artifactId}.addressAllProvinces</property>
+		<defaultValue>Kigali Province,Northern Province/Amajyaruguru,Eastern Province/Uburasirazuba,Southern Province/Amajyepfo,Western Province/Uburengerazuba</defaultValue>
+		<description>CSV list of provinces that can be selected for imported patient addresses</description>
 	</globalProperty>
 	<messages>
 		<lang>en</lang>

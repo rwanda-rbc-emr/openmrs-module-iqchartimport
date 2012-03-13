@@ -23,10 +23,31 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.openmrs.GlobalProperty;
+import org.openmrs.api.context.Context;
+
 /**
  * Utility methods for testing
  */
 public class TestingUtils {
+	
+	/**
+	 * Creates and saves a global property
+	 * @param name the property name
+	 * @param value the property value
+	 * @return the property object
+	 */
+	public static GlobalProperty setGlobalProperty(String name, Object value) {
+		GlobalProperty property = Context.getAdministrationService().getGlobalPropertyObject(name);
+		String val = value != null ? value.toString() : null;
+				
+		if (property == null)
+			property = new GlobalProperty(name, val);
+		else
+			property.setPropertyValue(val);
+		
+		return Context.getAdministrationService().saveGlobalProperty(property);
+	}
 	
 	/**
 	 * Extracts a resource to a temporary file for testing
@@ -69,20 +90,6 @@ public class TestingUtils {
 	}
 	
 	/**
-	 * Copies all data from one stream to another
-	 * @param in the input stream
-	 * @param out the output stream
-	 * @throws IOException
-	 */
-	public static void copyStream(InputStream in, OutputStream out) throws IOException {
-		byte[] buf = new byte[256];
-		int len;
-		while ((len = in.read(buf)) >= 0)
-			out.write(buf, 0, len);
-		out.close();
-	}
-	
-	/**
 	 * Gets the extension of a file path
 	 * @param path the file path
 	 * @return the extension
@@ -90,5 +97,19 @@ public class TestingUtils {
 	public static String getExtension(String path) {
 		int index = path.lastIndexOf('.');
 		return index >= 0 ? path.substring(index + 1) : null;
+	}
+	
+	/**
+	 * Copies all data from one stream to another
+	 * @param in the input stream
+	 * @param out the output stream
+	 * @throws IOException
+	 */
+	private static void copyStream(InputStream in, OutputStream out) throws IOException {
+		byte[] buf = new byte[256];
+		int len;
+		while ((len = in.read(buf)) >= 0)
+			out.write(buf, 0, len);
+		out.close();
 	}
 }
