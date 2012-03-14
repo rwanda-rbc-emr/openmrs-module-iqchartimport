@@ -37,7 +37,7 @@ public class MappingsTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void load() {
-		TestingUtils.setGlobalProperty(Constants.PROP_ADDRESS_PROVINCE, "Prov123");
+		TestUtils.setGlobalProperty(Constants.PROP_ADDRESS_PROVINCE, "Prov123");
 		
 		Mappings.getInstance().load();
 		

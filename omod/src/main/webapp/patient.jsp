@@ -76,7 +76,7 @@ $(document).ready(function() {
 		<tr>
 			<th><spring:message code="Program.program"/></th>
 			<th><spring:message code="Program.dateEnrolled" /></th>
-			<th><spring:message code="Program.dateEnrolled" /></th>
+			<th><spring:message code="Program.dateCompleted" /></th>
 			<th><spring:message code="Program.state" /></th>
 		</tr>
 		<c:forEach items="${patientPrograms}" var="program">

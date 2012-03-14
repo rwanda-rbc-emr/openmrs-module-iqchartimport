@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PatientProgram;
@@ -56,11 +57,9 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 		
 		executeDataSet("TestingDataset.xml");
 		
-		TestingUtils.setGlobalProperty(Constants.PROP_TRACNET_ID_TYPE_ID, 0);
-		
 		// Extract embedded test database
-		tempZipFile = TestingUtils.copyResource("/HIVData.mdb.zip");
-		tempMdbFile = TestingUtils.extractZipEntry(tempZipFile, "HIVData.mdb");
+		tempZipFile = TestUtils.copyResource("/HIVData.mdb.zip");
+		tempMdbFile = TestUtils.extractZipEntry(tempZipFile, "HIVData.mdb");
 		
 		IQChartDatabase database = new IQChartDatabase("HIVData.mdb", tempMdbFile.getAbsolutePath());
 		session = new IQChartSession(database);
@@ -85,7 +84,7 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void getTRACnetIDType_shouldReturnExistingIfMapped() {
-		TestingUtils.setGlobalProperty(Constants.PROP_TRACNET_ID_TYPE_ID, 1);
+		TestUtils.setGlobalProperty(Constants.PROP_TRACNET_ID_TYPE_ID, 1);
 		Mappings.getInstance().load();
 		
 		PatientIdentifierType tracnetIdType = builder.getTRACnetIDType();
@@ -148,5 +147,23 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 			assertEquals(iqPatient.getEnrollDate(), programs.get(0).getDateEnrolled());
 			assertEquals(iqPatient.getExitDate(), programs.get(0).getDateCompleted());
 		}
+	}
+	
+	@Test
+	public void getEncounterType() {	
+		Patient patient = new Patient();
+		patient.setBirthdate(TestUtils.date(1980, 6, 1));
+		patient.setBirthdateEstimated(false);
+		
+		EncounterType type = builder.getEncounterType(patient, TestUtils.date(1990, 1, 1), true);
+		assertEquals("PEDSINITIAL", type.getName());
+		type = builder.getEncounterType(patient, TestUtils.date(1992, 1, 1), false);
+		assertEquals("PEDSRETURN", type.getName());
+		type = builder.getEncounterType(patient, TestUtils.date(1995, 1, 1), false);
+		assertEquals("PEDSRETURN", type.getName());
+		type = builder.getEncounterType(patient, TestUtils.date(1995, 12, 1), false);
+		assertEquals("ADULTRETURN", type.getName());
+		type = builder.getEncounterType(patient, TestUtils.date(1996, 1, 1), true);
+		assertEquals("ADULTINITIAL", type.getName());
 	}
 }

@@ -16,7 +16,6 @@ package org.openmrs.module.iqchartimport.iq;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -26,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.module.iqchartimport.TestingUtils;
+import org.openmrs.module.iqchartimport.TestUtils;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
@@ -49,8 +48,8 @@ public class IQChartSessionTest {
 	@Before
 	public void setup() throws Exception {
 		// Extract embedded test database
-		tempZipFile = TestingUtils.copyResource("/HIVData.mdb.zip");
-		tempMdbFile = TestingUtils.extractZipEntry(tempZipFile, "HIVData.mdb");
+		tempZipFile = TestUtils.copyResource("/HIVData.mdb.zip");
+		tempMdbFile = TestUtils.extractZipEntry(tempZipFile, "HIVData.mdb");
 			
 		IQChartDatabase database = new IQChartDatabase("HIVData.mdb", tempMdbFile.getAbsolutePath());
 		session = new IQChartSession(database);
@@ -83,9 +82,9 @@ public class IQChartSessionTest {
 		Assert.assertEquals("Jane", patient.getFirstName());
 		Assert.assertEquals("Doe", patient.getLastName());
 		Assert.assertEquals("001", patient.getHospitalID());
-		Assert.assertEquals(new GregorianCalendar(2004, GregorianCalendar.SEPTEMBER, 29).getTime(), patient.getEnrollDate());
+		Assert.assertEquals(TestUtils.date(2004, 9, 29), patient.getEnrollDate());
 		Assert.assertEquals(SexCode.FEMALE, patient.getSexCode());
-		Assert.assertEquals(new GregorianCalendar(1972, GregorianCalendar.JANUARY, 1).getTime(), patient.getDob());
+		Assert.assertEquals(TestUtils.date(1972, 1, 1), patient.getDob());
 		Assert.assertTrue(patient.isDobEstimated());
 		Assert.assertEquals("Unknown", patient.getCellule());
 		Assert.assertEquals("Unknown", patient.getSector());
@@ -95,7 +94,7 @@ public class IQChartSessionTest {
 		Assert.assertEquals(ModeCode.VCT, patient.getModeCode());
 		Assert.assertEquals("", patient.getModeAdmissionOther());
 		Assert.assertFalse(patient.isNewTransfer());
-		Assert.assertEquals(new GregorianCalendar(2007, GregorianCalendar.AUGUST, 28).getTime(), patient.getARVStartDate());
+		Assert.assertEquals(TestUtils.date(2007, 8, 28), patient.getARVStartDate());
 		Assert.assertEquals(StatusCode.ACTIVE, patient.getStatusCode());
 		Assert.assertNull(patient.getExitDate());
 		Assert.assertNull(patient.getExitCode());
@@ -106,9 +105,9 @@ public class IQChartSessionTest {
 		Assert.assertEquals("Jane", patient.getFirstName());
 		Assert.assertEquals("Doe", patient.getLastName());
 		Assert.assertEquals("2040", patient.getHospitalID());
-		Assert.assertEquals(new GregorianCalendar(2007, GregorianCalendar.DECEMBER, 24).getTime(), patient.getEnrollDate());
+		Assert.assertEquals(TestUtils.date(2007, 12, 24), patient.getEnrollDate());
 		Assert.assertEquals(SexCode.FEMALE, patient.getSexCode());
-		Assert.assertEquals(new GregorianCalendar(1987, GregorianCalendar.FEBRUARY, 16).getTime(), patient.getDob());
+		Assert.assertEquals(TestUtils.date(1987, 2, 16), patient.getDob());
 		Assert.assertFalse(patient.isDobEstimated());
 		Assert.assertEquals("Unknown", patient.getCellule());
 		Assert.assertEquals("Unknown", patient.getSector());
@@ -118,9 +117,9 @@ public class IQChartSessionTest {
 		Assert.assertEquals(ModeCode.VCT, patient.getModeCode());
 		Assert.assertEquals("", patient.getModeAdmissionOther());
 		Assert.assertTrue(patient.isNewTransfer());
-		Assert.assertEquals(new GregorianCalendar(2006, GregorianCalendar.AUGUST, 1).getTime(), patient.getARVStartDate());
+		Assert.assertEquals(TestUtils.date(2006, 8, 1), patient.getARVStartDate());
 		Assert.assertEquals(StatusCode.EXITED, patient.getStatusCode());
-		Assert.assertEquals(new GregorianCalendar(2009, GregorianCalendar.AUGUST, 14).getTime(), patient.getExitDate());
+		Assert.assertEquals(TestUtils.date(2009, 8, 14), patient.getExitDate());
 		Assert.assertEquals(ExitCode.TRANSFERRED, patient.getExitCode());
 		Assert.assertNull(patient.getExitReasonOther());
 	}

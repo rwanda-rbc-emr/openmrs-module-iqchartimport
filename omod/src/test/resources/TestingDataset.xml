@@ -29,6 +29,55 @@
 		description="Test program"
 		uuid="fcb5b435-f00b-462a-882e-063a0b673db5"
 	/>
+	<encounter_type
+		encounter_type_id="1"
+		name="ADULTINITIAL"
+		description="Outpatient Adult Initial Visit"
+		creator="1"
+		date_created="2005-02-24 00:00:00"
+		retired="0"
+		retired_by="[NULL]"
+		date_retired="[NULL]"
+		retire_reason="[NULL]"
+		uuid="8d5b27bc-c2cc-11de-8d13-0010c6dffd0f"
+	/>
+	<encounter_type
+		encounter_type_id="2"
+		name="ADULTRETURN"
+		description="Outpatient Adult Return Visit"
+		creator="1"
+		date_created="2005-02-24 00:00:00"
+		retired="0"
+		retired_by="[NULL]"
+		date_retired="[NULL]"
+		retire_reason="[NULL]"
+		uuid="8d5b2be0-c2cc-11de-8d13-0010c6dffd0f"
+	/>
+	<encounter_type
+		encounter_type_id="3"
+		name="PEDSINITIAL"
+		description="Outpatient Pediatric Initial Visit"
+		creator="1"
+		date_created="2005-02-24 00:00:00"
+		retired="0"
+		retired_by="[NULL]"
+		date_retired="[NULL]"
+		retire_reason="[NULL]"
+		uuid="8d5b2dde-c2cc-11de-8d13-0010c6dffd0f"
+	/>
+	<encounter_type
+		encounter_type_id="4"
+		name="PEDSRETURN"
+		description="Outpatient Pediatric Return Visit"
+		creator="1"
+		date_created="2005-02-24 00:00:00"
+		retired="0"
+		retired_by="[NULL]"
+		date_retired="[NULL]"
+		retire_reason="[NULL]"
+		uuid="8d5b3108-c2cc-11de-8d13-0010c6dffd0f"
+	/>
+	<global_property property="iqchartimport.tracnetIDTypeId" property_value="0" uuid="8d793bee-c2cc-11de-8d13-0010c6df0000" />		
 	<global_property property="iqchartimport.addressCountry" property_value="Testland" uuid="8d793bee-c2cc-11de-8d13-0010c6df0001" />	
 	<global_property property="iqchartimport.addressProvince" property_value="Testern" uuid="8d793bee-c2cc-11de-8d13-0010c6df0002" />
 	<global_property property="iqchartimport.hivProgramId" property_value="1" uuid="8d793bee-c2cc-11de-8d13-0010c6df0003" />

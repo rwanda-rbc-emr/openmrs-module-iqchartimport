@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Program;
@@ -53,7 +52,6 @@ public class MappingsController {
 		
 		List<PatientIdentifierType> identifierTypes = Context.getPatientService().getAllPatientIdentifierTypes();
 		List<Program> programs = Context.getProgramWorkflowService().getAllPrograms();
-		List<EncounterType> encounterTypes = Context.getEncounterService().getAllEncounterTypes();
 		List<Location> locations = Context.getLocationService().getAllLocations();
 		
 		String provList = Context.getAdministrationService().getGlobalProperty(Constants.PROP_ADDRESS_ALL_PROVINCES);
@@ -62,7 +60,6 @@ public class MappingsController {
 		model.put("identifierTypes", identifierTypes);
 		model.put("allProvinces", allProvinces);
 		model.put("programs", programs);
-		model.put("encounterTypes", encounterTypes);
 		model.put("locations", locations);
 		model.put("mappings", Mappings.getInstance());
 		

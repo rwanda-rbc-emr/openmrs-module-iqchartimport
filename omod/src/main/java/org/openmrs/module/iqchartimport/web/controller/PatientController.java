@@ -63,7 +63,7 @@ public class PatientController {
 			EntityBuilder builder = new EntityBuilder(session);
 			Patient patient = builder.getPatient(tracnetID);
 			List<PatientProgram> patientPrograms = builder.getPatientPrograms(tracnetID);
-			Obs patientExitObs = builder.getPatientExitObs(patient, tracnetID);
+			Obs patientExitObs = builder.getPatientExitReasonObs(patient, tracnetID);
 			List<Encounter> encounters = builder.getPatientEncounters(patient, tracnetID);
 			
 			model.put("patient", patient);

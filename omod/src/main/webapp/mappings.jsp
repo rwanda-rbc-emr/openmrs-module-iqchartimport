@@ -49,20 +49,6 @@
 	    	</td>
 	    </tr>
 	    <tr>
-	    	<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.mappings.encounterType" /></td>
-	    	<td>
-	    		<sform:select path="encounterTypeId">
-	    			<c:if test="${mappings.encounterTypeId == -1}">
-		    			<sform:option value="-1" label="" />
-		    		</c:if>
-		    		<sform:option value="0">&lt;<spring:message code="@MODULE_ID@.mappings.createNew" />&gt;</sform:option>
-					<c:forEach items="${encounterTypes}" var="encounterType">
-						<sform:option value="${encounterType.encounterTypeId}" label="${encounterType.name}" />
-					</c:forEach>
-				</sform:select>
-	    	</td>
-	    </tr>
-	    <tr>
 	    	<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.mappings.encounterLocation" /></td>
 	    	<td>
 	    		<sform:select path="encounterLocationId">

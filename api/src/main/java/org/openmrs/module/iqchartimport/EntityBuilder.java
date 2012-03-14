@@ -15,12 +15,10 @@
 package org.openmrs.module.iqchartimport;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -101,27 +99,6 @@ public class EntityBuilder {
 	}
 	
 	/**
-	 * Gets the visit encounter type to use for imported obs
-	 * @return the encounter type
-	 * @throws IncompleteMappingException if mappings are not configured properly
-	 */
-	public EncounterType getEncounterType() {
-		int visitEncounterTypeId = Mappings.getInstance().getEncounterTypeId();
-		if (visitEncounterTypeId > 0) {
-			return Context.getEncounterService().getEncounterType(visitEncounterTypeId);	
-		}
-		else if (visitEncounterTypeId == 0) {
-			EncounterType encounterType = new EncounterType();
-			encounterType.setName(Constants.NEW_VISIT_ENCOUNTER_NAME);
-			encounterType.setDescription(Constants.NEW_VISIT_ENCOUNTER_DESCRIPTION);
-			return encounterType;
-		}
-		else {
-			throw new IncompleteMappingException();
-		}
-	}
-	
-	/**
 	 * Gets the location for imported encounters
 	 * @return the location
 	 * @throws IncompleteMappingException if mappings are not configured properly
@@ -185,29 +162,57 @@ public class EntityBuilder {
 	}
 	
 	public List<Encounter> getPatientEncounters(Patient patient, int tracnetID) {
-		Set<Encounter> encounters = new HashSet<Encounter>();
+		IQPatient iqPatient = session.getPatient(tracnetID);
+		Map<Date, Encounter> encounters = new TreeMap<Date, Encounter>();
+		
+		makePatientInitialEncounter(patient, tracnetID, encounters);
+		makePatientObsEncounters(patient, tracnetID, encounters);
+		
+		if (iqPatient.getExitDate() != null)
+			makePatientExitEncounter(patient, tracnetID, encounters);
+		
+		// Create sorted list
+		List<Encounter> sorted = new ArrayList<Encounter>();
+		for (Date date : encounters.keySet())
+			sorted.add(encounters.get(date));
+				
+		return sorted;
+	}
+	
+	/**
+	 * Gets the initial encounter for a patient
+	 * @param patient the patient
+	 * @param tracnetID the patient TRACnet ID
+	 * @param encounters the existing encounters
+	 */
+	public void makePatientInitialEncounter(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {
+		//IQPatient iqPatient = session.getPatient(tracnetID);
+	}
+	
+	/**
+	 * Gets the return encounters for a patient
+	 * @param patient the patient
+	 * @param tracnetID the patient TRACnet ID
+	 * @param encounters the existing encounters
+	 */
+	public void makePatientObsEncounters(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {
+		//IQPatient iqPatient = session.getPatient(tracnetID);	
+	}
+	
+	/**
+	 * Gets the exit encounter for a patient
+	 * @param patient the patient
+	 * @param tracnetID the patient TRACnet ID
+	 * @param encounters the existing encounters
+	 */
+	public void makePatientExitEncounter(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		
-		// Create initial encounter
-		
-		// Create obs encounters
-		
-		// Create exit encounter
-		if (iqPatient.getExitDate() != null) {
-			Encounter encounter = getEncounterForDate(encounters, patient, iqPatient.getExitDate());
-			encounter.addObs(getPatientExitObs(patient, tracnetID));
-			encounters.add(encounter);
+		Obs obs = getPatientExitReasonObs(patient, tracnetID);
+		if (obs != null) {
+			Encounter encounter = encounterForDate(patient, iqPatient.getExitDate(), false, encounters);
+			encounter.addObs(obs);
 		}
-		
-		// Copy encounters into a list and sort by date
-		List<Encounter> encountersSorted = new ArrayList<Encounter>(encounters);
-		Collections.sort(encountersSorted, new Comparator<Encounter>() {
-			@Override
-			public int compare(Encounter enc1, Encounter enc2) {
-				return enc1.getEncounterDatetime().compareTo(enc2.getEncounterDatetime());
-			}
-		});
-		return encountersSorted;
 	}
 	
 	/**
@@ -216,7 +221,7 @@ public class EntityBuilder {
 	 * @param tracnetID the TRACnet ID
 	 * @return
 	 */
-	public Obs getPatientExitObs(Patient patient, int tracnetID) {
+	public Obs getPatientExitReasonObs(Patient patient, int tracnetID) {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		
 		if (iqPatient.getStatusCode() != null && iqPatient.getStatusCode() == StatusCode.EXITED && iqPatient.getExitCode() != null) {
@@ -259,7 +264,7 @@ public class EntityBuilder {
 	 * @return the OpenMRS patient
 	 * @throws IncompleteMappingException if mapping is not configured properly
 	 */
-	private Patient convertPatient(IQPatient iqPatient) {
+	protected Patient convertPatient(IQPatient iqPatient) {
 		// Get TRACnet ID identifier type
 		PatientIdentifierType tracnetIDType = getTRACnetIDType();
 		
@@ -309,24 +314,51 @@ public class EntityBuilder {
 	}
 	
 	/**
+	 * Gets the encounter type to use for imported obs
+	 * @param patient the patient
+	 * @param date the encounter date
+	 * @param initial whether this is an initial encounter
+	 * @return the encounter type
+	 * @throws IncompleteMappingException if mappings are not configured properly
+	 */
+	protected EncounterType getEncounterType(Patient patient, Date date, boolean isInitial) {
+		// Calc patient age at time of encounter
+		int age = patient.getAge(date);
+		boolean isPediatric = (age < Constants.ADULT_START_AGE);
+		
+		if (isInitial && isPediatric)
+			return Context.getEncounterService().getEncounterType("PEDSINITIAL");
+		else if (isInitial && !isPediatric)
+			return Context.getEncounterService().getEncounterType("ADULTINITIAL");
+		else if (!isInitial && isPediatric)
+			return Context.getEncounterService().getEncounterType("PEDSRETURN");
+		else
+			return Context.getEncounterService().getEncounterType("ADULTRETURN");
+	}
+	
+	/**
 	 * Gets an encounter for the given day - if one exists it is returned
-	 * @param encounters the existing encounters
+	 * @param patient the patient
 	 * @param date the day
+	 * @param isInitial whether it's an initial encounter
+	 * @param encounters the existing encounters
 	 * @return the encounter
 	 */
-	private Encounter getEncounterForDate(Set<Encounter> encounters, Patient patient, Date date) {
-		// Search for existing one
-		for (Encounter enc : encounters) {
-			if (enc.getEncounterDatetime().equals(date))
-				return enc;
+	protected Encounter encounterForDate(Patient patient, Date date, boolean isInitial, Map<Date, Encounter> encounters) {
+		// If a return visit, look for existing encounter
+		if (!isInitial && encounters.containsKey(date)) {
+			return encounters.get(date);
 		}
 		
 		// Create new one
 		Encounter encounter = new Encounter();
-		encounter.setEncounterType(getEncounterType());
+		encounter.setEncounterType(getEncounterType(patient, date, isInitial));
 		encounter.setLocation(getEncounterLocation());
 		encounter.setEncounterDatetime(date);
 		encounter.setPatient(patient);
+		
+		// Store in encounter map and return
+		encounters.put(date, encounter);
 		return encounter;
 	}
 }

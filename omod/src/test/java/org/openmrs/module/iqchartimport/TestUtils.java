@@ -19,6 +19,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -29,7 +31,18 @@ import org.openmrs.api.context.Context;
 /**
  * Utility methods for testing
  */
-public class TestingUtils {
+public class TestUtils {
+	
+	/**
+	 * Creates a date object
+	 * @param year the year
+	 * @param month the month (1..12)
+	 * @param day the date (1..31)
+	 * @return
+	 */
+	public static Date date(int year, int month, int day) {
+		return new GregorianCalendar(year, month - 1, day).getTime();
+	}
 	
 	/**
 	 * Creates and saves a global property
@@ -56,7 +69,7 @@ public class TestingUtils {
 	 * @throws Exception
 	 */
 	public static File copyResource(String path) throws IOException {
-		InputStream in = TestingUtils.class.getResourceAsStream(path);
+		InputStream in = TestUtils.class.getResourceAsStream(path);
 		if (in == null)
 			throw new IOException("Unable to open resource: " + path);
 
