@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +61,7 @@ public class IQChartSession {
 	private static final String PATIENT_KEY = "TRACNetID";
 	
 	private Database database;
+	private Map<Integer, IQPatient> patientCache = new HashMap<Integer, IQPatient>();
 	
 	/**
 	 * Opens the given file as an IQChart database
@@ -108,6 +110,10 @@ public class IQChartSession {
 	 * @return the patient or null
 	 */
 	public IQPatient getPatient(int tracnetID) {
+		// Check cache first
+		if (patientCache.containsKey(tracnetID))
+			return patientCache.get(tracnetID);
+		
 		try {
 			Table table = database.getTable(TABLE_PATIENT);
 			Map<String, Object> row = Cursor.findRow(table, Collections.singletonMap("TRACNetID", (Object)new Integer(tracnetID)));
@@ -207,7 +213,7 @@ public class IQChartSession {
 	 * @param row the row
 	 * @return the patient
 	 */
-	private static IQPatient patientFromRow(Map<String, Object> row) {
+	protected IQPatient patientFromRow(Map<String, Object> row) {
 		int tracnetID = (Integer)row.get("TRACNetID");				
 		IQPatient patient = new IQPatient(tracnetID);
 		
@@ -231,6 +237,10 @@ public class IQChartSession {
 		patient.setExitDate((Date)row.get("ExitDate"));
 		patient.setExitCode(ExitCode.fromByte((Byte)row.get("ExitCode")));
 		patient.setExitReasonOther((String)row.get("ExitReasonOther"));
+		
+		// Store in cache
+		patientCache.put(tracnetID, patient);
+		
 		return patient;
 	}
 	
