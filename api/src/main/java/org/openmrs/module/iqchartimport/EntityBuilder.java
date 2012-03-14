@@ -41,6 +41,10 @@ import org.openmrs.module.iqchartimport.iq.IQPatient;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
 import org.openmrs.module.iqchartimport.iq.code.SexCode;
 import org.openmrs.module.iqchartimport.iq.code.StatusCode;
+import org.openmrs.module.iqchartimport.iq.obs.BaseIQObs;
+import org.openmrs.module.iqchartimport.iq.obs.IQCD4Obs;
+import org.openmrs.module.iqchartimport.iq.obs.IQHeightObs;
+import org.openmrs.module.iqchartimport.iq.obs.IQWeightObs;
 
 /**
  * Builder which creates OpenMRS entities from IQChart objects equivalents
@@ -180,27 +184,59 @@ public class EntityBuilder {
 	}
 	
 	/**
-	 * Gets the initial encounter for a patient
+	 * Makes the initial encounter for a patient
 	 * @param patient the patient
 	 * @param tracnetID the patient TRACnet ID
 	 * @param encounters the existing encounters
 	 */
-	public void makePatientInitialEncounter(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {
-		//IQPatient iqPatient = session.getPatient(tracnetID);
+	public void makePatientInitialEncounter(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {	
+		IQPatient iqPatient = session.getPatient(tracnetID);
+		
+		if (iqPatient.getEnrollDate() != null) {
+			encounterForDate(patient, iqPatient.getEnrollDate(), encounters);
+		}
 	}
 	
 	/**
-	 * Gets the return encounters for a patient
+	 * Makes the obs encounters for a patient
 	 * @param patient the patient
 	 * @param tracnetID the patient TRACnet ID
 	 * @param encounters the existing encounters
 	 */
 	public void makePatientObsEncounters(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {
-		//IQPatient iqPatient = session.getPatient(tracnetID);	
+		IQPatient iqPatient = session.getPatient(tracnetID);
+		List<BaseIQObs> iqObss = session.getPatientObs(iqPatient);
+		
+		for (BaseIQObs iqObs : iqObss) {
+			Encounter encounter = encounterForDate(patient, iqObs.getDate(), encounters);		
+			Concept concept = null;
+			Double value = null;
+			
+			if (iqObs instanceof IQHeightObs) {
+				concept = Utils.getConceptFromProperty("concept.height");
+				value = (double)((IQHeightObs)iqObs).getHeight();		
+			}
+			else if (iqObs instanceof IQWeightObs) {
+				concept = Utils.getConceptFromProperty("concept.weight");
+				value = (double)((IQWeightObs)iqObs).getWeight();		
+			}
+			else if (iqObs instanceof IQCD4Obs) {
+				concept = Utils.getConceptFromProperty("concept.cd4_count");
+				value = (double)((IQCD4Obs)iqObs).getCd4Count();		
+			}
+			
+			Obs obs = new Obs();
+			obs.setPerson(patient);
+			obs.setLocation(getEncounterLocation());
+			obs.setObsDatetime(iqObs.getDate());
+			obs.setConcept(concept);
+			obs.setValueNumeric(value);
+			encounter.addObs(obs);
+		}
 	}
 	
 	/**
-	 * Gets the exit encounter for a patient
+	 * Makes the exit encounter for a patient
 	 * @param patient the patient
 	 * @param tracnetID the patient TRACnet ID
 	 * @param encounters the existing encounters
@@ -210,7 +246,7 @@ public class EntityBuilder {
 		
 		Obs obs = getPatientExitReasonObs(patient, tracnetID);
 		if (obs != null) {
-			Encounter encounter = encounterForDate(patient, iqPatient.getExitDate(), false, encounters);
+			Encounter encounter = encounterForDate(patient, iqPatient.getExitDate(), encounters);
 			encounter.addObs(obs);
 		}
 	}
@@ -226,14 +262,12 @@ public class EntityBuilder {
 		
 		if (iqPatient.getStatusCode() != null && iqPatient.getStatusCode() == StatusCode.EXITED && iqPatient.getExitCode() != null) {
 			// Make exit reason obs
-			String codProp = Context.getAdministrationService().getGlobalProperty("concept.reasonExitedCare");
-			Concept reasonConcept = Context.getConceptService().getConcept(codProp);
+			Concept reasonConcept = Utils.getConceptFromProperty("concept.reasonExitedCare");
 			
 			if (reasonConcept != null) {
 				Concept causeConcept = null;	
 				if (iqPatient.getExitCode() == ExitCode.DECEASED) {
-					codProp = Context.getAdministrationService().getGlobalProperty("concept.patientDied");
-					causeConcept = Context.getConceptService().getConcept(codProp);
+					causeConcept = Utils.getConceptFromProperty("concept.patientDied");
 				}
 				else if (iqPatient.getExitCode() == ExitCode.TRANSFERRED) {
 					// TODO load concepts from mappings?
@@ -247,7 +281,7 @@ public class EntityBuilder {
 					Obs obsExit = new Obs();
 					obsExit.setPerson(patient);
 					obsExit.setConcept(reasonConcept);
-					obsExit.setLocation(Context.getLocationService().getDefaultLocation());
+					obsExit.setLocation(getEncounterLocation());
 					obsExit.setObsDatetime(iqPatient.getExitDate());
 					obsExit.setValueCoded(causeConcept);
 					return obsExit;
@@ -340,15 +374,16 @@ public class EntityBuilder {
 	 * Gets an encounter for the given day - if one exists it is returned
 	 * @param patient the patient
 	 * @param date the day
-	 * @param isInitial whether it's an initial encounter
 	 * @param encounters the existing encounters
 	 * @return the encounter
 	 */
-	protected Encounter encounterForDate(Patient patient, Date date, boolean isInitial, Map<Date, Encounter> encounters) {
-		// If a return visit, look for existing encounter
-		if (!isInitial && encounters.containsKey(date)) {
+	protected Encounter encounterForDate(Patient patient, Date date, Map<Date, Encounter> encounters) {
+		// Look for existing encounter on that date
+		if (encounters.containsKey(date)) 
 			return encounters.get(date);
-		}
+		
+		// If no existing, then this will be an initial encounter
+		boolean isInitial = encounters.isEmpty();
 		
 		// Create new one
 		Encounter encounter = new Encounter();

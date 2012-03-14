@@ -5,7 +5,7 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-    $('#encounters').dataTable();
+    $('#encounters').dataTable({"aaSorting": []});
 });
 </script>
 

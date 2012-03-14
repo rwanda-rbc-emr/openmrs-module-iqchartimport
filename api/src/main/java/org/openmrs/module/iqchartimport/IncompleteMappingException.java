@@ -22,4 +22,18 @@ import org.openmrs.api.APIException;
 public class IncompleteMappingException extends APIException {
 
 	private static final long serialVersionUID = -6015638770411118185L;
+	
+	/**
+	 * Default constructor
+	 */
+	public IncompleteMappingException() {
+	}
+	
+	/**
+	 * Creates an exception with a message
+	 * @param message the message
+	 */
+	public IncompleteMappingException(String message) {
+		super(message);
+	}
 }

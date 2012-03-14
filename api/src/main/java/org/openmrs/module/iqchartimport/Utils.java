@@ -14,6 +14,7 @@
 
 package org.openmrs.module.iqchartimport;
 
+import org.openmrs.Concept;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 
@@ -21,6 +22,7 @@ import org.openmrs.api.context.Context;
  * General utility functions
  */
 public class Utils {
+	
 	/**
 	 * Checks that the current user is a super-user
 	 * @throws APIAuthenticationException if user is not authenticated or a super-user
@@ -28,5 +30,19 @@ public class Utils {
 	public static void checkSuperUser() throws APIAuthenticationException {
 		if (!Context.isAuthenticated() || !Context.getUserContext().getAuthenticatedUser().isSuperUser())
 			throw new APIAuthenticationException("Must be super-user");
+	}
+	
+	/**
+	 * Gets a concept from a global property
+	 * @param property the property name
+	 * @return the concept
+	 * @throws IncompleteMappingException if global property doesn't exist
+	 */
+	public static Concept getConceptFromProperty(String property) {
+		String codProp = Context.getAdministrationService().getGlobalProperty(property);
+		if (codProp == null) 
+			throw new IncompleteMappingException("Missing '" + property + "' global property");
+		
+		return Context.getConceptService().getConcept(codProp);
 	}
 }

@@ -74,7 +74,8 @@ public class PatientController {
 			return "/module/iqchartimport/patient";
 		}
 		catch (IncompleteMappingException ex) {
-			request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, "Incomplete entity mappings");
+			String message = ex.getMessage() != null ? ex.getMessage() : "Incomplete entity mappings";
+			request.getSession().setAttribute(WebConstants.OPENMRS_ERROR_ATTR, message);
 			return "redirect:mappings.form";
 		}
 		finally {
