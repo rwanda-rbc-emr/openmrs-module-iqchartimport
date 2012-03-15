@@ -191,9 +191,10 @@ public class EntityBuilder {
 	 */
 	public void makePatientInitialEncounter(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {	
 		IQPatient iqPatient = session.getPatient(tracnetID);
+		Encounter encounter = encounterForDate(patient, iqPatient.getEnrollDate(), encounters);
 		
-		if (iqPatient.getEnrollDate() != null) {
-			Encounter encounter = encounterForDate(patient, iqPatient.getEnrollDate(), encounters);		
+		// Add 'mode of admission' obs
+		if (iqPatient.getModeCode() != null) {		
 			Concept conceptEnroll = MappingUtils.getConceptByName("METHOD OF ENROLLMENT");
 			Concept conceptMode = null;
 			
@@ -225,6 +226,15 @@ public class EntityBuilder {
 			obs.setValueCoded(conceptMode);
 			encounter.addObs(obs);
 		}
+		
+		// Add 'transfer in' obs
+		Concept conceptTransferIn = MappingUtils.getConceptByName("TRANSFER IN");
+		Concept conceptYes = MappingUtils.getConceptByName("YES");
+		Concept conceptNo = MappingUtils.getConceptByName("NO");
+		
+		Obs obs = makeObs(patient, iqPatient.getEnrollDate(), conceptTransferIn);
+		obs.setValueCoded(iqPatient.isNewTransfer() ? conceptYes : conceptNo);
+		encounter.addObs(obs);
 	}
 	
 	/**
