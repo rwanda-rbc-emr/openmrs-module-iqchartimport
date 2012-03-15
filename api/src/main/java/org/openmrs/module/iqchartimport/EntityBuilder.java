@@ -264,35 +264,19 @@ public class EntityBuilder {
 	 */
 	public void makePatientExitEncounter(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {
 		IQPatient iqPatient = session.getPatient(tracnetID);
+		Encounter encounter = encounterForDate(patient, iqPatient.getExitDate(), encounters);
 		
-		Obs obs = getPatientExitReasonObs(patient, tracnetID);
-		if (obs != null) {
-			Encounter encounter = encounterForDate(patient, iqPatient.getExitDate(), encounters);
-			encounter.addObs(obs);
-		}
-	}
-	
-	/**
-	 * Gets the exit reason obs for the given patient
-	 * @param patient the patient
-	 * @param tracnetID the TRACnet ID
-	 * @return
-	 */
-	public Obs getPatientExitReasonObs(Patient patient, int tracnetID) {
-		IQPatient iqPatient = session.getPatient(tracnetID);
-		
-		if (iqPatient.getExitCode() != null) {
+		// Add 'exit reason' obs
+		if (iqPatient.getExitCode() != null) {		
 			Concept conceptExited = MappingUtils.getConcept(ExitCode.mappedQuestion);
 			Concept conceptReason = MappingUtils.getConcept(iqPatient.getExitCode().mappedAnswer);
 			
 			if (conceptReason != null) {
-				Obs obsExit = makeObs(patient, iqPatient.getExitDate(), conceptExited);
-				obsExit.setValueCoded(conceptReason);
-				return obsExit;
+				Obs obs = makeObs(patient, iqPatient.getExitDate(), conceptExited);
+				obs.setValueCoded(conceptReason);
+				encounter.addObs(obs);
 			}
 		}
-		
-		return null;
 	}
 	
 	/**

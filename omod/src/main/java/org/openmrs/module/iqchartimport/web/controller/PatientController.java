@@ -28,9 +28,11 @@ import org.openmrs.PatientProgram;
 import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.iqchartimport.EntityBuilder;
 import org.openmrs.module.iqchartimport.IncompleteMappingException;
+import org.openmrs.module.iqchartimport.MappingUtils;
 import org.openmrs.module.iqchartimport.Utils;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
+import org.openmrs.module.iqchartimport.iq.code.ExitCode;
 import org.openmrs.web.WebConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -63,8 +65,9 @@ public class PatientController {
 			EntityBuilder builder = new EntityBuilder(session);
 			Patient patient = builder.getPatient(tracnetID);
 			List<PatientProgram> patientPrograms = builder.getPatientPrograms(tracnetID);
-			Obs patientExitObs = builder.getPatientExitReasonObs(patient, tracnetID);
 			List<Encounter> encounters = builder.getPatientEncounters(patient, tracnetID);
+			
+			Obs patientExitObs = Utils.findObs(encounters, MappingUtils.getConcept(ExitCode.mappedQuestion)).get(0);
 			
 			model.put("patient", patient);
 			model.put("patientPrograms", patientPrograms);

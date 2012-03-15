@@ -14,6 +14,12 @@
 
 package org.openmrs.module.iqchartimport;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openmrs.Concept;
+import org.openmrs.Encounter;
+import org.openmrs.Obs;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 
@@ -29,5 +35,24 @@ public class Utils {
 	public static void checkSuperUser() throws APIAuthenticationException {
 		if (!Context.isAuthenticated() || !Context.getUserContext().getAuthenticatedUser().isSuperUser())
 			throw new APIAuthenticationException("Must be super-user");
+	}
+	
+	/**
+	 * Finds obs with the given concept
+	 * @param encounters the encounters to search in
+	 * @param concept the concept to match
+	 * @return the encounters
+	 */
+	public static List<Obs> findObs(List<Encounter> encounters, Concept concept) {
+		List<Obs> obss = new ArrayList<Obs>();
+	
+		for (Encounter encounter : encounters) {
+			for (Obs obs : encounter.getAllObs()) {
+				if (obs.getConcept().equals(concept))
+					obss.add(obs);
+			}
+		}
+		
+		return obss;
 	}
 }
