@@ -19,7 +19,7 @@ package org.openmrs.module.iqchartimport.iq.code;
  */
 public enum ModeCode {
 	
-	OTHER ("@concept.otherNonCoded"),
+	OTHER ("UNKNOWN"),
 	VCT ("VCT PROGRAM"),
 	PMTCT ("PMTCT PROGRAM"),
 	HOSPITALIZATION ("INPATIENT HOSPITALIZATION"),

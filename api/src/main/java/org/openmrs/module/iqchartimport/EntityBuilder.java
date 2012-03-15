@@ -39,6 +39,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.module.iqchartimport.iq.IQPatient;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
+import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
 import org.openmrs.module.iqchartimport.iq.code.ModeCode;
 import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 import org.openmrs.module.iqchartimport.iq.obs.BaseIQObs;
@@ -193,6 +194,15 @@ public class EntityBuilder {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		Encounter encounter = encounterForDate(patient, iqPatient.getEnrollDate(), encounters);
 		
+		// Add 'civil status' obs
+		if (iqPatient.getMaritalStatusCode() != null) {
+			Concept conceptCivil = MappingUtils.getConcept(MaritalCode.mappedQuestion);
+			Concept conceptAns = MappingUtils.getConcept(iqPatient.getMaritalStatusCode().mappedAnswer);		
+			Obs obs = makeObs(patient, iqPatient.getEnrollDate(), conceptCivil);
+			obs.setValueCoded(conceptAns);
+			encounter.addObs(obs);
+		}
+		
 		// Add 'mode of admission' obs
 		if (iqPatient.getModeCode() != null) {		
 			Concept conceptEnroll = MappingUtils.getConcept(ModeCode.mappedQuestion);
@@ -203,11 +213,13 @@ public class EntityBuilder {
 		}
 		
 		// Add 'transfer in' obs
-		Concept conceptTransferIn = MappingUtils.getConcept(TransferCode.mappedQuestion);
-		Concept conceptAns = MappingUtils.getConcept(iqPatient.getTransferCode().mappedAnswer);
-		Obs obs = makeObs(patient, iqPatient.getEnrollDate(), conceptTransferIn);
-		obs.setValueCoded(conceptAns);
-		encounter.addObs(obs);
+		if (iqPatient.getTransferCode() != null) {
+			Concept conceptTransferIn = MappingUtils.getConcept(TransferCode.mappedQuestion);
+			Concept conceptAns = MappingUtils.getConcept(iqPatient.getTransferCode().mappedAnswer);
+			Obs obs = makeObs(patient, iqPatient.getEnrollDate(), conceptTransferIn);
+			obs.setValueCoded(conceptAns);
+			encounter.addObs(obs);
+		}
 	}
 	
 	/**

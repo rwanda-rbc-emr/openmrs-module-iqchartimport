@@ -18,6 +18,7 @@ package org.openmrs.module.iqchartimport.iq.code;
  * Patient program status code
  */
 public enum StatusCode {
+	
 	EXITED,
 	ACTIVE;
 	

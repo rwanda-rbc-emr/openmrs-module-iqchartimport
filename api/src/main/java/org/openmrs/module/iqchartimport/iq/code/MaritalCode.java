@@ -18,12 +18,24 @@ package org.openmrs.module.iqchartimport.iq.code;
  * Patient marital status code
  */
 public enum MaritalCode {
-	SINGLE,
-	MARRIED,
-	WIDOWED,
-	DIVORCED,
-	LIVINGWITHPARTNER,
-	OTHER;
+	
+	SINGLE ("SINGLE OR A CHILD"),
+	MARRIED ("MARRIED"),
+	WIDOWED ("WIDOWED"),
+	DIVORCED ("DIVORCED"),
+	LIVINGWITHPARTNER ("LIVING WITH PARTNER"),
+	OTHER ("UNKNOWN");
+	
+	public static final String mappedQuestion = "CIVIL STATUS";
+	public final String mappedAnswer;
+	
+	/**
+	 * Constructs new enum value
+	 * @param mappedAnswer the mapped answer
+	 */
+	MaritalCode(String mappedAnswer) {
+		this.mappedAnswer = mappedAnswer;
+	}
 	
 	/**
 	 * Converts a Byte value to an enum value
