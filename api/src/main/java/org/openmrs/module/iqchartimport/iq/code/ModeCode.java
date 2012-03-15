@@ -18,13 +18,25 @@ package org.openmrs.module.iqchartimport.iq.code;
  * Patient admission mode code
  */
 public enum ModeCode {
-	OTHER,
-	VCT,
-	PMTCT,
-	HOSPITALIZATION,
-	CONSULTATION,
-	CONSULTATION_TB,
-	PIT;
+	
+	OTHER ("@concept.otherNonCoded"),
+	VCT ("VCT PROGRAM"),
+	PMTCT ("PMTCT PROGRAM"),
+	HOSPITALIZATION ("INPATIENT HOSPITALIZATION"),
+	CONSULTATION ("OUTPATIENT CONSULTATION"),
+	CONSULTATION_TB ("TUBERCULOSIS PROGRAM"),
+	PIT ("OTHER OUTREACH PROGRAM");
+	
+	public static final String mappedQuestion = "METHOD OF ENROLLMENT";
+	public final String mappedAnswer;
+	
+	/**
+	 * Constructs new enum value
+	 * @param mappedAnswer the mapped answer
+	 */
+	ModeCode(String mappedAnswer) {
+		this.mappedAnswer = mappedAnswer;
+	}
 	
 	/**
 	 * Converts a Byte value to an enum value

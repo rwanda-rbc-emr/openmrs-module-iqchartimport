@@ -39,8 +39,8 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.module.iqchartimport.iq.IQPatient;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
-import org.openmrs.module.iqchartimport.iq.code.SexCode;
-import org.openmrs.module.iqchartimport.iq.code.StatusCode;
+import org.openmrs.module.iqchartimport.iq.code.ModeCode;
+import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 import org.openmrs.module.iqchartimport.iq.obs.BaseIQObs;
 import org.openmrs.module.iqchartimport.iq.obs.IQCD4Obs;
 import org.openmrs.module.iqchartimport.iq.obs.IQHeightObs;
@@ -195,45 +195,18 @@ public class EntityBuilder {
 		
 		// Add 'mode of admission' obs
 		if (iqPatient.getModeCode() != null) {		
-			Concept conceptEnroll = MappingUtils.getConceptByName("METHOD OF ENROLLMENT");
-			Concept conceptMode = null;
-			
-			switch (iqPatient.getModeCode()) {
-			case OTHER:
-				conceptMode = MappingUtils.getConceptFromProperty("concept.otherNonCoded");
-				break;
-			case VCT:
-				conceptMode = MappingUtils.getConceptByName("VCT PROGRAM");
-				break;
-			case PMTCT:
-				conceptMode = MappingUtils.getConceptByName("PMTCT PROGRAM");
-				break;
-			case HOSPITALIZATION:
-				conceptMode = MappingUtils.getConceptByName("INPATIENT HOSPITALIZATION");
-				break;
-			case CONSULTATION:
-				conceptMode = MappingUtils.getConceptByName("OUTPATIENT CONSULTATION");
-				break;
-			case CONSULTATION_TB:
-				conceptMode = MappingUtils.getConceptByName("TUBERCULOSIS PROGRAM");
-				break;
-			case PIT:
-				conceptMode = MappingUtils.getConceptByName("OTHER OUTREACH PROGRAM");
-				break;
-			}
-			
+			Concept conceptEnroll = MappingUtils.getConcept(ModeCode.mappedQuestion);
+			Concept conceptMode = MappingUtils.getConcept(iqPatient.getModeCode().mappedAnswer);		
 			Obs obs = makeObs(patient, iqPatient.getEnrollDate(), conceptEnroll);
 			obs.setValueCoded(conceptMode);
 			encounter.addObs(obs);
 		}
 		
 		// Add 'transfer in' obs
-		Concept conceptTransferIn = MappingUtils.getConceptByName("TRANSFER IN");
-		Concept conceptYes = MappingUtils.getConceptByName("YES");
-		Concept conceptNo = MappingUtils.getConceptByName("NO");
-		
+		Concept conceptTransferIn = MappingUtils.getConcept(TransferCode.mappedQuestion);
+		Concept conceptAns = MappingUtils.getConcept(iqPatient.getTransferCode().mappedAnswer);
 		Obs obs = makeObs(patient, iqPatient.getEnrollDate(), conceptTransferIn);
-		obs.setValueCoded(iqPatient.isNewTransfer() ? conceptYes : conceptNo);
+		obs.setValueCoded(conceptAns);
 		encounter.addObs(obs);
 	}
 	
@@ -253,15 +226,15 @@ public class EntityBuilder {
 			Double value = null;
 			
 			if (iqObs instanceof IQHeightObs) {
-				concept = MappingUtils.getConceptFromProperty("concept.height");
+				concept = MappingUtils.getConcept("@concept.height");
 				value = (double)((IQHeightObs)iqObs).getHeight();		
 			}
 			else if (iqObs instanceof IQWeightObs) {
-				concept = MappingUtils.getConceptFromProperty("concept.weight");
+				concept = MappingUtils.getConcept("@concept.weight");
 				value = (double)((IQWeightObs)iqObs).getWeight();		
 			}
 			else if (iqObs instanceof IQCD4Obs) {
-				concept = MappingUtils.getConceptFromProperty("concept.cd4_count");
+				concept = MappingUtils.getConcept("@concept.cd4_count");
 				value = (double)((IQCD4Obs)iqObs).getCd4Count();		
 			}
 			
@@ -296,26 +269,9 @@ public class EntityBuilder {
 	public Obs getPatientExitReasonObs(Patient patient, int tracnetID) {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		
-		if (iqPatient.getStatusCode() != null && iqPatient.getStatusCode() == StatusCode.EXITED && iqPatient.getExitCode() != null) {
-			Concept conceptExited = MappingUtils.getConceptFromProperty("concept.reasonExitedCare");
-			Concept conceptReason = null;
-			
-			switch (iqPatient.getExitCode()) {
-			case DECEASED:
-				conceptReason = MappingUtils.getConceptFromProperty("concept.patientDied");
-				break;
-			case TRANSFERRED:
-				conceptReason = MappingUtils.getConceptByName("PATIENT TRANSFERRED OUT");
-				break;
-			case LOST:
-				conceptReason = MappingUtils.getConceptByName("PATIENT DEFAULTED");
-				break;
-			case STOPPED_BY_PATIENT:
-				conceptReason = MappingUtils.getConceptByName("PATIENT REFUSED");
-				break;
-			}
-			
-			// TODO mappings for remaining codes
+		if (iqPatient.getExitCode() != null) {
+			Concept conceptExited = MappingUtils.getConcept(ExitCode.mappedQuestion);
+			Concept conceptReason = MappingUtils.getConcept(iqPatient.getExitCode().mappedAnswer);
 			
 			if (conceptReason != null) {
 				Obs obsExit = makeObs(patient, iqPatient.getExitDate(), conceptExited);
@@ -364,12 +320,8 @@ public class EntityBuilder {
 		patient.addAddress(address);
 		
 		// Set patient gender
-		if (iqPatient.getSexCode() != null) {
-			if (iqPatient.getSexCode() == SexCode.MALE)
-				patient.setGender("M");
-			else if (iqPatient.getSexCode() == SexCode.FEMALE)
-				patient.setGender("F");
-		}
+		if (iqPatient.getSexCode() != null)
+			patient.setGender(iqPatient.getSexCode().mappedValue);
 		
 		// Set patient birth date
 		patient.setBirthdate(iqPatient.getDob());

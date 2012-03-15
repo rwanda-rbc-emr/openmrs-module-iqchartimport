@@ -22,6 +22,7 @@ import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
 import org.openmrs.module.iqchartimport.iq.code.ModeCode;
 import org.openmrs.module.iqchartimport.iq.code.SexCode;
 import org.openmrs.module.iqchartimport.iq.code.StatusCode;
+import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 
 /**
  * A patient in an IQChart database
@@ -43,7 +44,7 @@ public class IQPatient {
 	private HIVStatusCode hivStatusPartCode;
 	private ModeCode modeCode;
 	private String modeAdmissionOther;
-	private boolean newTransfer;
+	private TransferCode transferCode;
 	private Date arvStartDate;
 	private StatusCode statusCode;
 	private Date exitDate;
@@ -186,12 +187,12 @@ public class IQPatient {
 		this.modeAdmissionOther = modeAdmissionOther;
 	}
 
-	public boolean isNewTransfer() {
-		return newTransfer;
+	public TransferCode getTransferCode() {
+		return transferCode;
 	}
 
-	public void setNewTransfer(boolean newTransfer) {
-		this.newTransfer = newTransfer;
+	public void setTransferCode(TransferCode transferCode) {
+		this.transferCode = transferCode;
 	}
 
 	public Date getARVStartDate() {

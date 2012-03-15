@@ -34,6 +34,7 @@ import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
 import org.openmrs.module.iqchartimport.iq.code.ModeCode;
 import org.openmrs.module.iqchartimport.iq.code.SexCode;
 import org.openmrs.module.iqchartimport.iq.code.StatusCode;
+import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 
 /**
  * Test class for IQChartSession
@@ -93,7 +94,7 @@ public class IQChartSessionTest {
 		Assert.assertEquals(HIVStatusCode.UNKNOWN, patient.getHIVStatusPartCode());
 		Assert.assertEquals(ModeCode.VCT, patient.getModeCode());
 		Assert.assertEquals("", patient.getModeAdmissionOther());
-		Assert.assertFalse(patient.isNewTransfer());
+		Assert.assertEquals(TransferCode.NEW, patient.getTransferCode());
 		Assert.assertEquals(TestUtils.date(2007, 8, 28), patient.getARVStartDate());
 		Assert.assertEquals(StatusCode.ACTIVE, patient.getStatusCode());
 		Assert.assertNull(patient.getExitDate());
@@ -116,7 +117,7 @@ public class IQChartSessionTest {
 		Assert.assertNull(patient.getHIVStatusPartCode());
 		Assert.assertEquals(ModeCode.VCT, patient.getModeCode());
 		Assert.assertEquals("", patient.getModeAdmissionOther());
-		Assert.assertTrue(patient.isNewTransfer());
+		Assert.assertEquals(TransferCode.TRANSFER, patient.getTransferCode());
 		Assert.assertEquals(TestUtils.date(2006, 8, 1), patient.getARVStartDate());
 		Assert.assertEquals(StatusCode.EXITED, patient.getStatusCode());
 		Assert.assertEquals(TestUtils.date(2009, 8, 14), patient.getExitDate());

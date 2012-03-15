@@ -18,8 +18,19 @@ package org.openmrs.module.iqchartimport.iq.code;
  * Patient sex code
  */
 public enum SexCode {
-	MALE,
-	FEMALE;
+	
+	MALE ("M"),
+	FEMALE ("F");
+	
+	public final String mappedValue;
+	
+	/**
+	 * Constructs new enum value
+	 * @param mappedValue the mapped value
+	 */
+	SexCode(String mappedValue) {
+		this.mappedValue = mappedValue;
+	}
 	
 	/**
 	 * Converts a Byte value to an enum value

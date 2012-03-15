@@ -47,7 +47,15 @@ public class MappingUtils {
 	 * @return the concept
 	 * @throws IncompleteMappingException if concept doesn't exist
 	 */
-	public static Concept getConceptByName(String name) {
+	public static Concept getConcept(String name) {
+		// If name is null, return null
+		if (name == null)
+			return null;
+		
+		// If name is prefixed with @ then it's a global property
+		else if (name.startsWith("@"))
+			return getConceptFromProperty(name.substring(1));
+		
 		Concept concept = Context.getConceptService().getConcept(name);
 		if (concept == null) 
 			throw new IncompleteMappingException("Missing '" + name + "' concept");
@@ -61,7 +69,7 @@ public class MappingUtils {
 	 * @return the concept
 	 * @throws IncompleteMappingException if global property doesn't exist
 	 */
-	public static Concept getConceptFromProperty(String property) {
+	private static Concept getConceptFromProperty(String property) {
 		String conceptId = Context.getAdministrationService().getGlobalProperty(property);
 		if (conceptId == null || conceptId.length() == 0) 
 			throw new IncompleteMappingException("Missing '" + property + "' global property");

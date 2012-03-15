@@ -15,25 +15,21 @@
 package org.openmrs.module.iqchartimport.iq.code;
 
 /**
- * Patient program exit code
+ * Patient transfer code
  */
-public enum ExitCode {
+public enum TransferCode {
 	
-	OTHER (null),
-	TRANSFERRED ("PATIENT TRANSFERRED OUT"),
-	DECEASED ("@concept.patientDied"),
-	LOST ("PATIENT DEFAULTED"),
-	STOPPED_BY_DOCTOR (null),
-	STOPPED_BY_PATIENT ("PATIENT REFUSED");
+	NEW ("NO"),
+	TRANSFER ("YES");
 	
-	public static final String mappedQuestion = "@concept.reasonExitedCare";
+	public static final String mappedQuestion = "TRANSFER IN";
 	public final String mappedAnswer;
 	
 	/**
 	 * Constructs new enum value
 	 * @param mappedAnswer the mapped answer
 	 */
-	ExitCode(String mappedAnswer) {
+	TransferCode(String mappedAnswer) {
 		this.mappedAnswer = mappedAnswer;
 	}
 	
@@ -42,7 +38,7 @@ public enum ExitCode {
 	 * @param val the Byte value
 	 * @return the enum value or null if byte value is null
 	 */
-	public static ExitCode fromByte(Byte val) {
+	public static TransferCode fromByte(Byte val) {
 		return val != null ? values()[val] : null;
 	}
 }
