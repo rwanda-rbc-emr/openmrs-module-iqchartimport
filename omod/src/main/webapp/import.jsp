@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
+<%@ include file="template/localInclude.jsp"%>
 <%@ include file="template/localHeader.jsp"%>
 
 <b class="boxHeader"><spring:message code="@MODULE_ID@.import.importCurrentDatabase" /></b>

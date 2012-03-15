@@ -1,13 +1,20 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
+<%@ include file="template/localInclude.jsp"%>
 <%@ include file="template/localHeader.jsp"%>
 
 <script type="text/javascript">
 $(document).ready(function() {
     $('#encounters').dataTable({"aaSorting": []});
+    
+	$('#obsDialog').jqm({ajax: '@href', trigger: 'a.obsDialogLink'});
 });
 </script>
+
+<div class="jqmWindow" id="obsDialog">
+	Please wait...
+</div>
 
 <div style="margin-bottom: 20px">
 	<input type="button" value="<spring:message code="general.back" />" onclick="location.href='preview.form'" />
@@ -115,7 +122,11 @@ $(document).ready(function() {
 		<tbody>
 			<c:forEach items="${encounters}" var="encounter">
 				<tr>
-					<td><openmrs:formatDate date="${encounter.encounterDatetime}" type="small" /></td>
+					<td>
+						<a href="observations.form?tracnetID=${patient.patientIdentifier.identifier}&amp;timestamp=${encounter.encounterDatetime.time}" class="obsDialogLink">
+							<openmrs:formatDate date="${encounter.encounterDatetime}" type="small" />
+						</a>
+					</td>
 					<td>${encounter.encounterType.name}</td>
 					<td>${encounter.location.name}</td>
 					<td>${encounter.creator.personName}</td>

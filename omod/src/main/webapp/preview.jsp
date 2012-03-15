@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
+<%@ include file="template/localInclude.jsp"%>
 <%@ include file="template/localHeader.jsp"%>
 
 <script type="text/javascript">
@@ -24,11 +25,8 @@ $(document).ready(function() {
 		</thead>
 		<tbody>
 			<c:forEach items="${patients}" var="patient" varStatus="status">
-				<tr  
-					onclick="location.href='patient.form?tracnetID=${patient.patientIdentifier.identifier}'"
-					style="cursor: pointer; ${patient.dead ? 'color: #900' : ''}"
-				>
-					<td>${patient.patientIdentifier.identifier}</td>
+				<tr style="${patient.dead ? 'color: #900' : ''}">
+					<td><a href="patient.form?tracnetID=${patient.patientIdentifier.identifier}">${patient.patientIdentifier.identifier}</a></td>
 					<td><c:out value="${patient.personName.familyName}" />, <c:out value="${patient.personName.givenName}" /></td>
 					<td><openmrs:formatDate date="${patient.birthdate}" /></td>
 					<td>

@@ -1,7 +1,8 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
-<%@ include file="template/localHeader.jsp"%>
+<%@ include file="template/localInclude.jsp"%>
+<%@ include file="template/localHeader.jsp"%>sp"%>
 
 <b class="boxHeader"><spring:message code="@MODULE_ID@.mappings.entityMappings" /></b>
 <form class="box" method="post">
