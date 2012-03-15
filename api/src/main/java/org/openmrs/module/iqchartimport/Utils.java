@@ -14,7 +14,6 @@
 
 package org.openmrs.module.iqchartimport;
 
-import org.openmrs.Concept;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 
@@ -30,33 +29,5 @@ public class Utils {
 	public static void checkSuperUser() throws APIAuthenticationException {
 		if (!Context.isAuthenticated() || !Context.getUserContext().getAuthenticatedUser().isSuperUser())
 			throw new APIAuthenticationException("Must be super-user");
-	}
-	
-	/**
-	 * Gets a concept by name
-	 * @param name the concept name
-	 * @return the concept
-	 * @throws IncompleteMappingException if concept doesn't exist
-	 */
-	public static Concept getConceptByName(String name) {
-		Concept concept = Context.getConceptService().getConcept(name);
-		if (concept == null) 
-			throw new IncompleteMappingException("Missing '" + name + "' concept");
-		
-		return concept;
-	}
-	
-	/**
-	 * Gets a concept from a global property
-	 * @param property the property name
-	 * @return the concept
-	 * @throws IncompleteMappingException if global property doesn't exist
-	 */
-	public static Concept getConceptFromProperty(String property) {
-		String conceptId = Context.getAdministrationService().getGlobalProperty(property);
-		if (conceptId == null || conceptId.length() == 0) 
-			throw new IncompleteMappingException("Missing '" + property + "' global property");
-		
-		return Context.getConceptService().getConcept(conceptId);
 	}
 }

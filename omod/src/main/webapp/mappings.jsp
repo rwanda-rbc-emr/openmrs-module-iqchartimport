@@ -2,10 +2,11 @@
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
 <%@ include file="template/localInclude.jsp"%>
-<%@ include file="template/localHeader.jsp"%>sp"%>
+<%@ include file="template/localHeader.jsp"%>
 
-<b class="boxHeader"><spring:message code="@MODULE_ID@.mappings.entityMappings" /></b>
-<form class="box" method="post">
+<b class="boxHeader">
+	<spring:message code="@MODULE_ID@.mappings.entityMappings" />
+</b>
 <sform:form commandName="mappings" cssClass="box" action="mappings.form">
 	<table>
 		<tr>

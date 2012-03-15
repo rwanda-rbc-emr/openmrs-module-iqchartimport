@@ -28,6 +28,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.iqchartimport.Mappings;
 import org.openmrs.module.iqchartimport.Utils;
+import org.openmrs.web.WebConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -67,10 +68,12 @@ public class MappingsController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public String handleSubmit(@ModelAttribute("mappings") Mappings mappings) {
+	public String handleSubmit(HttpServletRequest request, @ModelAttribute("mappings") Mappings mappings) {
 		Utils.checkSuperUser();
 
 		mappings.save();
+		
+		request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Mappings saved");
 		
 		return "redirect:mappings.form";
 	}

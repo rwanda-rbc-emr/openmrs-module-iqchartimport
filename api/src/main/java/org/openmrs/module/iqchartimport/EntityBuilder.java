@@ -213,15 +213,15 @@ public class EntityBuilder {
 			Double value = null;
 			
 			if (iqObs instanceof IQHeightObs) {
-				concept = Utils.getConceptFromProperty("concept.height");
+				concept = MappingUtils.getConceptFromProperty("concept.height");
 				value = (double)((IQHeightObs)iqObs).getHeight();		
 			}
 			else if (iqObs instanceof IQWeightObs) {
-				concept = Utils.getConceptFromProperty("concept.weight");
+				concept = MappingUtils.getConceptFromProperty("concept.weight");
 				value = (double)((IQWeightObs)iqObs).getWeight();		
 			}
 			else if (iqObs instanceof IQCD4Obs) {
-				concept = Utils.getConceptFromProperty("concept.cd4_count");
+				concept = MappingUtils.getConceptFromProperty("concept.cd4_count");
 				value = (double)((IQCD4Obs)iqObs).getCd4Count();		
 			}
 			
@@ -262,22 +262,22 @@ public class EntityBuilder {
 		
 		if (iqPatient.getStatusCode() != null && iqPatient.getStatusCode() == StatusCode.EXITED && iqPatient.getExitCode() != null) {
 			// Make exit reason obs
-			Concept reasonConcept = Utils.getConceptFromProperty("concept.reasonExitedCare");
+			Concept reasonConcept = MappingUtils.getConceptFromProperty("concept.reasonExitedCare");
 			
 			// Map exit code to cause concept
 			Concept causeConcept = null;	
 			if (iqPatient.getExitCode() == ExitCode.DECEASED) {
-				causeConcept = Utils.getConceptFromProperty("concept.patientDied");
+				causeConcept = MappingUtils.getConceptFromProperty("concept.patientDied");
 			}
 			else if (iqPatient.getExitCode() == ExitCode.TRANSFERRED) {
 				// TODO load concepts from mappings?
-				causeConcept = Utils.getConceptByName("PATIENT TRANSFERRED OUT");
+				causeConcept = MappingUtils.getConceptByName("PATIENT TRANSFERRED OUT");
 			}
 			else if (iqPatient.getExitCode() == ExitCode.LOST) {
-				causeConcept = Utils.getConceptByName("PATIENT DEFAULTED");
+				causeConcept = MappingUtils.getConceptByName("PATIENT DEFAULTED");
 			}
 			else if (iqPatient.getExitCode() == ExitCode.STOPPED_BY_PATIENT) {
-				causeConcept = Utils.getConceptByName("PATIENT REFUSED");
+				causeConcept = MappingUtils.getConceptByName("PATIENT REFUSED");
 			}
 			// TODO mappings for remaining codes
 			
@@ -364,13 +364,13 @@ public class EntityBuilder {
 		boolean isPediatric = (age < Constants.ADULT_START_AGE);
 		
 		if (isInitial && isPediatric)
-			return Context.getEncounterService().getEncounterType("PEDSINITIAL");
+			return MappingUtils.getEncounterTypeByName("PEDSINITIAL");
 		else if (isInitial && !isPediatric)
-			return Context.getEncounterService().getEncounterType("ADULTINITIAL");
+			return MappingUtils.getEncounterTypeByName("ADULTINITIAL");
 		else if (!isInitial && isPediatric)
-			return Context.getEncounterService().getEncounterType("PEDSRETURN");
+			return MappingUtils.getEncounterTypeByName("PEDSRETURN");
 		else
-			return Context.getEncounterService().getEncounterType("ADULTRETURN");
+			return MappingUtils.getEncounterTypeByName("ADULTRETURN");
 	}
 	
 	/**
