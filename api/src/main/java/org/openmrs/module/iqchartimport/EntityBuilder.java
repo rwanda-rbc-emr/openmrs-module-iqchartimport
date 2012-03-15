@@ -264,28 +264,31 @@ public class EntityBuilder {
 			// Make exit reason obs
 			Concept reasonConcept = Utils.getConceptFromProperty("concept.reasonExitedCare");
 			
-			if (reasonConcept != null) {
-				Concept causeConcept = null;	
-				if (iqPatient.getExitCode() == ExitCode.DECEASED) {
-					causeConcept = Utils.getConceptFromProperty("concept.patientDied");
-				}
-				else if (iqPatient.getExitCode() == ExitCode.TRANSFERRED) {
-					// TODO load concepts from mappings?
-					causeConcept = Context.getConceptService().getConcept("PATIENT TRANSFERRED OUT");
-				}
-				else if (iqPatient.getExitCode() == ExitCode.LOST) {
-					causeConcept = Context.getConceptService().getConcept("PATIENT DEFAULTED");
-				}
-				
-				if (causeConcept != null) {
-					Obs obsExit = new Obs();
-					obsExit.setPerson(patient);
-					obsExit.setConcept(reasonConcept);
-					obsExit.setLocation(getEncounterLocation());
-					obsExit.setObsDatetime(iqPatient.getExitDate());
-					obsExit.setValueCoded(causeConcept);
-					return obsExit;
-				}
+			// Map exit code to cause concept
+			Concept causeConcept = null;	
+			if (iqPatient.getExitCode() == ExitCode.DECEASED) {
+				causeConcept = Utils.getConceptFromProperty("concept.patientDied");
+			}
+			else if (iqPatient.getExitCode() == ExitCode.TRANSFERRED) {
+				// TODO load concepts from mappings?
+				causeConcept = Utils.getConceptByName("PATIENT TRANSFERRED OUT");
+			}
+			else if (iqPatient.getExitCode() == ExitCode.LOST) {
+				causeConcept = Utils.getConceptByName("PATIENT DEFAULTED");
+			}
+			else if (iqPatient.getExitCode() == ExitCode.STOPPED_BY_PATIENT) {
+				causeConcept = Utils.getConceptByName("PATIENT REFUSED");
+			}
+			// TODO mappings for remaining codes
+			
+			if (causeConcept != null) {
+				Obs obsExit = new Obs();
+				obsExit.setPerson(patient);
+				obsExit.setConcept(reasonConcept);
+				obsExit.setLocation(getEncounterLocation());
+				obsExit.setObsDatetime(iqPatient.getExitDate());
+				obsExit.setValueCoded(causeConcept);
+				return obsExit;
 			}
 		}
 		

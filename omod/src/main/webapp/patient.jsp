@@ -25,9 +25,13 @@ $(document).ready(function() {
 </b>
 <div class="box" style="margin-bottom: 20px">
 	<table width="100%" cellspacing="0">
-		<c:if test="${patient.dead}">
+		<c:if test="${patientExitObs != null}">
 			<tr>
-				<td colspan="2" style="font-weight: bold; color: red; text-align: center"><spring:message code="Patient.patientDeceased" /></td>
+				<td colspan="2" style="font-weight: bold; background-color: #FDD; text-align: center; padding: 5px">
+					<spring:message code="@MODULE_ID@.patient.patientExitedCare" />
+					<br/>
+					Reason: ${patientExitObs.valueCoded.name}
+				</td>
 			</tr>
 		</c:if>
 		<tr>
@@ -59,18 +63,6 @@ $(document).ready(function() {
 					</c:when>
 				</c:choose>
 			</td>
-		</tr>
-	</table>
-</div>
-
-<b class="boxHeader">
-	<spring:message code="patientDashboard.overview" />
-</b>
-<div class="box" style="margin-bottom: 20px">
-	<table width="100%" cellspacing="0">
-		<tr>
-			<td style="font-"></td>
-			<td></td>
 		</tr>
 	</table>
 </div>
@@ -116,20 +108,20 @@ $(document).ready(function() {
 				<th><spring:message code="Encounter.datetime"/></th>
 				<th><spring:message code="Encounter.type"/></th>
 				<th><spring:message code="Encounter.location"/></th>
-				<th><spring:message code="Encounter.enterer"/></th>
+				<th style="text-align: center"><spring:message code="Encounter.observations"/></th>
 			</tr>
 		</thead>
 		<tbody>
 			<c:forEach items="${encounters}" var="encounter">
 				<tr>
-					<td>
-						<a href="observations.form?tracnetID=${patient.patientIdentifier.identifier}&amp;timestamp=${encounter.encounterDatetime.time}" class="obsDialogLink">
-							<openmrs:formatDate date="${encounter.encounterDatetime}" type="small" />
-						</a>
-					</td>
+					<td><openmrs:formatDate date="${encounter.encounterDatetime}" type="small" /></td>
 					<td>${encounter.encounterType.name}</td>
 					<td>${encounter.location.name}</td>
-					<td>${encounter.creator.personName}</td>
+					<td style="text-align: center">
+						<a href="observations.form?tracnetID=${patient.patientIdentifier.identifier}&amp;timestamp=${encounter.encounterDatetime.time}" class="obsDialogLink">
+							${fn:length(encounter.allObs)}
+						</a>
+					</td>
 				</tr>
 			</c:forEach>
 		</tbody>

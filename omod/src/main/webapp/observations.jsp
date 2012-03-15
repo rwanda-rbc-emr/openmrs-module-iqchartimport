@@ -19,8 +19,37 @@
 		</tr>
 		<c:forEach items="${observations}" var="obs">
 			<tr>
-				<td>${obs.concept.name}</td>
-				<td>${obs.valueNumeric}</td>
+				<td><openmrs:format concept="${obs.concept}" /> (${obs.concept.conceptId})</td>
+				<td>
+					<c:choose>
+						<c:when test="${obs.concept.datatype.hl7Abbreviation == 'BIT'}">
+							<c:choose>
+								<c:when test="${obs.valueBoolean}">
+									<spring:message code="general.true"/>
+								</c:when>
+								<c:otherwise>
+									<spring:message code="general.false"/>
+								</c:otherwise>
+							</c:choose>
+						</c:when>
+						<c:when test="${obs.concept.datatype.hl7Abbreviation == 'NM' || obs.concept.datatype.hl7Abbreviation == 'SN'}">
+							${obs.valueNumeric}
+							${obs.concept.units}
+						</c:when>
+						<c:when test="${obs.concept.datatype.hl7Abbreviation == 'CWE'}">
+							<openmrs:format concept="${obs.valueCoded}" /> (${obs.valueCoded.conceptId})
+						</c:when>
+						<c:when test="${obs.concept.datatype.hl7Abbreviation == 'ST'}">
+							<c:out value="${obs.valueText}" />
+						</c:when>
+						<c:when test="${obs.concept.datatype.hl7Abbreviation == 'DT' || obs.concept.datatype.hl7Abbreviation == 'TS' || obs.concept.datatype.hl7Abbreviation == 'TM'}">
+							<openmrs:formatDate date="${obs.valueDatetime}" type="medium" />
+						</c:when>
+						<c:when test="${obs.concept.datatype.hl7Abbreviation == 'ED'}">
+							<spring:message code="ConceptComplex.name" />
+						</c:when>
+					</c:choose>
+				</td>
 			</tr>
 		</c:forEach>
 	</table>

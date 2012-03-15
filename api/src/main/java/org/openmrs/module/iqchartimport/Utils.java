@@ -33,16 +33,30 @@ public class Utils {
 	}
 	
 	/**
+	 * Gets a concept by name
+	 * @param name the concept name
+	 * @return the concept
+	 * @throws IncompleteMappingException if concept doesn't exist
+	 */
+	public static Concept getConceptByName(String name) {
+		Concept concept = Context.getConceptService().getConcept(name);
+		if (concept == null) 
+			throw new IncompleteMappingException("Missing '" + name + "' concept");
+		
+		return concept;
+	}
+	
+	/**
 	 * Gets a concept from a global property
 	 * @param property the property name
 	 * @return the concept
 	 * @throws IncompleteMappingException if global property doesn't exist
 	 */
 	public static Concept getConceptFromProperty(String property) {
-		String codProp = Context.getAdministrationService().getGlobalProperty(property);
-		if (codProp == null) 
+		String conceptId = Context.getAdministrationService().getGlobalProperty(property);
+		if (conceptId == null || conceptId.length() == 0) 
 			throw new IncompleteMappingException("Missing '" + property + "' global property");
 		
-		return Context.getConceptService().getConcept(codProp);
+		return Context.getConceptService().getConcept(conceptId);
 	}
 }
