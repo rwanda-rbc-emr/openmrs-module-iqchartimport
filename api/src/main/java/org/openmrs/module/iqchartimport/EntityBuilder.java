@@ -193,7 +193,37 @@ public class EntityBuilder {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		
 		if (iqPatient.getEnrollDate() != null) {
-			encounterForDate(patient, iqPatient.getEnrollDate(), encounters);
+			Encounter encounter = encounterForDate(patient, iqPatient.getEnrollDate(), encounters);		
+			Concept conceptEnroll = MappingUtils.getConceptByName("METHOD OF ENROLLMENT");
+			Concept conceptMode = null;
+			
+			switch (iqPatient.getModeCode()) {
+			case OTHER:
+				conceptMode = MappingUtils.getConceptFromProperty("concept.otherNonCoded");
+				break;
+			case VCT:
+				conceptMode = MappingUtils.getConceptByName("VCT PROGRAM");
+				break;
+			case PMTCT:
+				conceptMode = MappingUtils.getConceptByName("PMTCT PROGRAM");
+				break;
+			case HOSPITALIZATION:
+				conceptMode = MappingUtils.getConceptByName("INPATIENT HOSPITALIZATION");
+				break;
+			case CONSULTATION:
+				conceptMode = MappingUtils.getConceptByName("OUTPATIENT CONSULTATION");
+				break;
+			case CONSULTATION_TB:
+				conceptMode = MappingUtils.getConceptByName("TUBERCULOSIS PROGRAM");
+				break;
+			case PIT:
+				conceptMode = MappingUtils.getConceptByName("OTHER OUTREACH PROGRAM");
+				break;
+			}
+			
+			Obs obs = makeObs(patient, iqPatient.getEnrollDate(), conceptEnroll);
+			obs.setValueCoded(conceptMode);
+			encounter.addObs(obs);
 		}
 	}
 	
@@ -225,11 +255,7 @@ public class EntityBuilder {
 				value = (double)((IQCD4Obs)iqObs).getCd4Count();		
 			}
 			
-			Obs obs = new Obs();
-			obs.setPerson(patient);
-			obs.setLocation(getEncounterLocation());
-			obs.setObsDatetime(iqObs.getDate());
-			obs.setConcept(concept);
+			Obs obs = makeObs(patient, iqObs.getDate(), concept);
 			obs.setValueNumeric(value);
 			encounter.addObs(obs);
 		}
@@ -261,33 +287,29 @@ public class EntityBuilder {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		
 		if (iqPatient.getStatusCode() != null && iqPatient.getStatusCode() == StatusCode.EXITED && iqPatient.getExitCode() != null) {
-			// Make exit reason obs
-			Concept reasonConcept = MappingUtils.getConceptFromProperty("concept.reasonExitedCare");
+			Concept conceptExited = MappingUtils.getConceptFromProperty("concept.reasonExitedCare");
+			Concept conceptReason = null;
 			
-			// Map exit code to cause concept
-			Concept causeConcept = null;	
-			if (iqPatient.getExitCode() == ExitCode.DECEASED) {
-				causeConcept = MappingUtils.getConceptFromProperty("concept.patientDied");
+			switch (iqPatient.getExitCode()) {
+			case DECEASED:
+				conceptReason = MappingUtils.getConceptFromProperty("concept.patientDied");
+				break;
+			case TRANSFERRED:
+				conceptReason = MappingUtils.getConceptByName("PATIENT TRANSFERRED OUT");
+				break;
+			case LOST:
+				conceptReason = MappingUtils.getConceptByName("PATIENT DEFAULTED");
+				break;
+			case STOPPED_BY_PATIENT:
+				conceptReason = MappingUtils.getConceptByName("PATIENT REFUSED");
+				break;
 			}
-			else if (iqPatient.getExitCode() == ExitCode.TRANSFERRED) {
-				// TODO load concepts from mappings?
-				causeConcept = MappingUtils.getConceptByName("PATIENT TRANSFERRED OUT");
-			}
-			else if (iqPatient.getExitCode() == ExitCode.LOST) {
-				causeConcept = MappingUtils.getConceptByName("PATIENT DEFAULTED");
-			}
-			else if (iqPatient.getExitCode() == ExitCode.STOPPED_BY_PATIENT) {
-				causeConcept = MappingUtils.getConceptByName("PATIENT REFUSED");
-			}
+			
 			// TODO mappings for remaining codes
 			
-			if (causeConcept != null) {
-				Obs obsExit = new Obs();
-				obsExit.setPerson(patient);
-				obsExit.setConcept(reasonConcept);
-				obsExit.setLocation(getEncounterLocation());
-				obsExit.setObsDatetime(iqPatient.getExitDate());
-				obsExit.setValueCoded(causeConcept);
+			if (conceptReason != null) {
+				Obs obsExit = makeObs(patient, iqPatient.getExitDate(), conceptExited);
+				obsExit.setValueCoded(conceptReason);
 				return obsExit;
 			}
 		}
@@ -398,5 +420,21 @@ public class EntityBuilder {
 		// Store in encounter map and return
 		encounters.put(date, encounter);
 		return encounter;
+	}
+	
+	/**
+	 * Helper method to create a new obs
+	 * @param patient the patient
+	 * @param date the date
+	 * @param concept the concept
+	 * @return the obs
+	 */
+	protected Obs makeObs(Patient patient, Date date, Concept concept) {
+		Obs obs = new Obs();
+		obs.setPerson(patient);
+		obs.setLocation(getEncounterLocation());
+		obs.setObsDatetime(date);
+		obs.setConcept(concept);
+		return obs;
 	}
 }
