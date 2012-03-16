@@ -29,7 +29,7 @@ import org.openmrs.module.iqchartimport.TestUtils;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
-import org.openmrs.module.iqchartimport.iq.code.HIVStatusCode;
+import org.openmrs.module.iqchartimport.iq.code.HIVStatusPartCode;
 import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
 import org.openmrs.module.iqchartimport.iq.code.ModeCode;
 import org.openmrs.module.iqchartimport.iq.code.SexCode;
@@ -91,7 +91,7 @@ public class IQChartSessionTest {
 		Assert.assertEquals("Unknown", patient.getSector());
 		Assert.assertEquals("Unknown", patient.getDistrict());
 		Assert.assertEquals(MaritalCode.MARRIED, patient.getMaritalStatusCode());
-		Assert.assertEquals(HIVStatusCode.UNKNOWN, patient.getHIVStatusPartCode());
+		Assert.assertEquals(HIVStatusPartCode.UNKNOWN, patient.getHIVStatusPartCode());
 		Assert.assertEquals(ModeCode.VCT, patient.getModeCode());
 		Assert.assertEquals("", patient.getModeAdmissionOther());
 		Assert.assertEquals(TransferCode.NEW, patient.getTransferCode());

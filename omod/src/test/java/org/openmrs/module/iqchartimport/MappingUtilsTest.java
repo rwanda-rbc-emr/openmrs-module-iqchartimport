@@ -14,7 +14,7 @@
 
 package org.openmrs.module.iqchartimport;
 
-import junit.framework.Assert;
+import static org.junit.Assert.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,11 +23,11 @@ import org.junit.Test;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
- * Test cases for Mappings class
+ * Test cases for MappingsUtils class
  */
-public class MappingsTest extends BaseModuleContextSensitiveTest {
+public class MappingUtilsTest extends BaseModuleContextSensitiveTest {
 
-	protected static final Log log = LogFactory.getLog(MappingsTest.class);
+	protected static final Log log = LogFactory.getLog(MappingUtilsTest.class);
 	
 	@Before
 	public void setup() throws Exception {
@@ -35,11 +35,23 @@ public class MappingsTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	public void load() {
-		TestUtils.setGlobalProperty(Constants.PROP_ADDRESS_PROVINCE, "Prov123");
-		
-		Mappings.getInstance().load();
-		
-		Assert.assertEquals("Prov123", Mappings.getInstance().getAddressProvince());
+	public void getConcept_shouldReturnConceptIfExists() {
+		// Test by ID
+		assertEquals(new Integer(5497), MappingUtils.getConcept("5497").getConceptId());
+		// Test by name
+		assertEquals(new Integer(5497), MappingUtils.getConcept("CD4 COUNT").getConceptId());
+		// Test by global property lookup
+		assertEquals(new Integer(5497), MappingUtils.getConcept("@concept.cd4_count").getConceptId());	
+	}
+	
+	@Test
+	public void getConcept_shouldThrowExceptionIfConceptNotExists() {
+		try {
+			MappingUtils.getConcept("XXXXXXX");	
+			
+			fail("MappingUtils.getConcept should have thrown exception");
+		}
+		catch (IncompleteMappingException ex) {
+		}
 	}
 }

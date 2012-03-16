@@ -19,6 +19,7 @@ package org.openmrs.module.iqchartimport.iq.code;
  */
 public enum ExitCode {
 	
+	// TODO missing mappings
 	OTHER (null),
 	TRANSFERRED ("PATIENT TRANSFERRED OUT"),
 	DECEASED ("@concept.patientDied"),

@@ -77,8 +77,79 @@
 		retire_reason="[NULL]"
 		uuid="8d5b3108-c2cc-11de-8d13-0010c6dffd0f"
 	/>
-	<global_property property="iqchartimport.tracnetIDTypeId" property_value="0" uuid="8d793bee-c2cc-11de-8d13-0010c6df0000" />		
-	<global_property property="iqchartimport.addressCountry" property_value="Testland" uuid="8d793bee-c2cc-11de-8d13-0010c6df0001" />	
-	<global_property property="iqchartimport.addressProvince" property_value="Testern" uuid="8d793bee-c2cc-11de-8d13-0010c6df0002" />
-	<global_property property="iqchartimport.hivProgramId" property_value="1" uuid="8d793bee-c2cc-11de-8d13-0010c6df0003" />
+	<!-- dbunit throws weird error when I format this with attributes for columns -->
+	<concept>
+		<concept_id>5497</concept_id>
+		<retired>0</retired>
+		<short_name>CD4</short_name>
+		<description></description>
+		<form_text>NULL</form_text>
+		<datatype_id>1</datatype_id>
+		<class_id>1</class_id>
+		<is_set>0</is_set>
+		<creator>1</creator>
+		<date_created>2004-08-12 00:00:00</date_created>
+		<default_charge>NULL</default_charge>
+		<version></version>
+		<changed_by>1</changed_by>
+		<date_changed>2012-03-05 13:53:06</date_changed>
+		<retired_by>NULL</retired_by>
+		<date_retired>NULL</date_retired>
+		<retire_reason>NULL</retire_reason>
+		<uuid>3ceda710-26fe-102b-80cb-0017a47871b2</uuid>
+	</concept>
+	<concept_name>
+		<concept_id>5497</concept_id>
+		<name>CD4 COUNT</name>
+		<locale>en</locale>
+		<creator>1</creator>
+		<date_created>2004-08-12 00:00:00</date_created>
+		<concept_name_id>3866</concept_name_id>
+		<voided>0</voided>
+		<voided_by>NULL</voided_by>
+		<date_voided>NULL</date_voided>
+		<void_reason>NULL</void_reason>
+		<uuid>3e3f6df6-26fe-102b-80cb-0017a47871b2</uuid>
+	</concept_name>
+	<concept_numeric>
+		<concept_id>5497</concept_id>
+		<hi_absolute>NULL</hi_absolute>
+		<hi_critical>NULL</hi_critical>
+		<hi_normal>NULL</hi_normal>
+		<low_absolute>0</low_absolute>
+		<low_critical>350</low_critical>
+		<low_normal>NULL</low_normal>
+		<units>cells/mm3</units>
+		<precise>0</precise>
+	</concept_numeric>
+	<concept_datatype
+		concept_datatype_id="1"
+		name="Numeric"
+		hl7_abbreviation="NM"
+		description="Numeric value, including integer or float (e.g., creatinine, weight)"
+		creator="1"
+		date_created="2004-02-02 07:00:00"
+		retired="0"
+		retired_by="[NULL]"
+		date_retired="[NULL]"
+		retire_reason="[NULL]"
+		uuid="8d4a4488-c2cc-11de-8d13-0010c6dffd0f"
+	/>
+	<concept_class
+		concept_class_id="1"
+		name="Test"
+		description="Acq. during patient encounter (vitals, labs, etc.)"
+		creator="1"
+		date_created="2004-02-02 07:00:00"
+		retired="0"
+		retired_by="[NULL]"
+		date_retired="[NULL]"
+		retire_reason="[NULL]"	
+		uuid="8d4907b2-c2cc-11de-8d13-0010c6dffd0f"	
+	/>
+	<global_property property="concept.cd4_count" property_value="5497" uuid="8d793bee-c2cc-11de-8d13-0010c6df0001" />		
+	<global_property property="iqchartimport.tracnetIDTypeId" property_value="0" uuid="8d793bee-c2cc-11de-8d13-0010c6df1001" />		
+	<global_property property="iqchartimport.addressCountry" property_value="Testland" uuid="8d793bee-c2cc-11de-8d13-0010c6df1002" />	
+	<global_property property="iqchartimport.addressProvince" property_value="Testern" uuid="8d793bee-c2cc-11de-8d13-0010c6df1003" />
+	<global_property property="iqchartimport.hivProgramId" property_value="1" uuid="8d793bee-c2cc-11de-8d13-0010c6df1004" />
 </dataset>
