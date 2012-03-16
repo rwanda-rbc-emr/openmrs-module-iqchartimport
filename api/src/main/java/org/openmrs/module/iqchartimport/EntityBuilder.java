@@ -39,6 +39,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.module.iqchartimport.iq.IQPatient;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
+import org.openmrs.module.iqchartimport.iq.code.HIVStatusPartCode;
 import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
 import org.openmrs.module.iqchartimport.iq.code.ModeCode;
 import org.openmrs.module.iqchartimport.iq.code.TransferCode;
@@ -217,6 +218,15 @@ public class EntityBuilder {
 			Concept conceptTransferIn = MappingUtils.getConcept(TransferCode.mappedQuestion);
 			Concept conceptAns = MappingUtils.getConcept(iqPatient.getTransferCode().mappedAnswer);
 			Obs obs = makeObs(patient, iqPatient.getEnrollDate(), conceptTransferIn);
+			obs.setValueCoded(conceptAns);
+			encounter.addObs(obs);
+		}
+		
+		// Add 'partner HIV status' obs
+		if (iqPatient.getHIVStatusPartCode() != null) {
+			Concept conceptPartStatus = MappingUtils.getConcept(HIVStatusPartCode.mappedQuestion);
+			Concept conceptAns = MappingUtils.getConcept(iqPatient.getTransferCode().mappedAnswer);
+			Obs obs = makeObs(patient, iqPatient.getEnrollDate(), conceptPartStatus);
 			obs.setValueCoded(conceptAns);
 			encounter.addObs(obs);
 		}

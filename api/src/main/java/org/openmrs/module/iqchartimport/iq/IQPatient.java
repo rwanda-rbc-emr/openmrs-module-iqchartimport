@@ -17,7 +17,7 @@ package org.openmrs.module.iqchartimport.iq;
 import java.util.Date;
 
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
-import org.openmrs.module.iqchartimport.iq.code.HIVStatusCode;
+import org.openmrs.module.iqchartimport.iq.code.HIVStatusPartCode;
 import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
 import org.openmrs.module.iqchartimport.iq.code.ModeCode;
 import org.openmrs.module.iqchartimport.iq.code.SexCode;
@@ -41,7 +41,7 @@ public class IQPatient {
 	private String sector;
 	private String district;
 	private MaritalCode maritalStatusCode;
-	private HIVStatusCode hivStatusPartCode;
+	private HIVStatusPartCode hivStatusPartCode;
 	private ModeCode modeCode;
 	private String modeAdmissionOther;
 	private TransferCode transferCode;
@@ -163,11 +163,11 @@ public class IQPatient {
 		this.maritalStatusCode = maritalStatusCode;
 	}
 
-	public HIVStatusCode getHIVStatusPartCode() {
+	public HIVStatusPartCode getHIVStatusPartCode() {
 		return hivStatusPartCode;
 	}
 
-	public void setHIVStatusPartCode(HIVStatusCode hivStatusPartCode) {
+	public void setHIVStatusPartCode(HIVStatusPartCode hivStatusPartCode) {
 		this.hivStatusPartCode = hivStatusPartCode;
 	}
 

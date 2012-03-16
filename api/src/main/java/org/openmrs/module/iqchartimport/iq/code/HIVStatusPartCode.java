@@ -15,20 +15,32 @@
 package org.openmrs.module.iqchartimport.iq.code;
 
 /**
- * Patient HIV status code
+ * Patient's partner HIV status code
  */
-public enum HIVStatusCode {
-	NEGATIVE,
-	POSITIVE,
-	UNKNOWN,
-	NOTTESTED;
+public enum HIVStatusPartCode {
+	
+	NEGATIVE ("NEGATIVE"),
+	POSITIVE ("POSITIVE"),
+	UNKNOWN ("UNKNOWN"),
+	NOTTESTED ("NO TEST");
+	
+	public static final String mappedQuestion = "TESTING STATUS OF PARTNER";
+	public final String mappedAnswer;
+	
+	/**
+	 * Constructs new enum value
+	 * @param mappedAnswer the mapped answer
+	 */
+	HIVStatusPartCode(String mappedAnswer) {
+		this.mappedAnswer = mappedAnswer;
+	}
 	
 	/**
 	 * Converts a Byte value to an enum value
 	 * @param val the Byte value
 	 * @return the enum value or null if byte value is null
 	 */
-	public static HIVStatusCode fromByte(Byte val) {
+	public static HIVStatusPartCode fromByte(Byte val) {
 		return val != null ? values()[val] : null;
 	}
 }

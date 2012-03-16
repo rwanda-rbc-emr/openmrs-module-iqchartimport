@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
-import org.openmrs.module.iqchartimport.iq.code.HIVStatusCode;
+import org.openmrs.module.iqchartimport.iq.code.HIVStatusPartCode;
 import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
 import org.openmrs.module.iqchartimport.iq.code.ModeCode;
 import org.openmrs.module.iqchartimport.iq.code.SexCode;
@@ -229,7 +229,7 @@ public class IQChartSession {
 		patient.setSector((String)row.get("sector"));
 		patient.setDistrict((String)row.get("district"));
 		patient.setMaritalStatusCode(MaritalCode.fromByte((Byte)row.get("maritalStatusCode")));
-		patient.setHIVStatusPartCode(HIVStatusCode.fromByte((Byte)row.get("HIVStatusPartCode")));
+		patient.setHIVStatusPartCode(HIVStatusPartCode.fromByte((Byte)row.get("HIVStatusPartCode")));
 		patient.setModeCode(ModeCode.fromByte((Byte)row.get("ModeCode")));
 		patient.setModeAdmissionOther((String)row.get("ModeAdmissionOther"));
 		patient.setTransferCode(TransferCode.fromByte((Byte)row.get("NewTransfer")));
