@@ -42,11 +42,13 @@ import org.openmrs.module.iqchartimport.iq.code.ExitCode;
 import org.openmrs.module.iqchartimport.iq.code.HIVStatusPartCode;
 import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
 import org.openmrs.module.iqchartimport.iq.code.ModeCode;
+import org.openmrs.module.iqchartimport.iq.code.TBScreenCode;
 import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 import org.openmrs.module.iqchartimport.iq.obs.BaseIQObs;
-import org.openmrs.module.iqchartimport.iq.obs.IQCD4Obs;
-import org.openmrs.module.iqchartimport.iq.obs.IQHeightObs;
-import org.openmrs.module.iqchartimport.iq.obs.IQWeightObs;
+import org.openmrs.module.iqchartimport.iq.obs.CD4Obs;
+import org.openmrs.module.iqchartimport.iq.obs.HeightObs;
+import org.openmrs.module.iqchartimport.iq.obs.TBScreenObs;
+import org.openmrs.module.iqchartimport.iq.obs.WeightObs;
 
 /**
  * Builder which creates OpenMRS entities from IQChart objects equivalents
@@ -244,25 +246,30 @@ public class EntityBuilder {
 		
 		for (BaseIQObs iqObs : iqObss) {
 			Encounter encounter = encounterForDate(patient, iqObs.getDate(), encounters);		
-			Concept concept = null;
-			Double value = null;
+			Obs obs = makeObs(patient, iqObs.getDate(), null);
 			
-			if (iqObs instanceof IQHeightObs) {
-				concept = MappingUtils.getConcept("@concept.height");
-				value = (double)((IQHeightObs)iqObs).getHeight();		
+			if (iqObs instanceof HeightObs) {
+				obs.setConcept(MappingUtils.getConcept("@concept.height"));
+				obs.setValueNumeric((double)((HeightObs)iqObs).getHeight());		
 			}
-			else if (iqObs instanceof IQWeightObs) {
-				concept = MappingUtils.getConcept("@concept.weight");
-				value = (double)((IQWeightObs)iqObs).getWeight();		
+			else if (iqObs instanceof WeightObs) {
+				obs.setConcept(MappingUtils.getConcept("@concept.weight"));
+				obs.setValueNumeric((double)((WeightObs)iqObs).getWeight());		
 			}
-			else if (iqObs instanceof IQCD4Obs) {
-				concept = MappingUtils.getConcept("@concept.cd4_count");
-				value = (double)((IQCD4Obs)iqObs).getCd4Count();		
+			else if (iqObs instanceof CD4Obs) {
+				obs.setConcept(MappingUtils.getConcept("@concept.cd4_count"));
+				obs.setValueNumeric((double)((CD4Obs)iqObs).getCd4Count());		
 			}
-			
-			Obs obs = makeObs(patient, iqObs.getDate(), concept);
-			obs.setValueNumeric(value);
-			encounter.addObs(obs);
+			else if (iqObs instanceof TBScreenObs) {
+				Concept conceptAns = MappingUtils.getConcept(((TBScreenObs)iqObs).getCode().mappedAnswer);
+				if (conceptAns != null) {
+					obs.setConcept(MappingUtils.getConcept(TBScreenCode.mappedQuestion));
+					obs.setValueCoded(conceptAns);
+				}
+			}
+
+			if (obs.getConcept() != null)
+				encounter.addObs(obs);
 		}
 	}
 	

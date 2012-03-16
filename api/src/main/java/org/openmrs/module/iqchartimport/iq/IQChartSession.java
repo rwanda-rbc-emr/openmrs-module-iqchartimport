@@ -31,11 +31,13 @@ import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
 import org.openmrs.module.iqchartimport.iq.code.ModeCode;
 import org.openmrs.module.iqchartimport.iq.code.SexCode;
 import org.openmrs.module.iqchartimport.iq.code.StatusCode;
+import org.openmrs.module.iqchartimport.iq.code.TBScreenCode;
 import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 import org.openmrs.module.iqchartimport.iq.obs.BaseIQObs;
-import org.openmrs.module.iqchartimport.iq.obs.IQCD4Obs;
-import org.openmrs.module.iqchartimport.iq.obs.IQHeightObs;
-import org.openmrs.module.iqchartimport.iq.obs.IQWeightObs;
+import org.openmrs.module.iqchartimport.iq.obs.CD4Obs;
+import org.openmrs.module.iqchartimport.iq.obs.HeightObs;
+import org.openmrs.module.iqchartimport.iq.obs.TBScreenObs;
+import org.openmrs.module.iqchartimport.iq.obs.WeightObs;
 
 import com.healthmarketscience.jackcess.Cursor;
 import com.healthmarketscience.jackcess.Database;
@@ -55,6 +57,7 @@ public class IQChartSession {
 	private static final String TABLE_CD4 = "dtl_CD4";
 	private static final String TABLE_HEIGHT = "dtl_height";
 	private static final String TABLE_WEIGHT = "dtl_weight";
+	private static final String TABLE_TBSCREEN = "dtl_TBScreen";
 
 	/**
 	 * Key names
@@ -136,6 +139,7 @@ public class IQChartSession {
 		allObs.addAll(getPatientCD4Obs(patient));
 		allObs.addAll(getPatientHeightObs(patient));
 		allObs.addAll(getPatientWeightObs(patient));
+		allObs.addAll(getPatientTBScreenObs(patient));
 		
 		Collections.sort(allObs);
 		return allObs;
@@ -146,14 +150,14 @@ public class IQChartSession {
 	 * @param patient the patient
 	 * @return the obs
 	 */
-	public List<IQCD4Obs> getPatientCD4Obs(IQPatient patient) {
-		List<IQCD4Obs> obslist = new ArrayList<IQCD4Obs>();
+	public List<CD4Obs> getPatientCD4Obs(IQPatient patient) {
+		List<CD4Obs> obslist = new ArrayList<CD4Obs>();
 		try {
 			Table table = database.getTable(TABLE_CD4);
 			
 			for (Map<String, Object> row : table) {
 				if ((Integer)row.get("TRACNetID") == patient.getTracnetID()) {
-					IQCD4Obs obs = new IQCD4Obs((Date)row.get("date"), (Short)row.get("CD4count"));
+					CD4Obs obs = new CD4Obs((Date)row.get("date"), (Short)row.get("CD4count"));
 					obs.setTestType((String)row.get("TestType"));
 					obslist.add(obs);
 				}
@@ -170,14 +174,14 @@ public class IQChartSession {
 	 * @param patient the patient
 	 * @return the obs
 	 */
-	public List<IQHeightObs> getPatientHeightObs(IQPatient patient) {
-		List<IQHeightObs> obslist = new ArrayList<IQHeightObs>();
+	public List<HeightObs> getPatientHeightObs(IQPatient patient) {
+		List<HeightObs> obslist = new ArrayList<HeightObs>();
 		try {
 			Table table = database.getTable(TABLE_HEIGHT);
 			
 			for (Map<String, Object> row : table) {
 				if ((Integer)row.get(PATIENT_KEY) == patient.getTracnetID()) {
-					obslist.add(new IQHeightObs((Date)row.get("date"), (Short)row.get("Height")));
+					obslist.add(new HeightObs((Date)row.get("date"), (Short)row.get("Height")));
 				}
 			}
 			return obslist;
@@ -192,14 +196,36 @@ public class IQChartSession {
 	 * @param patient the patient
 	 * @return the obs
 	 */
-	public List<IQWeightObs> getPatientWeightObs(IQPatient patient) {
-		List<IQWeightObs> obslist = new ArrayList<IQWeightObs>();
+	public List<WeightObs> getPatientWeightObs(IQPatient patient) {
+		List<WeightObs> obslist = new ArrayList<WeightObs>();
 		try {
 			Table table = database.getTable(TABLE_WEIGHT);
 			
 			for (Map<String, Object> row : table) {
 				if ((Integer)row.get("TRACNetID") == patient.getTracnetID()) {
-					obslist.add(new IQWeightObs((Date)row.get("date"), (Short)row.get("weight")));
+					obslist.add(new WeightObs((Date)row.get("date"), (Short)row.get("weight")));
+				}
+			}
+			return obslist;
+			
+		} catch (IOException e) {		
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets all the TB screening obs for the given patient
+	 * @param patient the patient
+	 * @return the obs
+	 */
+	public List<TBScreenObs> getPatientTBScreenObs(IQPatient patient) {
+		List<TBScreenObs> obslist = new ArrayList<TBScreenObs>();
+		try {
+			Table table = database.getTable(TABLE_TBSCREEN);
+			
+			for (Map<String, Object> row : table) {
+				if ((Integer)row.get("TRACNetID") == patient.getTracnetID()) {
+					obslist.add(new TBScreenObs((Date)row.get("date"), TBScreenCode.fromByte((Byte)row.get("TBScreen"))));
 				}
 			}
 			return obslist;
