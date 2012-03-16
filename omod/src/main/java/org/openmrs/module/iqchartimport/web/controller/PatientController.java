@@ -67,7 +67,9 @@ public class PatientController {
 			List<PatientProgram> patientPrograms = builder.getPatientPrograms(tracnetID);
 			List<Encounter> encounters = builder.getPatientEncounters(patient, tracnetID);
 			
-			Obs patientExitObs = Utils.findObs(encounters, MappingUtils.getConcept(ExitCode.mappedQuestion)).get(0);
+			// Find exit reason obs
+			List<Obs> exitObss = Utils.findObs(encounters, MappingUtils.getConcept(ExitCode.mappedQuestion));
+			Obs patientExitObs = exitObss.size() > 0 ? exitObss.get(0) : null;
 			
 			model.put("patient", patient);
 			model.put("patientPrograms", patientPrograms);
