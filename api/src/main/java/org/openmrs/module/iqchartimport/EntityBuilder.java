@@ -354,13 +354,13 @@ public class EntityBuilder {
 		boolean isPediatric = (age < Constants.ADULT_START_AGE);
 		
 		if (isInitial && isPediatric)
-			return MappingUtils.getEncounterTypeByName("PEDSINITIAL");
+			return MappingUtils.getEncounterType("PEDSINITIAL");
 		else if (isInitial && !isPediatric)
-			return MappingUtils.getEncounterTypeByName("ADULTINITIAL");
+			return MappingUtils.getEncounterType("ADULTINITIAL");
 		else if (!isInitial && isPediatric)
-			return MappingUtils.getEncounterTypeByName("PEDSRETURN");
+			return MappingUtils.getEncounterType("PEDSRETURN");
 		else
-			return MappingUtils.getEncounterTypeByName("ADULTRETURN");
+			return MappingUtils.getEncounterType("ADULTRETURN");
 	}
 	
 	/**

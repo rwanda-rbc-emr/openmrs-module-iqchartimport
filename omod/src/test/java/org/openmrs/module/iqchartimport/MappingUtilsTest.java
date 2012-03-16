@@ -35,7 +35,24 @@ public class MappingUtilsTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	public void getConcept_shouldReturnConceptIfExists() {
+	public void getEncounterType_shouldReturnIfExists() {
+		// Test by name
+		assertEquals(new Integer(1), MappingUtils.getEncounterType("ADULTINITIAL").getEncounterTypeId());
+		assertEquals(new Integer(2), MappingUtils.getEncounterType("ADULTRETURN").getEncounterTypeId());
+	}
+	
+	@Test
+	public void getEncounterType_shouldThrowExceptionIfNotExists() {
+		try {
+			MappingUtils.getEncounterType("XXXXXXX");			
+			fail("MappingUtils.getEncounterType should have thrown exception");
+		}
+		catch (IncompleteMappingException ex) {
+		}
+	}
+	
+	@Test
+	public void getConcept_shouldReturnIfExists() {
 		// Test by ID
 		assertEquals(new Integer(5497), MappingUtils.getConcept("5497").getConceptId());
 		// Test by name
@@ -45,10 +62,17 @@ public class MappingUtilsTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	public void getConcept_shouldThrowExceptionIfConceptNotExists() {
+	public void getConcept_shouldThrowExceptionIfNotExists() {
 		try {
-			MappingUtils.getConcept("XXXXXXX");	
-			
+			// Test by name/ID
+			MappingUtils.getConcept("XXXXXXX");			
+			fail("MappingUtils.getConcept should have thrown exception");
+		}
+		catch (IncompleteMappingException ex) {
+		}
+		try {
+			// Test by global property lookup
+			MappingUtils.getConcept("@XXXXXXX");			
 			fail("MappingUtils.getConcept should have thrown exception");
 		}
 		catch (IncompleteMappingException ex) {

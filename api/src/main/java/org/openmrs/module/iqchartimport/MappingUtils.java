@@ -33,7 +33,7 @@ public class MappingUtils {
 	 * @return the encounter type
 	 * @throws IncompleteMappingException if encounter type doesn't exist
 	 */
-	public static EncounterType getEncounterTypeByName(String name) {
+	public static EncounterType getEncounterType(String name) {
 		EncounterType encType = Context.getEncounterService().getEncounterType(name);
 		if (encType == null) 
 			throw new IncompleteMappingException("Missing '" + name + "' encounter type");
