@@ -38,10 +38,12 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.module.iqchartimport.iq.IQPatient;
+import org.openmrs.module.iqchartimport.iq.Pregnancy;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
 import org.openmrs.module.iqchartimport.iq.code.HIVStatusPartCode;
 import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
 import org.openmrs.module.iqchartimport.iq.code.ModeCode;
+import org.openmrs.module.iqchartimport.iq.code.SexCode;
 import org.openmrs.module.iqchartimport.iq.code.TBScreenCode;
 import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 import org.openmrs.module.iqchartimport.iq.obs.BaseIQObs;
@@ -179,6 +181,8 @@ public class EntityBuilder {
 		if (iqPatient.getExitDate() != null)
 			makePatientExitEncounter(patient, tracnetID, encounters);
 		
+		addPregnancyObsToEncounters(patient, tracnetID, encounters);
+		
 		// Create sorted list
 		List<Encounter> sorted = new ArrayList<Encounter>();
 		for (Date date : encounters.keySet())
@@ -186,14 +190,14 @@ public class EntityBuilder {
 				
 		return sorted;
 	}
-	
+
 	/**
 	 * Makes the initial encounter for a patient
 	 * @param patient the patient
 	 * @param tracnetID the patient TRACnet ID
 	 * @param encounters the existing encounters
 	 */
-	public void makePatientInitialEncounter(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {	
+	protected void makePatientInitialEncounter(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {	
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		Encounter encounter = encounterForDate(patient, iqPatient.getEnrollDate(), encounters);
 		
@@ -240,7 +244,7 @@ public class EntityBuilder {
 	 * @param tracnetID the patient TRACnet ID
 	 * @param encounters the existing encounters
 	 */
-	public void makePatientObsEncounters(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {
+	protected void makePatientObsEncounters(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		List<BaseIQObs> iqObss = session.getPatientObs(iqPatient);
 		
@@ -279,7 +283,7 @@ public class EntityBuilder {
 	 * @param tracnetID the patient TRACnet ID
 	 * @param encounters the existing encounters
 	 */
-	public void makePatientExitEncounter(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {
+	protected void makePatientExitEncounter(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		Encounter encounter = encounterForDate(patient, iqPatient.getExitDate(), encounters);
 		
@@ -293,6 +297,42 @@ public class EntityBuilder {
 				obs.setValueCoded(conceptReason);
 				encounter.addObs(obs);
 			}
+		}
+	}
+	
+	/**
+	 * Adds pregnancy obs to all encounters
+	 * @param patient the patient
+	 * @param tracnetID the patient's TRACnet ID
+	 * @param encounters the patient's encounters
+	 */
+	protected void addPregnancyObsToEncounters(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {
+		IQPatient iqPatient = session.getPatient(tracnetID);
+		List<Pregnancy> pregnancies = session.getPatientPregnancies(iqPatient);
+		Concept conceptPregnancy = MappingUtils.getConcept("PATIENT PREGNANCY STATUS");
+		Concept conceptYes = MappingUtils.getConcept("YES");
+		Concept conceptNo = MappingUtils.getConcept("NO");
+		Concept conceptNA = MappingUtils.getConcept("NOT APPLICABLE");
+		
+		for (Date date : encounters.keySet()) {
+			Obs obs = makeObs(patient, date, conceptPregnancy);
+			
+			// Pregnancy = not applicable for all male patients
+			if (iqPatient.getSexCode() == SexCode.MALE)
+				obs.setValueCoded(conceptNA);
+			else {
+				// Check each of patient's pregnancies 
+				boolean pregOnDate = false;
+				for (Pregnancy pregnancy : pregnancies) {
+					if (date.after(pregnancy.getDateStart()) && date.before(pregnancy.getDateEnd())) {
+						pregOnDate = true;
+						break;
+					}
+				}
+				
+				obs.setValueCoded(pregOnDate ? conceptYes : conceptNo);
+			}
+			encounters.get(date).addObs(obs);
 		}
 	}
 	

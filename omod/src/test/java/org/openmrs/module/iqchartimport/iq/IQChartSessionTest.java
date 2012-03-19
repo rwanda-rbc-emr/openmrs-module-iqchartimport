@@ -14,11 +14,11 @@
 
 package org.openmrs.module.iqchartimport.iq;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -67,61 +67,72 @@ public class IQChartSessionTest {
 	
 	@Test
 	public void getNumPatients() {
-		Assert.assertEquals(2601, session.getNumPatients());
+		assertEquals(2601, session.getNumPatients());
 	}
 	
 	@Test
 	public void getPatients() {
 		List<IQPatient> patients = session.getPatients();
-		Assert.assertEquals(2601, patients.size());
+		assertEquals(2601, patients.size());
 	}
 	
 	@Test
 	public void getPatient() {
 		IQPatient patient = session.getPatient(235001);
-		Assert.assertEquals(235001, patient.getTracnetID());
-		Assert.assertEquals("Jane", patient.getFirstName());
-		Assert.assertEquals("Doe", patient.getLastName());
-		Assert.assertEquals("001", patient.getHospitalID());
-		Assert.assertEquals(TestUtils.date(2004, 9, 29), patient.getEnrollDate());
-		Assert.assertEquals(SexCode.FEMALE, patient.getSexCode());
-		Assert.assertEquals(TestUtils.date(1972, 1, 1), patient.getDob());
-		Assert.assertTrue(patient.isDobEstimated());
-		Assert.assertEquals("Unknown", patient.getCellule());
-		Assert.assertEquals("Unknown", patient.getSector());
-		Assert.assertEquals("Unknown", patient.getDistrict());
-		Assert.assertEquals(MaritalCode.MARRIED, patient.getMaritalStatusCode());
-		Assert.assertEquals(HIVStatusPartCode.UNKNOWN, patient.getHIVStatusPartCode());
-		Assert.assertEquals(ModeCode.VCT, patient.getModeCode());
-		Assert.assertEquals("", patient.getModeAdmissionOther());
-		Assert.assertEquals(TransferCode.NEW, patient.getTransferCode());
-		Assert.assertEquals(TestUtils.date(2007, 8, 28), patient.getARVStartDate());
-		Assert.assertEquals(StatusCode.ACTIVE, patient.getStatusCode());
-		Assert.assertNull(patient.getExitDate());
-		Assert.assertNull(patient.getExitCode());
-		Assert.assertNull(patient.getExitReasonOther());
+		assertEquals(235001, patient.getTracnetID());
+		assertEquals("Jane", patient.getFirstName());
+		assertEquals("Doe", patient.getLastName());
+		assertEquals("001", patient.getHospitalID());
+		assertEquals(TestUtils.date(2004, 9, 29), patient.getEnrollDate());
+		assertEquals(SexCode.FEMALE, patient.getSexCode());
+		assertEquals(TestUtils.date(1972, 1, 1), patient.getDob());
+		assertTrue(patient.isDobEstimated());
+		assertEquals("Unknown", patient.getCellule());
+		assertEquals("Unknown", patient.getSector());
+		assertEquals("Unknown", patient.getDistrict());
+		assertEquals(MaritalCode.MARRIED, patient.getMaritalStatusCode());
+		assertEquals(HIVStatusPartCode.UNKNOWN, patient.getHIVStatusPartCode());
+		assertEquals(ModeCode.VCT, patient.getModeCode());
+		assertEquals("", patient.getModeAdmissionOther());
+		assertEquals(TransferCode.NEW, patient.getTransferCode());
+		assertEquals(TestUtils.date(2007, 8, 28), patient.getARVStartDate());
+		assertEquals(StatusCode.ACTIVE, patient.getStatusCode());
+		assertNull(patient.getExitDate());
+		assertNull(patient.getExitCode());
+		assertNull(patient.getExitReasonOther());
 		
 		patient = session.getPatient(185568);
-		Assert.assertEquals(185568, patient.getTracnetID());
-		Assert.assertEquals("Jane", patient.getFirstName());
-		Assert.assertEquals("Doe", patient.getLastName());
-		Assert.assertEquals("2040", patient.getHospitalID());
-		Assert.assertEquals(TestUtils.date(2007, 12, 24), patient.getEnrollDate());
-		Assert.assertEquals(SexCode.FEMALE, patient.getSexCode());
-		Assert.assertEquals(TestUtils.date(1987, 2, 16), patient.getDob());
-		Assert.assertFalse(patient.isDobEstimated());
-		Assert.assertEquals("Unknown", patient.getCellule());
-		Assert.assertEquals("Unknown", patient.getSector());
-		Assert.assertEquals("Unknown", patient.getDistrict());
-		Assert.assertEquals(MaritalCode.LIVINGWITHPARTNER, patient.getMaritalStatusCode());
-		Assert.assertNull(patient.getHIVStatusPartCode());
-		Assert.assertEquals(ModeCode.VCT, patient.getModeCode());
-		Assert.assertEquals("", patient.getModeAdmissionOther());
-		Assert.assertEquals(TransferCode.TRANSFER, patient.getTransferCode());
-		Assert.assertEquals(TestUtils.date(2006, 8, 1), patient.getARVStartDate());
-		Assert.assertEquals(StatusCode.EXITED, patient.getStatusCode());
-		Assert.assertEquals(TestUtils.date(2009, 8, 14), patient.getExitDate());
-		Assert.assertEquals(ExitCode.TRANSFERRED, patient.getExitCode());
-		Assert.assertNull(patient.getExitReasonOther());
+		assertEquals(185568, patient.getTracnetID());
+		assertEquals("Jane", patient.getFirstName());
+		assertEquals("Doe", patient.getLastName());
+		assertEquals("2040", patient.getHospitalID());
+		assertEquals(TestUtils.date(2007, 12, 24), patient.getEnrollDate());
+		assertEquals(SexCode.FEMALE, patient.getSexCode());
+		assertEquals(TestUtils.date(1987, 2, 16), patient.getDob());
+		assertFalse(patient.isDobEstimated());
+		assertEquals("Unknown", patient.getCellule());
+		assertEquals("Unknown", patient.getSector());
+		assertEquals("Unknown", patient.getDistrict());
+		assertEquals(MaritalCode.LIVINGWITHPARTNER, patient.getMaritalStatusCode());
+		assertNull(patient.getHIVStatusPartCode());
+		assertEquals(ModeCode.VCT, patient.getModeCode());
+		assertEquals("", patient.getModeAdmissionOther());
+		assertEquals(TransferCode.TRANSFER, patient.getTransferCode());
+		assertEquals(TestUtils.date(2006, 8, 1), patient.getARVStartDate());
+		assertEquals(StatusCode.EXITED, patient.getStatusCode());
+		assertEquals(TestUtils.date(2009, 8, 14), patient.getExitDate());
+		assertEquals(ExitCode.TRANSFERRED, patient.getExitCode());
+		assertNull(patient.getExitReasonOther());
+	}
+	
+	@Test
+	public void getPatientPregnancies() {
+		IQPatient patient = session.getPatient(236862);
+		List<Pregnancy> pregnancies = session.getPatientPregnancies(patient);
+		
+		assertEquals(1, pregnancies.size());
+		assertEquals(TestUtils.date(2007, 11, 27), pregnancies.get(0).getDateStart());
+		assertEquals(TestUtils.date(2008, 8, 29), pregnancies.get(0).getEstDelivery());
+		assertEquals(TestUtils.date(2008, 8, 24), pregnancies.get(0).getDateEnd());
 	}
 }

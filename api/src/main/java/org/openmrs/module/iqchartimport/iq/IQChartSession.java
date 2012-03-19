@@ -58,6 +58,7 @@ public class IQChartSession {
 	private static final String TABLE_HEIGHT = "dtl_height";
 	private static final String TABLE_WEIGHT = "dtl_weight";
 	private static final String TABLE_TBSCREEN = "dtl_TBScreen";
+	private static final String TABLE_PREGNANCY = "dtl_pregnancy";
 
 	/**
 	 * Key names
@@ -229,6 +230,28 @@ public class IQChartSession {
 				}
 			}
 			return obslist;
+			
+		} catch (IOException e) {		
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the pregnancies for the given patient
+	 * @param patient the patient
+	 * @return the pregnancies
+	 */
+	public List<Pregnancy> getPatientPregnancies(IQPatient patient) {
+		List<Pregnancy> pregnancies = new ArrayList<Pregnancy>();
+		try {
+			Table table = database.getTable(TABLE_PREGNANCY);
+			
+			for (Map<String, Object> row : table) {
+				if ((Integer)row.get("TRACNetID") == patient.getTracnetID()) {
+					pregnancies.add(new Pregnancy((Date)row.get("DateStart"), (Date)row.get("EstDelivery"), (Date)row.get("DateEnd")));
+				}
+			}
+			return pregnancies;
 			
 		} catch (IOException e) {		
 		}

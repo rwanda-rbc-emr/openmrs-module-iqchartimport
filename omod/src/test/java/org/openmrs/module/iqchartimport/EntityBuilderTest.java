@@ -14,6 +14,8 @@
 
 package org.openmrs.module.iqchartimport;
 
+import static junit.framework.Assert.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -35,8 +37,6 @@ import org.openmrs.module.iqchartimport.iq.IQPatient;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
 import org.openmrs.module.iqchartimport.iq.code.SexCode;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
-
-import static junit.framework.Assert.*;
 
 /**
  * Test class for EntityBuilder
