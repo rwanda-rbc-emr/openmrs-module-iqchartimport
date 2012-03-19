@@ -6,9 +6,7 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-    $('#encounters').dataTable({"aaSorting": []});
-    
-	$('#obsDialog').jqm({ajax: '@href', trigger: 'a.obsDialogLink'});
+    $('#obsDialog').jqm({ajax: '@href', trigger: 'a.obsDialogLink'});
 });
 </script>
 
