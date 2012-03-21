@@ -24,7 +24,7 @@ import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.iqchartimport.EntityBuilder;
 import org.openmrs.module.iqchartimport.IncompleteMappingException;
 import org.openmrs.module.iqchartimport.Utils;
-import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
+import org.openmrs.module.iqchartimport.iq.IQDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.web.WebConstants;
 import org.springframework.stereotype.Controller;
@@ -46,7 +46,7 @@ public class PreviewController {
 	public String showPage(HttpServletRequest request, ModelMap model) throws IOException {
 		Utils.checkSuperUser();
 		
-		IQChartDatabase database = IQChartDatabase.load(request.getSession(), Constants.SESSION_ATTR_DATABASE);
+		IQDatabase database = IQDatabase.load(request.getSession(), Constants.SESSION_ATTR_DATABASE);
 		if (database == null)
 			return "redirect:upload.form";
 		

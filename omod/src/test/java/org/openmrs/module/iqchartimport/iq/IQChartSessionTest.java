@@ -26,7 +26,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.iqchartimport.TestUtils;
-import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
+import org.openmrs.module.iqchartimport.iq.IQDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
 import org.openmrs.module.iqchartimport.iq.code.HIVStatusPartCode;
@@ -52,7 +52,7 @@ public class IQChartSessionTest {
 		tempZipFile = TestUtils.copyResource("/HIVData.mdb.zip");
 		tempMdbFile = TestUtils.extractZipEntry(tempZipFile, "HIVData.mdb");
 			
-		IQChartDatabase database = new IQChartDatabase("HIVData.mdb", tempMdbFile.getAbsolutePath());
+		IQDatabase database = new IQDatabase("HIVData.mdb", tempMdbFile.getAbsolutePath());
 		session = new IQChartSession(database);
 	}
 	

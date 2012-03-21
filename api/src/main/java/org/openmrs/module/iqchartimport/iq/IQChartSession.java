@@ -73,7 +73,7 @@ public class IQChartSession {
 	 * @param path the MDB file path to open
 	 * @throws IOException if unable to open file
 	 */
-	public IQChartSession(IQChartDatabase database) throws IOException {
+	public IQChartSession(IQDatabase database) throws IOException {
 		this.database = Database.open(new File(database.getPath()));
 	}
 	

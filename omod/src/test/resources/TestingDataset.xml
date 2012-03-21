@@ -10,7 +10,7 @@
 		date_created="2005-09-22 00:00:00"
 		required="0"
 		format_description="[NULL]"
-		validator="org.openmrs.patient.impl.LuhnIdentifierValidator"
+		validator="[NULL]"
 		retired="0"
 		retired_by="[NULL]"
 		date_retired="[NULL]"

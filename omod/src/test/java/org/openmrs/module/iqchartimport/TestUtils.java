@@ -108,8 +108,28 @@ public class TestUtils {
 	 * @return the extension
 	 */
 	public static String getExtension(String path) {
-		int index = path.lastIndexOf('.');
+		final int index = path.lastIndexOf('.');
 		return index >= 0 ? path.substring(index + 1) : null;
+	}
+	
+	/**
+	 * Outputs a basic progress bar to the console
+	 * @param progress the progress (0...1)
+	 * @param existing the existing ticks as returned by the last call to this function
+	 * @return the existing ticks
+	 */
+	public static int progressBar(float progress, int existing) {
+		final int TOTAL_TICKS = 50;
+		final int progressTicks = (int)(progress * TOTAL_TICKS);
+		final int newTicks = progressTicks - existing;
+		
+		for (int i = 0; i < newTicks; ++i)
+			System.out.print(".");
+		
+		if (progressTicks == TOTAL_TICKS && newTicks > 0)
+			System.out.println();
+			
+		return progressTicks;
 	}
 	
 	/**
@@ -119,7 +139,7 @@ public class TestUtils {
 	 * @throws IOException
 	 */
 	private static void copyStream(InputStream in, OutputStream out) throws IOException {
-		byte[] buf = new byte[256];
+		final byte[] buf = new byte[256];
 		int len;
 		while ((len = in.read(buf)) >= 0)
 			out.write(buf, 0, len);

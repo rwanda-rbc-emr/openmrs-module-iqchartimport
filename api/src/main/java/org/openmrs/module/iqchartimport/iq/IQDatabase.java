@@ -20,34 +20,34 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * An IQChart MDB file that has been uploaded
+ * An IQChart MDB database file
  */
-public class IQChartDatabase {
+public class IQDatabase {
 	
-	protected static final Log log = LogFactory.getLog(IQChartDatabase.class);
+	protected static final Log log = LogFactory.getLog(IQDatabase.class);
 	
-	private String originalFilename;
+	private String name;
 	private String path;
 	
 	/**
-	 * @param originalFilename
+	 * @param name
 	 * @param path
 	 */
-	public IQChartDatabase(String originalFilename, String path) {
-		this.originalFilename = originalFilename;
+	public IQDatabase(String name, String path) {
+		this.name = name;
 		this.path = path;
 	}
 
 	/**
-	 * Gets the original database name
+	 * Gets the database name
 	 * @return the name
 	 */
-	public String getOriginalFilename() {
-		return originalFilename;
+	public String getName() {
+		return name;
 	}
 
 	/**
-	 * Gets the path of temp database file
+	 * Gets the path of the database file
 	 * @return the path
 	 */
 	public String getPath() {
@@ -55,27 +55,27 @@ public class IQChartDatabase {
 	}
 	
 	/**
-	 * Loads upload object as string attribute in session
+	 * Loads database as string attribute in session
 	 * @param session the session
 	 * @param key the attribute key
 	 * @return the upload object or null
 	 */
-	public static IQChartDatabase load(HttpSession session, String key) {
+	public static IQDatabase load(HttpSession session, String key) {
 		String val = (String)session.getAttribute(key);
 		if (val != null) {
 			String[] tokens = val.split("\\|");
 			if (tokens.length == 2)
-				return new IQChartDatabase(tokens[0], tokens[1]);
+				return new IQDatabase(tokens[0], tokens[1]);
 		}
 		return null;
 	}
 	
 	/**
-	 * Saves upload object as string attribute in session
+	 * Saves datebase as string attribute in session
 	 * @param session the session
 	 * @param key the attribute key
 	 */
 	public void save(HttpSession session, String key) {
-		session.setAttribute(key, originalFilename + "|" + path);
+		session.setAttribute(key, name + "|" + path);
 	}
 }
