@@ -81,7 +81,14 @@ public class ImportEngineTest extends BaseModuleContextSensitiveTest {
 			progBarTicks = TestUtils.progressBar(task.getProgress(), progBarTicks);
 		}
 		
+		if (task.getException() != null)
+			task.getException().printStackTrace();
+		
+		// Check no exeception
+		assertNull(task.getException());
+		
 		// Check number of patients added to DB
+		assertEquals(2601, task.getPatientsImported());
 		assertEquals(2601, patientSvc.getAllPatients().size() - initialPatients);
 		
 		// Check we can find the test patients

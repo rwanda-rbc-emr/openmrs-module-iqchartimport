@@ -64,7 +64,7 @@ public class PatientController {
 		try {
 			EntityBuilder builder = new EntityBuilder(session);
 			Patient patient = builder.getPatient(tracnetID);
-			List<PatientProgram> patientPrograms = builder.getPatientPrograms(tracnetID);
+			List<PatientProgram> patientPrograms = builder.getPatientPrograms(patient, tracnetID);
 			List<Encounter> encounters = builder.getPatientEncounters(patient, tracnetID);
 			
 			// Find exit reason obs

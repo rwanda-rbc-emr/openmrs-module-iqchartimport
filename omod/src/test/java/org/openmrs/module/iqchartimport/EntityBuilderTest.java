@@ -138,10 +138,12 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 	public void getPatientPrograms() {	
 		for (int tracnetID : testIDs ) {
 			IQPatient iqPatient = session.getPatient(tracnetID);
-			List<PatientProgram> programs = builder.getPatientPrograms(tracnetID);
+			Patient patient = builder.getPatient(tracnetID);
+			List<PatientProgram> programs = builder.getPatientPrograms(patient, tracnetID);
 			
 			// Check for single program
 			assertEquals(1, programs.size());
+			assertSame(patient, programs.get(0).getPatient());
 			assertEquals(new Integer(1), programs.get(0).getProgram().getProgramId());
 			assertEquals("Test program", programs.get(0).getProgram().getName());
 			assertEquals(iqPatient.getEnrollDate(), programs.get(0).getDateEnrolled());

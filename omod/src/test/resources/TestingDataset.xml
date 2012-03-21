@@ -147,9 +147,36 @@
 		retire_reason="[NULL]"	
 		uuid="8d4907b2-c2cc-11de-8d13-0010c6dffd0f"	
 	/>
+	<location>
+		<location_id>1</location_id>
+		<name>Unknown Location</name>
+		<description>NULL</description>
+		<address1></address1>
+		<address2></address2>
+		<city_village></city_village>
+		<state_province></state_province>
+		<postal_code></postal_code>
+		<country></country>
+		<latitude>NULL</latitude>
+		<longitude>NULL</longitude>
+		<creator>1</creator>
+		<date_created>2005-09-22 00:00:00</date_created>
+		<county_district>NULL</county_district>
+		<neighborhood_cell>NULL</neighborhood_cell>
+		<region>NULL</region>
+		<subregion>NULL</subregion>
+		<township_division>NULL</township_division>
+		<retired>0</retired>
+		<retired_by>NULL</retired_by>
+		<date_retired>NULL</date_retired>
+		<retire_reason>NULL</retire_reason>
+		<parent_location>NULL</parent_location>
+		<uuid>8d6c993e-c2cc-11de-8d13-0010c6dffd0f</uuid>
+	</location>
 	<global_property property="concept.cd4_count" property_value="5497" uuid="8d793bee-c2cc-11de-8d13-0010c6df0001" />		
 	<global_property property="iqchartimport.tracnetIDTypeId" property_value="0" uuid="8d793bee-c2cc-11de-8d13-0010c6df1001" />		
 	<global_property property="iqchartimport.addressCountry" property_value="Testland" uuid="8d793bee-c2cc-11de-8d13-0010c6df1002" />	
 	<global_property property="iqchartimport.addressProvince" property_value="Testern" uuid="8d793bee-c2cc-11de-8d13-0010c6df1003" />
 	<global_property property="iqchartimport.hivProgramId" property_value="1" uuid="8d793bee-c2cc-11de-8d13-0010c6df1004" />
+	<global_property property="iqchartimport.encounterLocationId" property_value="1" uuid="8d793bee-c2cc-11de-8d13-0010c6df1005" />
 </dataset>

@@ -19,8 +19,9 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
 import org.openmrs.Patient;
-import org.openmrs.api.PatientService;
+import org.openmrs.PatientProgram;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
 import org.openmrs.module.iqchartimport.iq.IQDatabase;
@@ -38,6 +39,7 @@ public class ImportTask implements Runnable {
 	private boolean complete = false;
 	private int totalPatients = 0;
 	private int patientsImported = 0;
+	private int encountersImported = 0;
 	private Exception exception;
 	
 	/**
@@ -63,8 +65,6 @@ public class ImportTask implements Runnable {
 		}
 		catch (Exception ex) {
 			exception = ex;
-			
-			System.err.println(ex);
 		}
 		finally {
 			Context.clearSession();
@@ -82,7 +82,6 @@ public class ImportTask implements Runnable {
 	 * @param session the session
 	 */
 	private void doImport(IQChartSession session) {
-		PatientService patientSvc = Context.getPatientService();
 		EntityBuilder builder = new EntityBuilder(session);
 		
 		List<Patient> patients = builder.getPatients();
@@ -90,10 +89,43 @@ public class ImportTask implements Runnable {
 		
 		// Import each patient
 		for (Patient patient : patients) {
-			patientSvc.savePatient(patient);
+			// Get TRACnet ID
+			int tracnetID = Integer.parseInt(patient.getPatientIdentifier().getIdentifier());
+			
+			// Look for patients with same TRACnet ID
+			List<Patient> matchPatients = Context.getPatientService().getPatients(null, tracnetID + "", null, true);
+			
+			if (matchPatients.size() > 0) {
+				continue;
+			}
+			
+			// Save patient to database
+			Context.getPatientService().savePatient(patient);
+			
+			// Import patient programs
+			for (PatientProgram patientProgram : builder.getPatientPrograms(patient, tracnetID)) {
+				
+				Context.getProgramWorkflowService().savePatientProgram(patientProgram);
+			}
+			
+			// Import patient encounters
+			for (Encounter encounter : builder.getPatientEncounters(patient, tracnetID)) {
+				
+				Context.getEncounterService().saveEncounter(encounter);
+				
+				++encountersImported;
+			}
 			
 			++patientsImported;
 		}
+	}
+	
+	/**
+	 * Gets if task is complete
+	 * @return true if task is complete
+	 */
+	public boolean isComplete() {
+		return complete;
 	}
 	
 	/**
@@ -105,11 +137,19 @@ public class ImportTask implements Runnable {
 	}
 	
 	/**
-	 * Gets if task is complete
-	 * @return true if task is complete
+	 * Gets the number of patients imported
+	 * @return the number
 	 */
-	public boolean isComplete() {
-		return complete;
+	public int getPatientsImported() {
+		return patientsImported;
+	}
+
+	/**
+	 * Gets the number of encounters imported
+	 * @return the number
+	 */
+	public int getEncountersImported() {
+		return encountersImported;
 	}
 
 	/**

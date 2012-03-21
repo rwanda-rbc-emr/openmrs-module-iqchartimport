@@ -150,10 +150,11 @@ public class EntityBuilder {
 	
 	/**
 	 * Gets the patient's programs
+	 * @param patient the patient
 	 * @param tracnetID the patient TRACnet ID
 	 * @return the patient programs
 	 */
-	public List<PatientProgram> getPatientPrograms(int tracnetID) {		
+	public List<PatientProgram> getPatientPrograms(Patient patient, int tracnetID) {		
 		List<PatientProgram> patientPrograms = new ArrayList<PatientProgram>();
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		
@@ -162,6 +163,7 @@ public class EntityBuilder {
 			Program hivProgram = getHIVProgram();
 			
 			PatientProgram hivPatientProgram = new PatientProgram();
+			hivPatientProgram.setPatient(patient);
 			hivPatientProgram.setProgram(hivProgram);
 			hivPatientProgram.setDateEnrolled(iqPatient.getEnrollDate());
 			hivPatientProgram.setDateCompleted(iqPatient.getExitDate());
@@ -171,6 +173,12 @@ public class EntityBuilder {
 		return patientPrograms;
 	}
 	
+	/**
+	 * Gets the patient's encounters
+	 * @param patient the patient
+	 * @param tracnetID the patient's TRACnet ID
+	 * @return the encounters
+	 */
 	public List<Encounter> getPatientEncounters(Patient patient, int tracnetID) {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		Map<Date, Encounter> encounters = new TreeMap<Date, Encounter>();
