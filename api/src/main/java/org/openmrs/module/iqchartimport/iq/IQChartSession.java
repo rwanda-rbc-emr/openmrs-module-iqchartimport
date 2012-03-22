@@ -27,12 +27,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
 import org.openmrs.module.iqchartimport.iq.code.HIVStatusPartCode;
-import org.openmrs.module.iqchartimport.iq.code.HospitalizationCode;
+import org.openmrs.module.iqchartimport.iq.code.HospReasonCode;
 import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
 import org.openmrs.module.iqchartimport.iq.code.ModeCode;
 import org.openmrs.module.iqchartimport.iq.code.SexCode;
 import org.openmrs.module.iqchartimport.iq.code.StatusCode;
 import org.openmrs.module.iqchartimport.iq.code.TBScreenCode;
+import org.openmrs.module.iqchartimport.iq.code.WHOStageCode;
 import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 import org.openmrs.module.iqchartimport.iq.model.Hospitalization;
 import org.openmrs.module.iqchartimport.iq.model.Pregnancy;
@@ -40,6 +41,7 @@ import org.openmrs.module.iqchartimport.iq.obs.BaseIQObs;
 import org.openmrs.module.iqchartimport.iq.obs.CD4Obs;
 import org.openmrs.module.iqchartimport.iq.obs.HeightObs;
 import org.openmrs.module.iqchartimport.iq.obs.TBScreenObs;
+import org.openmrs.module.iqchartimport.iq.obs.WHOStageObs;
 import org.openmrs.module.iqchartimport.iq.obs.WeightObs;
 
 import com.healthmarketscience.jackcess.Cursor;
@@ -63,6 +65,7 @@ public class IQChartSession {
 	private static final String TABLE_TBSCREEN = "dtl_TBScreen";
 	private static final String TABLE_PREGNANCY = "dtl_pregnancy";
 	private static final String TABLE_HOSPITALIZATION = "dtl_hosp";
+	private static final String TABLE_WHOSTAGE = "dtl_who";
 
 	/**
 	 * Key names
@@ -145,6 +148,7 @@ public class IQChartSession {
 		allObs.addAll(getPatientHeightObs(patient));
 		allObs.addAll(getPatientWeightObs(patient));
 		allObs.addAll(getPatientTBScreenObs(patient));
+		allObs.addAll(getPatientWHOStageObs(patient));
 		
 		Collections.sort(allObs);
 		return allObs;
@@ -241,6 +245,28 @@ public class IQChartSession {
 	}
 	
 	/**
+	 * Gets all the WHO stage obs for the given patient
+	 * @param patient the patient
+	 * @return the obs
+	 */
+	public List<WHOStageObs> getPatientWHOStageObs(IQPatient patient) {
+		List<WHOStageObs> obslist = new ArrayList<WHOStageObs>();
+		try {
+			Table table = database.getTable(TABLE_WHOSTAGE);
+			
+			for (Map<String, Object> row : table) {
+				if ((Integer)row.get(PATIENT_KEY) == patient.getTracnetID()) {
+					obslist.add(new WHOStageObs((Date)row.get("date"), WHOStageCode.fromString((String)row.get("WHO"))));
+				}
+			}
+			return obslist;
+			
+		} catch (IOException e) {		
+		}
+		return null;
+	}
+	
+	/**
 	 * Gets the pregnancies for the given patient
 	 * @param patient the patient
 	 * @return the pregnancies
@@ -274,7 +300,7 @@ public class IQChartSession {
 			
 			for (Map<String, Object> row : table) {
 				if ((Integer)row.get(PATIENT_KEY) == patient.getTracnetID()) {
-					hospitalizations.add(new Hospitalization((String)row.get("facility"), (Date)row.get("dateAdm"), (Date)row.get("dateDisch"), HospitalizationCode.fromByte((Byte)row.get("reason"))));
+					hospitalizations.add(new Hospitalization((String)row.get("facility"), (Date)row.get("dateAdm"), (Date)row.get("dateDisch"), HospReasonCode.fromByte((Byte)row.get("reason"))));
 				}
 			}
 			return hospitalizations;

@@ -45,11 +45,13 @@ import org.openmrs.module.iqchartimport.iq.code.ModeCode;
 import org.openmrs.module.iqchartimport.iq.code.SexCode;
 import org.openmrs.module.iqchartimport.iq.code.TBScreenCode;
 import org.openmrs.module.iqchartimport.iq.code.TransferCode;
+import org.openmrs.module.iqchartimport.iq.code.WHOStageCode;
 import org.openmrs.module.iqchartimport.iq.model.Pregnancy;
 import org.openmrs.module.iqchartimport.iq.obs.BaseIQObs;
 import org.openmrs.module.iqchartimport.iq.obs.CD4Obs;
 import org.openmrs.module.iqchartimport.iq.obs.HeightObs;
 import org.openmrs.module.iqchartimport.iq.obs.TBScreenObs;
+import org.openmrs.module.iqchartimport.iq.obs.WHOStageObs;
 import org.openmrs.module.iqchartimport.iq.obs.WeightObs;
 
 /**
@@ -278,6 +280,15 @@ public class EntityBuilder {
 					obs.setConcept(MappingUtils.getConcept(TBScreenCode.mappedQuestion));
 					obs.setValueCoded(conceptAns);
 				}
+			}
+			else if (iqObs instanceof WHOStageObs) {
+				String[] ageDepStages = ((WHOStageObs)iqObs).getStage().mappedAnswer.split("\\|");
+				int age = patient.getAge(iqObs.getDate());
+				boolean isPediatric = (age < Constants.ADULT_START_AGE);
+				String stage = isPediatric ? ageDepStages[0] : ageDepStages[1];
+				
+				obs.setConcept(MappingUtils.getConcept(WHOStageCode.mappedQuestion));
+				obs.setValueCoded(MappingUtils.getConcept(stage));
 			}
 
 			if (obs.getConcept() != null)
