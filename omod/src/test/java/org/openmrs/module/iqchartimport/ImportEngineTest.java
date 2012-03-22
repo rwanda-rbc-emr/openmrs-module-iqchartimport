@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.iqchartimport.iq.IQDatabase;
+import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
@@ -39,7 +39,7 @@ public class ImportEngineTest extends BaseModuleContextSensitiveTest {
 	protected static final Log log = LogFactory.getLog(ImportEngineTest.class);
 
 	private File tempZipFile, tempMdbFile;
-	private IQDatabase database;
+	private IQChartDatabase database;
 	
 	// IDs of patients from test DB to check
 	private int[] testIDs = { 235001, 185568 };
@@ -52,7 +52,7 @@ public class ImportEngineTest extends BaseModuleContextSensitiveTest {
 		// Extract embedded test database
 		tempZipFile = TestUtils.copyResource("/HIVData.mdb.zip");
 		tempMdbFile = TestUtils.extractZipEntry(tempZipFile, "HIVData.mdb");	
-		database = new IQDatabase("HIVData.mdb", tempMdbFile.getAbsolutePath());
+		database = new IQChartDatabase("HIVData.mdb", tempMdbFile.getAbsolutePath());
 	}
 	
 	@After
@@ -64,7 +64,7 @@ public class ImportEngineTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void startImport() throws InterruptedException {
-		boolean started = ImportEngine.startImport(database);
+		boolean started = ImportEngine.startImport(database, false);
 		ImportTask task = ImportEngine.getCurrentTask();
 		
 		assertTrue(started);

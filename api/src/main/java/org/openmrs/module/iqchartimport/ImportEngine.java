@@ -14,7 +14,7 @@
 
 package org.openmrs.module.iqchartimport;
 
-import org.openmrs.module.iqchartimport.iq.IQDatabase;
+import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 
 /**
  * Simple engine class to run a single import task at a time
@@ -27,13 +27,14 @@ public class ImportEngine {
 	/**
 	 * Creates and starts a new import task
 	 * @param database the database to import
+	 * @param full true for full import, false for just patients
 	 * @return true if successful, else false if a task is already running
 	 */
-	public static synchronized boolean startImport(IQDatabase database) {
+	public static synchronized boolean startImport(IQChartDatabase database, boolean full) {
 		if (task != null && !task.isComplete())
 			return false;
 		
-		task = new ImportTask(database);
+		task = new ImportTask(database, full);
 		thread = new Thread(task);
 		thread.start();
 		return true;

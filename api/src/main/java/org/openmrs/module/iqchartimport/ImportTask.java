@@ -24,7 +24,7 @@ import org.openmrs.Patient;
 import org.openmrs.PatientProgram;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
-import org.openmrs.module.iqchartimport.iq.IQDatabase;
+import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 
 /**
@@ -35,7 +35,8 @@ public class ImportTask implements Runnable {
 	protected static final Log log = LogFactory.getLog(ImportTask.class);
 			
 	private UserContext userContext;
-	private IQDatabase database;
+	private IQChartDatabase database;
+	private boolean full = false;
 	private boolean complete = false;
 	private int totalPatients = 0;
 	private int patientsImported = 0;
@@ -45,10 +46,12 @@ public class ImportTask implements Runnable {
 	/**
 	 * Creates a new import task
 	 * @param database the database to import from
+	 * @param full true for full import, false for just patients
 	 */
-	protected ImportTask(IQDatabase database) {
+	protected ImportTask(IQChartDatabase database, boolean full) {
 		this.userContext = Context.getUserContext();
 		this.database = database;
+		this.full = full;
 	}
 	
 	@Override
@@ -96,24 +99,27 @@ public class ImportTask implements Runnable {
 			List<Patient> matchPatients = Context.getPatientService().getPatients(null, tracnetID + "", null, true);
 			
 			if (matchPatients.size() > 0) {
+				// TODO log duplicate
 				continue;
 			}
 			
 			// Save patient to database
 			Context.getPatientService().savePatient(patient);
 			
-			// Import patient programs
-			for (PatientProgram patientProgram : builder.getPatientPrograms(patient, tracnetID)) {
+			if (full) {			
+				// Import patient programs
+				for (PatientProgram patientProgram : builder.getPatientPrograms(patient, tracnetID)) {
+					
+					Context.getProgramWorkflowService().savePatientProgram(patientProgram);
+				}
 				
-				Context.getProgramWorkflowService().savePatientProgram(patientProgram);
-			}
-			
-			// Import patient encounters
-			for (Encounter encounter : builder.getPatientEncounters(patient, tracnetID)) {
-				
-				Context.getEncounterService().saveEncounter(encounter);
-				
-				++encountersImported;
+				// Import patient encounters
+				for (Encounter encounter : builder.getPatientEncounters(patient, tracnetID)) {
+					
+					Context.getEncounterService().saveEncounter(encounter);
+					
+					++encountersImported;
+				}
 			}
 			
 			++patientsImported;
