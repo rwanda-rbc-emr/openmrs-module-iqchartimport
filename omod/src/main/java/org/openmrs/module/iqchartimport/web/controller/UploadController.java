@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.iqchartimport.Utils;
-import org.openmrs.module.iqchartimport.iq.IQDatabase;
+import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -48,7 +48,7 @@ public class UploadController {
 		Utils.checkSuperUser();
 		
 		HttpSession session = request.getSession();
-		IQDatabase database = IQDatabase.load(session, Constants.SESSION_ATTR_DATABASE);
+		IQChartDatabase database = IQChartDatabase.load(session, Constants.SESSION_ATTR_DATABASE);
 		
 		if (database != null) {
 			model.put("database", database);
@@ -84,7 +84,7 @@ public class UploadController {
 				uploadFile.transferTo(tempMDBFile);
 				
 				// Store upload in session
-				IQDatabase upload = new IQDatabase(uploadFile.getOriginalFilename(), tempMDBFile.getAbsolutePath());
+				IQChartDatabase upload = new IQChartDatabase(uploadFile.getOriginalFilename(), tempMDBFile.getAbsolutePath());
 				upload.save(request.getSession(), Constants.SESSION_ATTR_DATABASE);
 				
 			} catch (IOException e) {

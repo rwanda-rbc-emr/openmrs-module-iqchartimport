@@ -31,7 +31,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PatientProgram;
-import org.openmrs.module.iqchartimport.iq.IQDatabase;
+import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.module.iqchartimport.iq.IQPatient;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
@@ -61,7 +61,7 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 		tempZipFile = TestUtils.copyResource("/HIVData.mdb.zip");
 		tempMdbFile = TestUtils.extractZipEntry(tempZipFile, "HIVData.mdb");
 		
-		IQDatabase database = new IQDatabase("HIVData.mdb", tempMdbFile.getAbsolutePath());
+		IQChartDatabase database = new IQChartDatabase("HIVData.mdb", tempMdbFile.getAbsolutePath());
 		session = new IQChartSession(database);
 		builder = new EntityBuilder(session);
 	}

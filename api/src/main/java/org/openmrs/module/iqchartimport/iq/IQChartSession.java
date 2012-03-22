@@ -27,12 +27,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
 import org.openmrs.module.iqchartimport.iq.code.HIVStatusPartCode;
+import org.openmrs.module.iqchartimport.iq.code.HospitalizationCode;
 import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
 import org.openmrs.module.iqchartimport.iq.code.ModeCode;
 import org.openmrs.module.iqchartimport.iq.code.SexCode;
 import org.openmrs.module.iqchartimport.iq.code.StatusCode;
 import org.openmrs.module.iqchartimport.iq.code.TBScreenCode;
 import org.openmrs.module.iqchartimport.iq.code.TransferCode;
+import org.openmrs.module.iqchartimport.iq.model.Hospitalization;
+import org.openmrs.module.iqchartimport.iq.model.Pregnancy;
 import org.openmrs.module.iqchartimport.iq.obs.BaseIQObs;
 import org.openmrs.module.iqchartimport.iq.obs.CD4Obs;
 import org.openmrs.module.iqchartimport.iq.obs.HeightObs;
@@ -59,6 +62,7 @@ public class IQChartSession {
 	private static final String TABLE_WEIGHT = "dtl_weight";
 	private static final String TABLE_TBSCREEN = "dtl_TBScreen";
 	private static final String TABLE_PREGNANCY = "dtl_pregnancy";
+	private static final String TABLE_HOSPITALIZATION = "dtl_hosp";
 
 	/**
 	 * Key names
@@ -73,7 +77,7 @@ public class IQChartSession {
 	 * @param path the MDB file path to open
 	 * @throws IOException if unable to open file
 	 */
-	public IQChartSession(IQDatabase database) throws IOException {
+	public IQChartSession(IQChartDatabase database) throws IOException {
 		this.database = Database.open(new File(database.getPath()));
 	}
 	
@@ -157,7 +161,7 @@ public class IQChartSession {
 			Table table = database.getTable(TABLE_CD4);
 			
 			for (Map<String, Object> row : table) {
-				if ((Integer)row.get("TRACNetID") == patient.getTracnetID()) {
+				if ((Integer)row.get(PATIENT_KEY) == patient.getTracnetID()) {
 					CD4Obs obs = new CD4Obs((Date)row.get("date"), (Short)row.get("CD4count"));
 					obs.setTestType((String)row.get("TestType"));
 					obslist.add(obs);
@@ -203,7 +207,7 @@ public class IQChartSession {
 			Table table = database.getTable(TABLE_WEIGHT);
 			
 			for (Map<String, Object> row : table) {
-				if ((Integer)row.get("TRACNetID") == patient.getTracnetID()) {
+				if ((Integer)row.get(PATIENT_KEY) == patient.getTracnetID()) {
 					obslist.add(new WeightObs((Date)row.get("date"), (Short)row.get("weight")));
 				}
 			}
@@ -225,7 +229,7 @@ public class IQChartSession {
 			Table table = database.getTable(TABLE_TBSCREEN);
 			
 			for (Map<String, Object> row : table) {
-				if ((Integer)row.get("TRACNetID") == patient.getTracnetID()) {
+				if ((Integer)row.get(PATIENT_KEY) == patient.getTracnetID()) {
 					obslist.add(new TBScreenObs((Date)row.get("date"), TBScreenCode.fromByte((Byte)row.get("TBScreen"))));
 				}
 			}
@@ -247,11 +251,33 @@ public class IQChartSession {
 			Table table = database.getTable(TABLE_PREGNANCY);
 			
 			for (Map<String, Object> row : table) {
-				if ((Integer)row.get("TRACNetID") == patient.getTracnetID()) {
+				if ((Integer)row.get(PATIENT_KEY) == patient.getTracnetID()) {
 					pregnancies.add(new Pregnancy((Date)row.get("DateStart"), (Date)row.get("EstDelivery"), (Date)row.get("DateEnd")));
 				}
 			}
 			return pregnancies;
+			
+		} catch (IOException e) {		
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the pregnancies for the given patient
+	 * @param patient the patient
+	 * @return the pregnancies
+	 */
+	public List<Hospitalization> getPatientHospitalizations(IQPatient patient) {
+		List<Hospitalization> hospitalizations = new ArrayList<Hospitalization>();
+		try {
+			Table table = database.getTable(TABLE_HOSPITALIZATION);
+			
+			for (Map<String, Object> row : table) {
+				if ((Integer)row.get(PATIENT_KEY) == patient.getTracnetID()) {
+					hospitalizations.add(new Hospitalization((String)row.get("facility"), (Date)row.get("dateAdm"), (Date)row.get("dateDisch"), HospitalizationCode.fromByte((Byte)row.get("reason"))));
+				}
+			}
+			return hospitalizations;
 			
 		} catch (IOException e) {		
 		}
