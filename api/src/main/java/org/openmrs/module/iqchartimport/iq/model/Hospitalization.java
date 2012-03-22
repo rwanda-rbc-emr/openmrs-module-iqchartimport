@@ -16,7 +16,7 @@ package org.openmrs.module.iqchartimport.iq.model;
 
 import java.util.Date;
 
-import org.openmrs.module.iqchartimport.iq.code.HospitalizationCode;
+import org.openmrs.module.iqchartimport.iq.code.HospReasonCode;
 
 /**
  * Patient hospitalization
@@ -26,7 +26,7 @@ public class Hospitalization {
 	private String facility;
 	private Date dateAdm;
 	private Date dateDisch;
-	private HospitalizationCode reason;
+	private HospReasonCode reason;
 	
 	/**
 	 * @param facility
@@ -34,7 +34,7 @@ public class Hospitalization {
 	 * @param dateDisch
 	 * @param reason
 	 */
-	public Hospitalization(String facility, Date dateAdm, Date dateDisch, HospitalizationCode reason) {
+	public Hospitalization(String facility, Date dateAdm, Date dateDisch, HospReasonCode reason) {
 		this.facility = facility;
 		this.dateAdm = dateAdm;
 		this.dateDisch = dateDisch;
@@ -65,11 +65,11 @@ public class Hospitalization {
 		this.dateDisch = dateDisch;
 	}
 
-	public HospitalizationCode getReason() {
+	public HospReasonCode getReason() {
 		return reason;
 	}
 
-	public void setReason(HospitalizationCode reason) {
+	public void setReason(HospReasonCode reason) {
 		this.reason = reason;
 	}
 }

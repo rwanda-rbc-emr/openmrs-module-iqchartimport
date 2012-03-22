@@ -17,22 +17,21 @@ package org.openmrs.module.iqchartimport.iq.code;
 /**
  * Patient hospitalization reason code
  */
-public enum HospitalizationCode {
+public enum HospReasonCode {
 	
-	// TODO missing mappings
-	OI_TB (null),
-	OI_OTHER (null),
-	OTHER_HIV_RELATED (null),
-	NON_HIV_RELATED (null);
+	OI_TB ("OI TB"),
+	OI_OTHER ("OI OTHER"),
+	OTHER_HIV_RELATED ("OTHER HIV RELATED"),
+	NON_HIV_RELATED ("NON HIV RELATED");
 	
-	public static final String mappedQuestion = null;
+	public static final String mappedQuestion = "REASON FOR REFERRAL TO HOSPITAL";
 	public final String mappedAnswer;
 	
 	/**
 	 * Constructs new enum value
 	 * @param mappedAnswer the mapped answer
 	 */
-	HospitalizationCode(String mappedAnswer) {
+	HospReasonCode(String mappedAnswer) {
 		this.mappedAnswer = mappedAnswer;
 	}
 	
@@ -41,7 +40,7 @@ public enum HospitalizationCode {
 	 * @param val the Byte value
 	 * @return the enum value or null if byte value is null
 	 */
-	public static HospitalizationCode fromByte(Byte val) {
+	public static HospReasonCode fromByte(Byte val) {
 		return val != null ? values()[val - 1] : null;
 	}
 }
