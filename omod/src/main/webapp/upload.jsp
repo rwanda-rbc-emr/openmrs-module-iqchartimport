@@ -26,7 +26,7 @@
 		<table width="100%" cellspacing="0">
 			<tr>
 				<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.upload.filename" /></td>
-				<td><c:out value="${database.originalFilename}" /></td>
+				<td><c:out value="${database.name}" /></td>
 			</tr>
 			<tr>
 				<td style="font-weight: bold"><spring:message code="@MODULE_ID@.general.patients" /></td>
