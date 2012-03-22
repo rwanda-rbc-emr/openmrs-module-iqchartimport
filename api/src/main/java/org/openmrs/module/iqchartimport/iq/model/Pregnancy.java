@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport.iq;
+package org.openmrs.module.iqchartimport.iq.model;
 
 import java.util.Date;
 
@@ -32,7 +32,6 @@ public class Pregnancy {
 	 * @param dateEnd the actual end date
 	 */
 	public Pregnancy(Date dateStart, Date estDelivery, Date dateEnd) {
-		super();
 		this.dateStart = dateStart;
 		this.estDelivery = estDelivery;
 		this.dateEnd = dateEnd;
