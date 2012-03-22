@@ -22,9 +22,9 @@ import org.apache.commons.logging.LogFactory;
 /**
  * An IQChart MDB database file
  */
-public class IQDatabase {
+public class IQChartDatabase {
 	
-	protected static final Log log = LogFactory.getLog(IQDatabase.class);
+	protected static final Log log = LogFactory.getLog(IQChartDatabase.class);
 	
 	private String name;
 	private String path;
@@ -33,7 +33,7 @@ public class IQDatabase {
 	 * @param name
 	 * @param path
 	 */
-	public IQDatabase(String name, String path) {
+	public IQChartDatabase(String name, String path) {
 		this.name = name;
 		this.path = path;
 	}
@@ -60,12 +60,12 @@ public class IQDatabase {
 	 * @param key the attribute key
 	 * @return the upload object or null
 	 */
-	public static IQDatabase load(HttpSession session, String key) {
+	public static IQChartDatabase load(HttpSession session, String key) {
 		String val = (String)session.getAttribute(key);
 		if (val != null) {
 			String[] tokens = val.split("\\|");
 			if (tokens.length == 2)
-				return new IQDatabase(tokens[0], tokens[1]);
+				return new IQChartDatabase(tokens[0], tokens[1]);
 		}
 		return null;
 	}
