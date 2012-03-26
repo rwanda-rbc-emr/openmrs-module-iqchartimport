@@ -28,7 +28,7 @@ public class Mappings {
 	protected int tracnetIDTypeId;
 	protected String addressProvince;
 	protected int hivProgramId;
-	protected int encounterLocationId;
+	protected int siteLocationId;
 	
 	/**
 	 * The default constructor
@@ -54,7 +54,7 @@ public class Mappings {
 		tracnetIDTypeId = loadIntOption(Constants.PROP_TRACNET_ID_TYPE_ID, -1);
 		addressProvince = loadStringOption(Constants.PROP_ADDRESS_PROVINCE, null);
 		hivProgramId = loadIntOption(Constants.PROP_HIV_PROGRAM_ID, -1);
-		encounterLocationId = loadIntOption(Constants.PROP_ENCOUNTER_LOCATION_ID, -1);
+		siteLocationId = loadIntOption(Constants.PROP_SITE_LOCATION_ID, -1);
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public class Mappings {
 		saveOption(Constants.PROP_TRACNET_ID_TYPE_ID, tracnetIDTypeId);
 		saveOption(Constants.PROP_ADDRESS_PROVINCE, addressProvince);
 		saveOption(Constants.PROP_HIV_PROGRAM_ID, hivProgramId);
-		saveOption(Constants.PROP_ENCOUNTER_LOCATION_ID, encounterLocationId);
+		saveOption(Constants.PROP_SITE_LOCATION_ID, siteLocationId);
 	}
 
 	/**
@@ -116,19 +116,19 @@ public class Mappings {
 	}
 	
 	/**
-	 * Gets the encounter location id
+	 * Gets the site location id
 	 * @return the location id
 	 */
-	public int getEncounterLocationId() {
-		return encounterLocationId;
+	public int getSiteLocationId() {
+		return siteLocationId;
 	}
 
 	/**
-	 * Sets the encounter location id
-	 * @param encounterLocationId the location id
+	 * Sets the site location id
+	 * @param siteLocationId the location id
 	 */
-	public void setEncounterLocationId(int encounterLocationId) {
-		this.encounterLocationId = encounterLocationId;
+	public void setSiteLocationId(int siteLocationId) {
+		this.siteLocationId = siteLocationId;
 	}
 
 	/**

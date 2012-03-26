@@ -18,6 +18,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
+import org.openmrs.Person;
+import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 
 /**
@@ -26,6 +28,25 @@ import org.openmrs.api.context.Context;
 public class MappingUtils {
 	
 	protected static final Log log = LogFactory.getLog(MappingUtils.class);
+	
+	/**
+	 * Gets the provider person for all encounters
+	 * @return the provider or null if it doesn't exist
+	 */
+	public static Person getEncounterProvider() {
+		return Context.getPersonService().getPersonByUuid(Constants.IQCHART_PROVIDER_UUID.toString());
+	}
+	
+	/**
+	 * Creates the provider person for all encounters
+	 */
+	public static void createEncounterProvider() {
+		Person provider = new Person();
+		provider.addName(new PersonName("IQChart", null, "Provider"));
+		provider.setUuid(Constants.IQCHART_PROVIDER_UUID.toString());
+		provider.setGender("");
+		Context.getPersonService().savePerson(provider);
+	}
 
 	/**
 	 * Gets an encounter type by name

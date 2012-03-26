@@ -5,7 +5,7 @@
 <%@ include file="template/localHeader.jsp"%>
 
 <script type="text/javascript">
-$(document).ready(function() {
+$(function() {
     $('#patients').dataTable();
 });
 </script>

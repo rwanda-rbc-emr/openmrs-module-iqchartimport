@@ -26,6 +26,7 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.Constants;
+import org.openmrs.module.iqchartimport.MappingUtils;
 import org.openmrs.module.iqchartimport.Mappings;
 import org.openmrs.module.iqchartimport.Utils;
 import org.openmrs.web.WebConstants;
@@ -34,6 +35,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
@@ -63,17 +65,23 @@ public class MappingsController {
 		model.put("programs", programs);
 		model.put("locations", locations);
 		model.put("mappings", Mappings.getInstance());
+		model.put("encounterProvider", MappingUtils.getEncounterProvider());
 		
 		return "/module/iqchartimport/mappings";
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public String handleSubmit(HttpServletRequest request, @ModelAttribute("mappings") Mappings mappings) {
+	public String handleSubmit(HttpServletRequest request, @ModelAttribute("mappings") Mappings mappings, @RequestParam Boolean createProvider) {
 		Utils.checkSuperUser();
-
-		mappings.save();
 		
-		request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Mappings saved");
+		if (createProvider) {
+			MappingUtils.createEncounterProvider();
+			request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Provider created");
+		}
+		else {
+			mappings.save();
+			request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Mappings saved");
+		}
 		
 		return "redirect:mappings.form";
 	}

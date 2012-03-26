@@ -79,20 +79,10 @@ public class EntityBuilder {
 	 */
 	public PatientIdentifierType getTRACnetIDType() {
 		int tracnetIDTypeId = Mappings.getInstance().getTracnetIDTypeId();
-		if (tracnetIDTypeId > 0) {
+		if (tracnetIDTypeId > 0)
 			return Context.getPatientService().getPatientIdentifierType(tracnetIDTypeId);	
-		}
-		else if (tracnetIDTypeId == 0) {
-			PatientIdentifierType tracnetIDType = new PatientIdentifierType();
-			tracnetIDType.setName(Constants.NEW_TRACNET_ID_TYPE_NAME);
-			tracnetIDType.setDescription(Constants.NEW_TRACNET_ID_TYPE_NAME);
-			tracnetIDType.setFormat(Constants.NEW_TRACNET_ID_TYPE_FORMAT);
-			tracnetIDType.setFormatDescription(Constants.NEW_TRACNET_ID_TYPE_FORMAT_DESC);
-			return tracnetIDType;
-		}
-		else {
+		else
 			throw new IncompleteMappingException();
-		}
 	}
 	
 	/**
@@ -102,27 +92,23 @@ public class EntityBuilder {
 	 */
 	public Program getHIVProgram() {
 		int hivProgramId = Mappings.getInstance().getHivProgramId();
-		if (hivProgramId > 0) {
+		if (hivProgramId > 0)
 			return Context.getProgramWorkflowService().getProgram(hivProgramId);	
-		}
-		else {
+		else
 			throw new IncompleteMappingException();
-		}
 	}
 	
 	/**
-	 * Gets the location for imported encounters
+	 * Gets the site location for imported encounters, identifiers etc
 	 * @return the location
 	 * @throws IncompleteMappingException if mappings are not configured properly
 	 */
-	public Location getEncounterLocation() {
-		int encounterLocationId = Mappings.getInstance().getEncounterLocationId();
-		if (encounterLocationId > 0) {
-			return Context.getLocationService().getLocation(encounterLocationId);	
-		}
-		else {
+	public Location getSiteLocation() {
+		int siteLocationId = Mappings.getInstance().getSiteLocationId();
+		if (siteLocationId > 0)
+			return Context.getLocationService().getLocation(siteLocationId);	
+		else
 			throw new IncompleteMappingException();
-		}
 	}
 	
 	/**
@@ -371,6 +357,7 @@ public class EntityBuilder {
 		PatientIdentifier tracnetID = new PatientIdentifier();
 		tracnetID.setIdentifier("" + iqPatient.getTracnetID());
 		tracnetID.setIdentifierType(tracnetIDType);
+		tracnetID.setLocation(getSiteLocation());
 		tracnetID.setPreferred(true);
 		patient.addIdentifier(tracnetID);
 		
@@ -407,6 +394,34 @@ public class EntityBuilder {
 	}
 	
 	/**
+	 * Gets an encounter for the given day - if one exists it is returned
+	 * @param patient the patient
+	 * @param date the day
+	 * @param encounters the existing encounters
+	 * @return the encounter
+	 */
+	protected Encounter encounterForDate(Patient patient, Date date, Map<Date, Encounter> encounters) {
+		// Look for existing encounter on that date
+		if (encounters.containsKey(date)) 
+			return encounters.get(date);
+		
+		// If no existing, then this will be an initial encounter
+		boolean isInitial = encounters.isEmpty();
+		
+		// Create new one
+		Encounter encounter = new Encounter();
+		encounter.setEncounterType(getEncounterType(patient, date, isInitial));
+		encounter.setLocation(getSiteLocation());
+		encounter.setProvider(MappingUtils.getEncounterProvider());
+		encounter.setEncounterDatetime(date);
+		encounter.setPatient(patient);
+		
+		// Store in encounter map and return
+		encounters.put(date, encounter);
+		return encounter;
+	}
+	
+	/**
 	 * Gets the encounter type to use for imported obs
 	 * @param patient the patient
 	 * @param date the encounter date
@@ -430,33 +445,6 @@ public class EntityBuilder {
 	}
 	
 	/**
-	 * Gets an encounter for the given day - if one exists it is returned
-	 * @param patient the patient
-	 * @param date the day
-	 * @param encounters the existing encounters
-	 * @return the encounter
-	 */
-	protected Encounter encounterForDate(Patient patient, Date date, Map<Date, Encounter> encounters) {
-		// Look for existing encounter on that date
-		if (encounters.containsKey(date)) 
-			return encounters.get(date);
-		
-		// If no existing, then this will be an initial encounter
-		boolean isInitial = encounters.isEmpty();
-		
-		// Create new one
-		Encounter encounter = new Encounter();
-		encounter.setEncounterType(getEncounterType(patient, date, isInitial));
-		encounter.setLocation(getEncounterLocation());
-		encounter.setEncounterDatetime(date);
-		encounter.setPatient(patient);
-		
-		// Store in encounter map and return
-		encounters.put(date, encounter);
-		return encounter;
-	}
-	
-	/**
 	 * Helper method to create a new obs
 	 * @param patient the patient
 	 * @param date the date
@@ -466,7 +454,7 @@ public class EntityBuilder {
 	protected Obs makeObs(Patient patient, Date date, Concept concept) {
 		Obs obs = new Obs();
 		obs.setPerson(patient);
-		obs.setLocation(getEncounterLocation());
+		obs.setLocation(getSiteLocation());
 		obs.setObsDatetime(date);
 		obs.setConcept(concept);
 		return obs;

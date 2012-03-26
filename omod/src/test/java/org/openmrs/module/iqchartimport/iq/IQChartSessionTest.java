@@ -16,7 +16,6 @@ package org.openmrs.module.iqchartimport.iq;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -26,7 +25,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.iqchartimport.TestUtils;
-import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
 import org.openmrs.module.iqchartimport.iq.code.HIVStatusPartCode;
 import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
@@ -43,25 +41,15 @@ public class IQChartSessionTest {
 	
 	protected static final Log log = LogFactory.getLog(IQChartSessionTest.class);
 
-	private File tempZipFile, tempMdbFile;
 	private IQChartSession session;
 	
 	@Before
 	public void setup() throws Exception {
-		// Extract embedded test database
-		tempZipFile = TestUtils.copyResource("/HIVData.mdb.zip");
-		tempMdbFile = TestUtils.extractZipEntry(tempZipFile, "HIVData.mdb");
-			
-		IQChartDatabase database = new IQChartDatabase("HIVData.mdb", tempMdbFile.getAbsolutePath());
-		session = new IQChartSession(database);
+		session = new IQChartSession(TestUtils.getDatabase());
 	}
 	
 	@After
 	public void cleanup() throws IOException {
-		// Delete temporary files
-		tempMdbFile.delete();
-		tempZipFile.delete();
-		
 		session.close();
 	}
 	

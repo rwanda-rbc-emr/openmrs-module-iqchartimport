@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport;
+package org.openmrs.module.iqchartimport.task;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,9 +21,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientProgram;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
+import org.openmrs.module.iqchartimport.EntityBuilder;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 
@@ -37,8 +39,9 @@ public class ImportTask implements Runnable {
 	private UserContext userContext;
 	private IQChartDatabase database;
 	private boolean full = false;
-	private boolean complete = false;
+	private boolean completed = false;
 	private int totalPatients = 0;
+	private int patientsProcessed = 0;
 	private int patientsImported = 0;
 	private int encountersImported = 0;
 	private Exception exception;
@@ -59,24 +62,31 @@ public class ImportTask implements Runnable {
 		IQChartSession session = null;
 		
 		try {
+			log.info("Starting IQChart database import");
+			
 			session = new IQChartSession(database);
 			
 			Context.openSession();
 			Context.setUserContext(userContext);
 			
 			doImport(session);
+			
+			log.info("Finished IQChart database import");
 		}
 		catch (Exception ex) {
 			exception = ex;
+			
+			log.error("Unable to complete IQChart database import", ex);
 		}
 		finally {
-			Context.clearSession();
+			Context.closeSession();
 			try {
 				if (session != null)
 					session.close();
 			} catch (IOException e) {
+				log.error("Unable to close OpenMRS session");
 			}
-			complete = true;
+			completed = true;
 		}
 	}
 	
@@ -92,14 +102,14 @@ public class ImportTask implements Runnable {
 		
 		// Import each patient
 		for (Patient patient : patients) {
+			++patientsProcessed;
+			
 			// Get TRACnet ID
-			int tracnetID = Integer.parseInt(patient.getPatientIdentifier().getIdentifier());
+			PatientIdentifier tracnetIdentifier = patient.getPatientIdentifier();
+			int tracnetID = Integer.parseInt(tracnetIdentifier.getIdentifier());
 			
-			// Look for patients with same TRACnet ID
-			List<Patient> matchPatients = Context.getPatientService().getPatients(null, tracnetID + "", null, true);
-			
-			if (matchPatients.size() > 0) {
-				// TODO log duplicate
+			if (Context.getPatientService().isIdentifierInUseByAnotherPatient(tracnetIdentifier)) {
+				log.info("Duplicate patient not imported: " + tracnetID);
 				continue;
 			}
 			
@@ -122,6 +132,10 @@ public class ImportTask implements Runnable {
 				}
 			}
 			
+			// Break cleanly if thread has been interrupted
+			if (Thread.currentThread().isInterrupted())
+				break;
+			
 			++patientsImported;
 		}
 	}
@@ -130,16 +144,19 @@ public class ImportTask implements Runnable {
 	 * Gets if task is complete
 	 * @return true if task is complete
 	 */
-	public boolean isComplete() {
-		return complete;
+	public boolean isCompleted() {
+		return completed;
 	}
 	
 	/**
 	 * Gets the import progress
-	 * @return the progress (0...1)
+	 * @return the progress (0...100)
 	 */
-	public float getProgress() {
-		return patientsImported / (float)totalPatients;
+	public int getProgress() {
+		if (completed)
+			return 100;
+		else
+			return (totalPatients > 0) ? (100 * patientsProcessed / totalPatients) : 0;
 	}
 	
 	/**

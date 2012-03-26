@@ -174,7 +174,7 @@
 		<uuid>8d6c993e-c2cc-11de-8d13-0010c6dffd0f</uuid>
 	</location>
 	<global_property property="concept.cd4_count" property_value="5497" uuid="8d793bee-c2cc-11de-8d13-0010c6df0001" />		
-	<global_property property="iqchartimport.tracnetIDTypeId" property_value="0" uuid="8d793bee-c2cc-11de-8d13-0010c6df1001" />		
+	<global_property property="iqchartimport.tracnetIDTypeId" property_value="1" uuid="8d793bee-c2cc-11de-8d13-0010c6df1001" />		
 	<global_property property="iqchartimport.addressCountry" property_value="Testland" uuid="8d793bee-c2cc-11de-8d13-0010c6df1002" />	
 	<global_property property="iqchartimport.addressProvince" property_value="Testern" uuid="8d793bee-c2cc-11de-8d13-0010c6df1003" />
 	<global_property property="iqchartimport.hivProgramId" property_value="1" uuid="8d793bee-c2cc-11de-8d13-0010c6df1004" />

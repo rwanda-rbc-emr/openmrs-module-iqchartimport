@@ -16,11 +16,8 @@ package org.openmrs.module.iqchartimport;
 
 import static junit.framework.Assert.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,7 +28,6 @@ import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PatientProgram;
-import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.module.iqchartimport.iq.IQPatient;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
@@ -45,7 +41,6 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 
 	protected static final Log log = LogFactory.getLog(EntityBuilderTest.class);
 
-	private File tempZipFile, tempMdbFile;
 	private IQChartSession session;
 	private EntityBuilder builder;
 	
@@ -57,29 +52,26 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 		
 		executeDataSet("TestingDataset.xml");
 		
-		// Extract embedded test database
-		tempZipFile = TestUtils.copyResource("/HIVData.mdb.zip");
-		tempMdbFile = TestUtils.extractZipEntry(tempZipFile, "HIVData.mdb");
-		
-		IQChartDatabase database = new IQChartDatabase("HIVData.mdb", tempMdbFile.getAbsolutePath());
-		session = new IQChartSession(database);
+		session = new IQChartSession(TestUtils.getDatabase());
 		builder = new EntityBuilder(session);
 	}
 	
 	@After
-	public void cleanup() throws IOException {
-		// Delete temporary files
-		tempMdbFile.delete();
-		tempZipFile.delete();
-		
+	public void cleanup() throws IOException {	
 		session.close();
 	}
 	
 	@Test
-	public void getTRACnetIDType_shouldCreateNewIfNotMapped() {
-		PatientIdentifierType tracnetIdType = builder.getTRACnetIDType();
-		Assert.assertNull(tracnetIdType.getId());
-		Assert.assertEquals(Constants.NEW_TRACNET_ID_TYPE_NAME, tracnetIdType.getName());
+	public void getTRACnetIDType_shouldThrowExceptionIfNotMapped() {
+		TestUtils.setGlobalProperty(Constants.PROP_TRACNET_ID_TYPE_ID, -1);
+		Mappings.getInstance().load();
+		
+		try {
+			builder.getTRACnetIDType();
+			fail();
+		}
+		catch (IncompleteMappingException ex) {
+		}
 	}
 	
 	@Test

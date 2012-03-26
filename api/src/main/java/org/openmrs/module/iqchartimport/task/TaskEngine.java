@@ -12,14 +12,14 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport;
+package org.openmrs.module.iqchartimport.task;
 
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 
 /**
  * Simple engine class to run a single import task at a time
  */
-public class ImportEngine {
+public class TaskEngine {
 
 	private static ImportTask task;
 	private static Thread thread;
@@ -31,7 +31,7 @@ public class ImportEngine {
 	 * @return true if successful, else false if a task is already running
 	 */
 	public static synchronized boolean startImport(IQChartDatabase database, boolean full) {
-		if (task != null && !task.isComplete())
+		if (task != null && !task.isCompleted())
 			return false;
 		
 		task = new ImportTask(database, full);
@@ -46,5 +46,13 @@ public class ImportEngine {
 	 */
 	public static synchronized ImportTask getCurrentTask() {
 		return task;
+	}
+	
+	/**
+	 * Stops the currently running if there is one
+	 */
+	public static synchronized void stopCurrentTask() {
+		if (thread != null)
+			thread.interrupt();
 	}
 }

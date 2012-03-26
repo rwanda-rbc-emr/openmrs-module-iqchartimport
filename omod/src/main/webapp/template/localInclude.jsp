@@ -11,3 +11,6 @@
 <openmrs:htmlInclude file="/scripts/jquery/dataTables/css/dataTables.css" />
 <openmrs:htmlInclude file="/scripts/jquery/jqModal/jqModal.js" />
 <openmrs:htmlInclude file="/scripts/jquery/jqModal/jqModal.css" />
+
+<openmrs:htmlInclude file="/scripts/jquery-ui/js/jquery-ui-1.7.2.custom.min.js" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/css/redmond/jquery-ui-1.7.2.custom.css" />

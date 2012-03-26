@@ -4,10 +4,19 @@
 <%@ include file="template/localInclude.jsp"%>
 <%@ include file="template/localHeader.jsp"%>
 
+<script type="text/javascript">
+$(function() {
+	$("#createProviderButton").click(function() {
+		$("#createProvider").val("1");
+		$("#mappingsForm").submit();
+	});
+});
+</script>
+
 <b class="boxHeader">
 	<spring:message code="@MODULE_ID@.mappings.entityMappings" />
 </b>
-<sform:form commandName="mappings" cssClass="box" action="mappings.form">
+<sform:form id="mappingsForm" commandName="mappings" cssClass="box" action="mappings.form">
 	<table>
 		<tr>
 	    	<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.mappings.tracnetIdentifierType" /></td>
@@ -16,8 +25,7 @@
 	    			<c:if test="${mappings.tracnetIDTypeId == -1}">
 		    			<sform:option value="-1" label="" />
 		    		</c:if>
-		    		<sform:option value="0">&lt;<spring:message code="@MODULE_ID@.mappings.createNew" />&gt;</sform:option>
-					<c:forEach items="${identifierTypes}" var="identifierType">
+		    		<c:forEach items="${identifierTypes}" var="identifierType">
 						<sform:option value="${identifierType.patientIdentifierTypeId}" label="${identifierType.name}" />
 					</c:forEach>
 				</sform:select>
@@ -51,16 +59,31 @@
 	    	</td>
 	    </tr>
 	    <tr>
-	    	<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.mappings.encounterLocation" /></td>
+	    	<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.mappings.siteLocation" /></td>
 	    	<td>
-	    		<sform:select path="encounterLocationId">
-	    			<c:if test="${mappings.encounterLocationId == -1}">
+	    		<sform:select path="siteLocationId">
+	    			<c:if test="${mappings.siteLocationId == -1}">
 		    			<sform:option value="-1" label="" />
 		    		</c:if>
 		    		<c:forEach items="${locations}" var="location">
 						<sform:option value="${location.locationId}" label="${location.name}" />
 					</c:forEach>
 				</sform:select>
+	    	</td>
+	    </tr>
+	    <tr>
+	    	<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.mappings.encounterProvider" /></td>
+	    	<td>
+	    		<c:choose>
+	    			<c:when test="${encounterProvider != null}">
+	    				<c:out value="${encounterProvider.personName}" />
+	    			</c:when>
+	    			<c:otherwise>
+	    				<spring:message code="general.none"/>
+	    				<input type="hidden" id="createProvider" name="createProvider" value="0" />
+	    				<input type="button" id="createProviderButton" value="<spring:message code="@MODULE_ID@.mappings.create"/>" />
+	    			</c:otherwise>
+	    		</c:choose>
 	    	</td>
 	    </tr>
 	</table>

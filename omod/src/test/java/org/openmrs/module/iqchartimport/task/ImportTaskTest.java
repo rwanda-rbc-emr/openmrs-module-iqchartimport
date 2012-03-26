@@ -12,71 +12,54 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport;
+package org.openmrs.module.iqchartimport.task;
 
 import static junit.framework.Assert.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
+import org.openmrs.module.iqchartimport.TestUtils;
+import org.openmrs.module.iqchartimport.task.ImportTask;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
- * Test class for EntityBuilder
+ * Test class for ImportTask
  */
-public class ImportEngineTest extends BaseModuleContextSensitiveTest {
+public class ImportTaskTest extends BaseModuleContextSensitiveTest {
 
-	protected static final Log log = LogFactory.getLog(ImportEngineTest.class);
-
-	private File tempZipFile, tempMdbFile;
-	private IQChartDatabase database;
+	protected static final Log log = LogFactory.getLog(ImportTaskTest.class);
 	
 	// IDs of patients from test DB to check
 	private int[] testIDs = { 235001, 185568 };
 	
 	@Before
-	public void setup() throws Exception {
-		
-		executeDataSet("TestingDataset.xml");
-		
-		// Extract embedded test database
-		tempZipFile = TestUtils.copyResource("/HIVData.mdb.zip");
-		tempMdbFile = TestUtils.extractZipEntry(tempZipFile, "HIVData.mdb");	
-		database = new IQChartDatabase("HIVData.mdb", tempMdbFile.getAbsolutePath());
-	}
-	
-	@After
-	public void cleanup() throws IOException {
-		// Delete temporary files
-		tempMdbFile.delete();
-		tempZipFile.delete();
+	public void setup() throws Exception {	
+		executeDataSet("TestingDataset.xml");	
 	}
 	
 	@Test
-	public void startImport() throws InterruptedException {
-		boolean started = ImportEngine.startImport(database, false);
-		ImportTask task = ImportEngine.getCurrentTask();
-		
-		assertTrue(started);
-		assertNotNull(task);
+	public void startImport() throws InterruptedException, IOException {
+		ImportTask task = new ImportTask(TestUtils.getDatabase(), false);
 		
 		// Get number of existing patients
 		PatientService patientSvc = Context.getPatientService();
 		int initialPatients = patientSvc.getAllPatients().size();
 		
+		// Run task in new thread
+		Thread thread = new Thread(task);
+		thread.start();
+		
 		// Wait for task to finish
 		int progBarTicks = 0;
-		while (!task.isComplete()) {
+		while (!task.isCompleted()) {
 			Thread.sleep(1000);
 			progBarTicks = TestUtils.progressBar(task.getProgress(), progBarTicks);
 		}

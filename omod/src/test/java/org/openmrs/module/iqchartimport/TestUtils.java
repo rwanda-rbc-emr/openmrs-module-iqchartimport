@@ -27,11 +27,15 @@ import java.util.zip.ZipFile;
 
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 
 /**
  * Utility methods for testing
  */
 public class TestUtils {
+	
+	private static IQChartDatabase database = null;
+	private static File tempZipFile, tempMdbFile;
 	
 	/**
 	 * Creates a date object
@@ -63,12 +67,48 @@ public class TestUtils {
 	}
 	
 	/**
+	 * Outputs a basic progress bar to the console
+	 * @param progress the progress (0...100)
+	 * @param existing the existing ticks as returned by the last call to this function
+	 * @return the existing ticks
+	 */
+	public static int progressBar(int progress, int existing) {
+		final int TOTAL_TICKS = 50;
+		final int progressTicks = (progress * TOTAL_TICKS) / 100;
+		final int newTicks = progressTicks - existing;
+		
+		for (int i = 0; i < newTicks; ++i)
+			System.out.print(".");
+		
+		if (progressTicks == TOTAL_TICKS && newTicks > 0)
+			System.out.println();
+			
+		return progressTicks;
+	}
+	
+	/**
+	 * Gets the embedded IQChart database for testing
+	 * @return the database
+	 * @throws IOException
+	 */
+	public static IQChartDatabase getDatabase() throws IOException {
+		if (database == null) {
+			// Extract embedded test database
+			tempZipFile = copyResource("/HIVData.mdb.zip");
+			tempMdbFile = extractZipEntry(tempZipFile, "HIVData.mdb");	
+			database = new IQChartDatabase("HIVData.mdb", tempMdbFile.getAbsolutePath());
+		}
+		
+		return database;
+	}
+	
+	/**
 	 * Extracts a resource to a temporary file for testing
 	 * @param path the database resource path
 	 * @return the temporary file
 	 * @throws Exception
 	 */
-	public static File copyResource(String path) throws IOException {
+	private static File copyResource(String path) throws IOException {
 		InputStream in = TestUtils.class.getResourceAsStream(path);
 		if (in == null)
 			throw new IOException("Unable to open resource: " + path);
@@ -89,7 +129,7 @@ public class TestUtils {
 	 * @throws ZipException
 	 * @throws IOException
 	 */
-	public static File extractZipEntry(File zipFile, String entryName) throws ZipException, IOException {
+	private static File extractZipEntry(File zipFile, String entryName) throws ZipException, IOException {
 		ZipFile zip = new ZipFile(zipFile);
 		ZipEntry entry = zip.getEntry(entryName);
 		InputStream in = zip.getInputStream(entry);
@@ -107,29 +147,9 @@ public class TestUtils {
 	 * @param path the file path
 	 * @return the extension
 	 */
-	public static String getExtension(String path) {
+	private static String getExtension(String path) {
 		final int index = path.lastIndexOf('.');
 		return index >= 0 ? path.substring(index + 1) : null;
-	}
-	
-	/**
-	 * Outputs a basic progress bar to the console
-	 * @param progress the progress (0...1)
-	 * @param existing the existing ticks as returned by the last call to this function
-	 * @return the existing ticks
-	 */
-	public static int progressBar(float progress, int existing) {
-		final int TOTAL_TICKS = 50;
-		final int progressTicks = (int)(progress * TOTAL_TICKS);
-		final int newTicks = progressTicks - existing;
-		
-		for (int i = 0; i < newTicks; ++i)
-			System.out.print(".");
-		
-		if (progressTicks == TOTAL_TICKS && newTicks > 0)
-			System.out.println();
-			
-		return progressTicks;
 	}
 	
 	/**
