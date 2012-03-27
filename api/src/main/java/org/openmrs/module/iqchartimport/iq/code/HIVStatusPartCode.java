@@ -14,24 +14,26 @@
 
 package org.openmrs.module.iqchartimport.iq.code;
 
+import org.openmrs.module.iqchartimport.Dictionary;
+
 /**
  * Patient's partner HIV status code
  */
 public enum HIVStatusPartCode {
 	
-	NEGATIVE ("NEGATIVE"),
-	POSITIVE ("POSITIVE"),
-	UNKNOWN ("UNKNOWN"),
+	NEGATIVE (Dictionary.NEGATIVE),
+	POSITIVE (Dictionary.POSITIVE),
+	UNKNOWN (Dictionary.UNKNOWN),
 	NOTTESTED ("NO TEST");
 	
-	public static final String mappedQuestion = "TESTING STATUS OF PARTNER";
-	public final String mappedAnswer;
+	public static final Object mappedQuestion = "TESTING STATUS OF PARTNER";
+	public final Object mappedAnswer;
 	
 	/**
 	 * Constructs new enum value
 	 * @param mappedAnswer the mapped answer
 	 */
-	HIVStatusPartCode(String mappedAnswer) {
+	HIVStatusPartCode(Object mappedAnswer) {
 		this.mappedAnswer = mappedAnswer;
 	}
 	

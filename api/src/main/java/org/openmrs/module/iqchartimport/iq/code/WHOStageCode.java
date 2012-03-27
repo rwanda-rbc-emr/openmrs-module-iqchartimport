@@ -19,19 +19,19 @@ package org.openmrs.module.iqchartimport.iq.code;
  */
 public enum WHOStageCode {
 	
-	STAGE_1 ("WHO STAGE 1 PEDS|WHO STAGE 1 ADULT"),
-	STAGE_2 ("WHO STAGE 2 PEDS|WHO STAGE 2 ADULT"),
-	STAGE_3 ("WHO STAGE 3 PEDS|WHO STAGE 3 ADULT"),
-	STAGE_4 ("WHO STAGE 4 PEDS|WHO STAGE 4 ADULT");
+	STAGE_1 (new String[] { "WHO STAGE 1 PEDS", "WHO STAGE 1 ADULT" }),
+	STAGE_2 (new String[] { "WHO STAGE 2 PEDS", "WHO STAGE 2 ADULT" }),
+	STAGE_3 (new String[] { "WHO STAGE 3 PEDS", "WHO STAGE 3 ADULT" }),
+	STAGE_4 (new String[] { "WHO STAGE 4 PEDS", "WHO STAGE 4 ADULT" });
 	
-	public static final String mappedQuestion = "WHO STAGE";
-	public final String mappedAnswer;
+	public static final Object mappedQuestion = "WHO STAGE";
+	public final Object mappedAnswer;
 	
 	/**
 	 * Constructs new enum value
 	 * @param mappedAnswer the mapped answer
 	 */
-	WHOStageCode(String mappedAnswer) {
+	WHOStageCode(Object mappedAnswer) {
 		this.mappedAnswer = mappedAnswer;
 	}
 	

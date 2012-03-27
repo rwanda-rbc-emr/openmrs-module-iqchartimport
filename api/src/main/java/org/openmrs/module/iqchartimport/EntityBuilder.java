@@ -268,7 +268,7 @@ public class EntityBuilder {
 				}
 			}
 			else if (iqObs instanceof WHOStageObs) {
-				String[] ageDepStages = ((WHOStageObs)iqObs).getStage().mappedAnswer.split("\\|");
+				String[] ageDepStages = (String[]) ((WHOStageObs)iqObs).getStage().mappedAnswer;
 				int age = patient.getAge(iqObs.getDate());
 				boolean isPediatric = (age < Constants.ADULT_START_AGE);
 				String stage = isPediatric ? ageDepStages[0] : ageDepStages[1];
@@ -380,7 +380,7 @@ public class EntityBuilder {
 		
 		// Set patient gender
 		if (iqPatient.getSexCode() != null)
-			patient.setGender(iqPatient.getSexCode().mappedValue);
+			patient.setGender((String)iqPatient.getSexCode().mappedValue);
 		
 		// Set patient birth date
 		patient.setBirthdate(iqPatient.getDob());

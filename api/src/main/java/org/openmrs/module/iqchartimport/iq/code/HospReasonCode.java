@@ -24,14 +24,14 @@ public enum HospReasonCode {
 	OTHER_HIV_RELATED ("OTHER HIV RELATED"),
 	NON_HIV_RELATED ("NON HIV RELATED");
 	
-	public static final String mappedQuestion = "REASON FOR REFERRAL TO HOSPITAL";
-	public final String mappedAnswer;
+	public static final Object mappedQuestion = "REASON FOR REFERRAL TO HOSPITAL";
+	public final Object mappedAnswer;
 	
 	/**
 	 * Constructs new enum value
 	 * @param mappedAnswer the mapped answer
 	 */
-	HospReasonCode(String mappedAnswer) {
+	HospReasonCode(Object mappedAnswer) {
 		this.mappedAnswer = mappedAnswer;
 	}
 	

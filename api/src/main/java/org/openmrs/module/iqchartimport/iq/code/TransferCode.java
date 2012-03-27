@@ -14,22 +14,24 @@
 
 package org.openmrs.module.iqchartimport.iq.code;
 
+import org.openmrs.module.iqchartimport.Dictionary;
+
 /**
  * Patient transfer code
  */
 public enum TransferCode {
 	
-	NEW ("NO"),
-	TRANSFER ("YES");
+	NEW (Dictionary.NO),
+	TRANSFER (Dictionary.YES);
 	
-	public static final String mappedQuestion = "TRANSFER IN";
-	public final String mappedAnswer;
+	public static final Object mappedQuestion = "TRANSFER IN";
+	public final Object mappedAnswer;
 	
 	/**
 	 * Constructs new enum value
 	 * @param mappedAnswer the mapped answer
 	 */
-	TransferCode(String mappedAnswer) {
+	TransferCode(Object mappedAnswer) {
 		this.mappedAnswer = mappedAnswer;
 	}
 	

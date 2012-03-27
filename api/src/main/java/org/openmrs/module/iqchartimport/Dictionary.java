@@ -12,32 +12,17 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport.iq.code;
+package org.openmrs.module.iqchartimport;
 
 /**
- * Patient sex code
+ * Common PIH dictionary concepts
  */
-public enum SexCode {
-	
-	MALE ("M"),
-	FEMALE ("F");
-	
-	public final Object mappedValue;
-	
-	/**
-	 * Constructs new enum value
-	 * @param mappedValue the mapped value
-	 */
-	SexCode(Object mappedValue) {
-		this.mappedValue = mappedValue;
-	}
-	
-	/**
-	 * Converts a Byte value to an enum value
-	 * @param val the Byte value
-	 * @return the enum value or null if byte value is null
-	 */
-	public static SexCode fromByte(Byte val) {
-		return val != null ? values()[val] : null;
-	}
+public class Dictionary {
+
+	public static final int YES = 1065;
+	public static final int NO = 1066;
+	public static final int UNKNOWN = 1067;
+	public static final int POSITIVE = 703;
+	public static final int NEGATIVE = 664;
+	public static final int TRANSFER_IN = 2536;
 }

@@ -14,12 +14,14 @@
 
 package org.openmrs.module.iqchartimport.iq.code;
 
+import org.openmrs.module.iqchartimport.Dictionary;
+
 /**
  * Patient admission mode code
  */
 public enum ModeCode {
 	
-	OTHER ("UNKNOWN"),
+	OTHER (Dictionary.UNKNOWN),
 	VCT ("VCT PROGRAM"),
 	PMTCT ("PMTCT PROGRAM"),
 	HOSPITALIZATION ("INPATIENT HOSPITALIZATION"),
@@ -27,14 +29,14 @@ public enum ModeCode {
 	CONSULTATION_TB ("TUBERCULOSIS PROGRAM"),
 	PIT ("OTHER OUTREACH PROGRAM");
 	
-	public static final String mappedQuestion = "METHOD OF ENROLLMENT";
-	public final String mappedAnswer;
+	public static final Object mappedQuestion = "METHOD OF ENROLLMENT";
+	public final Object mappedAnswer;
 	
 	/**
 	 * Constructs new enum value
 	 * @param mappedAnswer the mapped answer
 	 */
-	ModeCode(String mappedAnswer) {
+	ModeCode(Object mappedAnswer) {
 		this.mappedAnswer = mappedAnswer;
 	}
 	

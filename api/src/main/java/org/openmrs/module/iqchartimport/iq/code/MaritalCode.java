@@ -14,6 +14,8 @@
 
 package org.openmrs.module.iqchartimport.iq.code;
 
+import org.openmrs.module.iqchartimport.Dictionary;
+
 /**
  * Patient marital status code
  */
@@ -24,16 +26,16 @@ public enum MaritalCode {
 	WIDOWED ("WIDOWED"),
 	DIVORCED ("DIVORCED"),
 	LIVINGWITHPARTNER ("LIVING WITH PARTNER"),
-	OTHER ("UNKNOWN");
+	OTHER (Dictionary.UNKNOWN);
 	
-	public static final String mappedQuestion = "CIVIL STATUS";
-	public final String mappedAnswer;
+	public static final Object mappedQuestion = "CIVIL STATUS";
+	public final Object mappedAnswer;
 	
 	/**
 	 * Constructs new enum value
 	 * @param mappedAnswer the mapped answer
 	 */
-	MaritalCode(String mappedAnswer) {
+	MaritalCode(Object mappedAnswer) {
 		this.mappedAnswer = mappedAnswer;
 	}
 	

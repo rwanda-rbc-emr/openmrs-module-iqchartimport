@@ -14,24 +14,26 @@
 
 package org.openmrs.module.iqchartimport.iq.code;
 
+import org.openmrs.module.iqchartimport.Dictionary;
+
 /**
  * TB screening result code
  */
 public enum TBScreenCode {
 	
 	// TODO missing mappings
-	NEGATIVE ("NEGATIVE"),
-	POSITIVE ("POSITIVE"),
+	NEGATIVE (Dictionary.NEGATIVE),
+	POSITIVE (Dictionary.POSITIVE),
 	NOT_DETECTED (null);
 	
-	public static final String mappedQuestion = "TB SCREENING";
-	public final String mappedAnswer;
+	public static final Object mappedQuestion = "TB SCREENING";
+	public final Object mappedAnswer;
 	
 	/**
 	 * Constructs new enum value
 	 * @param mappedAnswer the mapped answer
 	 */
-	TBScreenCode(String mappedAnswer) {
+	TBScreenCode(Object mappedAnswer) {
 		this.mappedAnswer = mappedAnswer;
 	}
 	

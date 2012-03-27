@@ -63,38 +63,54 @@ public class MappingUtils {
 	}
 
 	/**
-	 * Gets a concept by name
-	 * @param name the concept name
+	 * Gets a concept by id, name or global property
+	 * @param identifier the id, name or global property
 	 * @return the concept
 	 * @throws IncompleteMappingException if concept doesn't exist
 	 */
-	public static Concept getConcept(String name) {
+	public static Concept getConcept(Object identifier) {
 		// If name is null, return null
-		if (name == null)
+		if (identifier == null)
 			return null;
 		
-		// If name is prefixed with @ then it's a global property
-		else if (name.startsWith("@"))
-			return getConceptFromProperty(name.substring(1));
+		if (identifier instanceof Integer)
+			return getConceptById((Integer)identifier);
 		
-		Concept concept = Context.getConceptService().getConcept(name);
+		String str = (String)identifier;
+			
+		// If string is prefixed with @ then it's a global property
+		if (str.startsWith("@")) {
+			String property = str.substring(1);
+			String propVal = Context.getAdministrationService().getGlobalProperty(property);
+			
+			if (propVal == null || propVal.length() == 0) 
+				throw new IncompleteMappingException("Missing '" + property + "' global property");
+			
+			try {
+				return getConceptById(Integer.parseInt(propVal));
+			}
+			catch (NumberFormatException ex) {
+				throw new IncompleteMappingException("Invalid '" + property + "' global property");
+			}
+		}
+
+		Concept concept = Context.getConceptService().getConcept(str);
 		if (concept == null) 
-			throw new IncompleteMappingException("Missing '" + name + "' concept");
+			throw new IncompleteMappingException("Missing '" + str + "' concept");
 		
 		return concept;
 	}
-
+	
 	/**
-	 * Gets a concept from a global property
-	 * @param property the property name
-	 * @return the concept
-	 * @throws IncompleteMappingException if global property doesn't exist
+	 * 
+	 * @param conceptId
+	 * @return
 	 */
-	private static Concept getConceptFromProperty(String property) {
-		String conceptId = Context.getAdministrationService().getGlobalProperty(property);
-		if (conceptId == null || conceptId.length() == 0) 
-			throw new IncompleteMappingException("Missing '" + property + "' global property");
+	private static Concept getConceptById(int conceptId) {
+		Concept concept = Context.getConceptService().getConcept(conceptId);
+		if (concept == null) 
+			throw new IncompleteMappingException("Missing " + conceptId + " concept");
 		
-		return Context.getConceptService().getConcept(conceptId);
+		return concept;
 	}
 }

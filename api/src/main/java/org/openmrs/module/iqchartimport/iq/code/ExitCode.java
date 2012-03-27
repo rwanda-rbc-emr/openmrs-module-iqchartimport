@@ -27,14 +27,14 @@ public enum ExitCode {
 	STOPPED_BY_DOCTOR (null),
 	STOPPED_BY_PATIENT ("PATIENT REFUSED");
 	
-	public static final String mappedQuestion = "@concept.reasonExitedCare";
-	public final String mappedAnswer;
+	public static final Object mappedQuestion = "@concept.reasonExitedCare";
+	public final Object mappedAnswer;
 	
 	/**
 	 * Constructs new enum value
 	 * @param mappedAnswer the mapped answer
 	 */
-	ExitCode(String mappedAnswer) {
+	ExitCode(Object mappedAnswer) {
 		this.mappedAnswer = mappedAnswer;
 	}
 	
