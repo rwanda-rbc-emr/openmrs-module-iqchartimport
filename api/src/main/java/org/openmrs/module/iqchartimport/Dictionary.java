@@ -22,6 +22,7 @@ public class Dictionary {
 	public static final int YES = 1065;
 	public static final int NO = 1066;
 	public static final int UNKNOWN = 1067;
+	public static final int NOT_APPLICABLE = 1175;
 	public static final int POSITIVE = 703;
 	public static final int NEGATIVE = 664;
 	public static final int TRANSFER_IN = 2536;
