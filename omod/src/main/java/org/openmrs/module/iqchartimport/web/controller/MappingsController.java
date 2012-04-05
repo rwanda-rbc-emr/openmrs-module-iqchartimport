@@ -71,10 +71,10 @@ public class MappingsController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public String handleSubmit(HttpServletRequest request, @ModelAttribute("mappings") Mappings mappings, @RequestParam Boolean createProvider) {
+	public String handleSubmit(HttpServletRequest request, @ModelAttribute("mappings") Mappings mappings, @RequestParam(required = false) Boolean createProvider) {
 		Utils.checkSuperUser();
 		
-		if (createProvider) {
+		if (createProvider != null && createProvider) {
 			MappingUtils.createEncounterProvider();
 			request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Provider created");
 		}
