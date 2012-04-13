@@ -315,9 +315,9 @@ public class EntityBuilder {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		List<Pregnancy> pregnancies = session.getPatientPregnancies(iqPatient);
 		Concept conceptPregnancy = MappingUtils.getConcept("PATIENT PREGNANCY STATUS");
-		Concept conceptYes = MappingUtils.getConcept("YES");
-		Concept conceptNo = MappingUtils.getConcept("NO");
-		Concept conceptNA = MappingUtils.getConcept("NOT APPLICABLE");
+		Concept conceptYes = MappingUtils.getConcept(Dictionary.YES);
+		Concept conceptNo = MappingUtils.getConcept(Dictionary.NO);
+		Concept conceptNA = MappingUtils.getConcept(Dictionary.NOT_APPLICABLE);
 		
 		for (Date date : encounters.keySet()) {
 			Obs obs = makeObs(patient, date, conceptPregnancy);
@@ -326,6 +326,14 @@ public class EntityBuilder {
 			if (iqPatient.getSexCode() == SexCode.MALE)
 				obs.setValueCoded(conceptNA);
 			else {
+				// Does date fall inside the range of a incomplete pregnancy record (one without an end date)
+				for (Pregnancy pregnancy : pregnancies) {
+					if (pregnancy.getDateEnd() == null && date.after(pregnancy.getDateStart()) && date.before(pregnancy.getEstDelivery())) {
+						// Don't add any obs... because we just don't know what happened
+						continue;
+					}
+				}
+				
 				// Check each of patient's pregnancies 
 				boolean pregOnDate = false;
 				for (Pregnancy pregnancy : pregnancies) {
