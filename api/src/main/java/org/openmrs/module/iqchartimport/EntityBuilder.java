@@ -47,6 +47,7 @@ import org.openmrs.module.iqchartimport.iq.code.TBScreenCode;
 import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 import org.openmrs.module.iqchartimport.iq.code.WHOStageCode;
 import org.openmrs.module.iqchartimport.iq.model.Pregnancy;
+import org.openmrs.module.iqchartimport.iq.model.TBTreatment;
 import org.openmrs.module.iqchartimport.iq.obs.BaseIQObs;
 import org.openmrs.module.iqchartimport.iq.obs.CD4Obs;
 import org.openmrs.module.iqchartimport.iq.obs.HeightObs;
@@ -91,9 +92,22 @@ public class EntityBuilder {
 	 * @throws IncompleteMappingException if mappings are not configured properly
 	 */
 	public Program getHIVProgram() {
-		int hivProgramId = Mappings.getInstance().getHivProgramId();
+		int hivProgramId = Mappings.getInstance().getHIVProgramId();
 		if (hivProgramId > 0)
 			return Context.getProgramWorkflowService().getProgram(hivProgramId);	
+		else
+			throw new IncompleteMappingException();
+	}
+	
+	/**
+	 * Gets the TB program to use for imported patients
+	 * @return the TB program
+	 * @throws IncompleteMappingException if mappings are not configured properly
+	 */
+	public Program getTBProgram() {
+		int tbProgramId = Mappings.getInstance().getTBProgramId();
+		if (tbProgramId > 0)
+			return Context.getProgramWorkflowService().getProgram(tbProgramId);	
 		else
 			throw new IncompleteMappingException();
 	}
@@ -156,6 +170,21 @@ public class EntityBuilder {
 			hivPatientProgram.setDateEnrolled(iqPatient.getEnrollDate());
 			hivPatientProgram.setDateCompleted(iqPatient.getExitDate());
 			patientPrograms.add(hivPatientProgram);
+		}
+		
+		List<TBTreatment> tbTreatments = session.getPatientTBTreatments(iqPatient);
+		if (tbTreatments.size() > 0) {
+			// Get TB program
+			Program tbProgram = getTBProgram();
+			
+			for (TBTreatment tbTreatment : tbTreatments) {
+				PatientProgram tbPatientProgram = new PatientProgram();
+				tbPatientProgram.setPatient(patient);
+				tbPatientProgram.setProgram(tbProgram);
+				tbPatientProgram.setDateEnrolled(tbTreatment.getStartDate());
+				tbPatientProgram.setDateCompleted(tbTreatment.getEndDate());
+				patientPrograms.add(tbPatientProgram);
+			}
 		}
 		
 		return patientPrograms;

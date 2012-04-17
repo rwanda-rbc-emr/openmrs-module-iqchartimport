@@ -34,5 +34,6 @@ public class Constants {
 	public static final String PROP_ADDRESS_PROVINCE = MODULE_ID + ".addressProvince";
 	public static final String PROP_ADDRESS_ALL_PROVINCES = MODULE_ID + ".addressAllProvinces";
 	public static final String PROP_HIV_PROGRAM_ID = MODULE_ID + ".hivProgramId";
+	public static final String PROP_TB_PROGRAM_ID = MODULE_ID + ".tbProgramId";
 	public static final String PROP_SITE_LOCATION_ID = MODULE_ID + ".encounterLocationId";
 }

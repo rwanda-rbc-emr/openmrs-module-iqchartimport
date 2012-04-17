@@ -33,6 +33,7 @@ import org.openmrs.module.iqchartimport.iq.code.SexCode;
 import org.openmrs.module.iqchartimport.iq.code.StatusCode;
 import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 import org.openmrs.module.iqchartimport.iq.model.Pregnancy;
+import org.openmrs.module.iqchartimport.iq.model.TBTreatment;
 
 /**
  * Test class for IQChartSession
@@ -122,5 +123,22 @@ public class IQChartSessionTest {
 		assertEquals(TestUtils.date(2007, 11, 27), pregnancies.get(0).getDateStart());
 		assertEquals(TestUtils.date(2008, 8, 29), pregnancies.get(0).getEstDelivery());
 		assertEquals(TestUtils.date(2008, 8, 24), pregnancies.get(0).getDateEnd());
+	}
+	
+	@Test
+	public void getPatientTBTreatments() {
+		IQPatient patient = session.getPatient(236868);
+		List<TBTreatment> tbTreatments = session.getPatientTBTreatments(patient);
+		
+		assertEquals(1, tbTreatments.size());
+		assertEquals(TestUtils.date(2007, 8, 27), tbTreatments.get(0).getStartDate());
+		assertNull(tbTreatments.get(0).getEndDate());
+		
+		patient = session.getPatient(236710);
+		tbTreatments = session.getPatientTBTreatments(patient);
+		
+		assertEquals(1, tbTreatments.size());
+		assertEquals(TestUtils.date(2007, 4, 19), tbTreatments.get(0).getStartDate());
+		assertEquals(TestUtils.date(2007, 11, 29), tbTreatments.get(0).getEndDate());
 	}
 }

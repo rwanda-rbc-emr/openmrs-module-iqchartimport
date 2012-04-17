@@ -19,21 +19,21 @@ $(function() {
 </div>
 		
 <b class="boxHeader">
-	<spring:message code="@MODULE_ID@.patient.details" />
+	<spring:message code="iqchartimport.patient.details" />
 </b>
 <div class="box" style="margin-bottom: 20px">
 	<table width="100%" cellspacing="0">
 		<c:if test="${patientExitObs != null}">
 			<tr>
 				<td colspan="2" style="font-weight: bold; background-color: #FDD; text-align: center; padding: 5px">
-					<spring:message code="@MODULE_ID@.patient.patientExitedCare" />
+					<spring:message code="iqchartimport.patient.patientExitedCare" />
 					<br/>
 					Reason: ${patientExitObs.valueCoded.name}
 				</td>
 			</tr>
 		</c:if>
 		<tr>
-			<td style="font-weight: bold"><spring:message code="@MODULE_ID@.general.tracnetID" /></td>
+			<td style="font-weight: bold"><spring:message code="iqchartimport.general.tracnetID" /></td>
 			<td>${patient.patientIdentifier.identifier}</td>
 		</tr>
 		<tr>

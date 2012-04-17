@@ -28,6 +28,7 @@ public class Mappings {
 	protected int tracnetIDTypeId;
 	protected String addressProvince;
 	protected int hivProgramId;
+	protected int tbProgramId;
 	protected int siteLocationId;
 	
 	/**
@@ -54,6 +55,7 @@ public class Mappings {
 		tracnetIDTypeId = loadIntOption(Constants.PROP_TRACNET_ID_TYPE_ID, -1);
 		addressProvince = loadStringOption(Constants.PROP_ADDRESS_PROVINCE, null);
 		hivProgramId = loadIntOption(Constants.PROP_HIV_PROGRAM_ID, -1);
+		tbProgramId = loadIntOption(Constants.PROP_TB_PROGRAM_ID, -1);
 		siteLocationId = loadIntOption(Constants.PROP_SITE_LOCATION_ID, -1);
 	}
 	
@@ -64,6 +66,7 @@ public class Mappings {
 		saveOption(Constants.PROP_TRACNET_ID_TYPE_ID, tracnetIDTypeId);
 		saveOption(Constants.PROP_ADDRESS_PROVINCE, addressProvince);
 		saveOption(Constants.PROP_HIV_PROGRAM_ID, hivProgramId);
+		saveOption(Constants.PROP_TB_PROGRAM_ID, tbProgramId);
 		saveOption(Constants.PROP_SITE_LOCATION_ID, siteLocationId);
 	}
 
@@ -103,7 +106,7 @@ public class Mappings {
 	 * Gets the HIV program id
 	 * @return the program id
 	 */
-	public int getHivProgramId() {
+	public int getHIVProgramId() {
 		return hivProgramId;
 	}
 
@@ -111,8 +114,24 @@ public class Mappings {
 	 * Sets the HIV program id
 	 * @param hivProgramId the program id
 	 */
-	public void setHivProgramId(int hivProgramId) {
+	public void setHIVProgramId(int hivProgramId) {
 		this.hivProgramId = hivProgramId;
+	}
+	
+	/**
+	 * Gets the TB program id
+	 * @return the program id
+	 */
+	public int getTBProgramId() {
+		return tbProgramId;
+	}
+
+	/**
+	 * Sets the TB program id
+	 * @param tbProgramId the program id
+	 */
+	public void setTBProgramId(int tbProgramId) {
+		this.tbProgramId = tbProgramId;
 	}
 	
 	/**

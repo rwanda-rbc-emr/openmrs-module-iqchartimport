@@ -14,12 +14,12 @@ $(function() {
 </script>
 
 <b class="boxHeader">
-	<spring:message code="@MODULE_ID@.mappings.entityMappings" />
+	<spring:message code="iqchartimport.mappings.entityMappings" />
 </b>
 <sform:form id="mappingsForm" commandName="mappings" cssClass="box" action="mappings.form">
 	<table>
 		<tr>
-	    	<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.mappings.tracnetIdentifierType" /></td>
+	    	<td style="font-weight: bold" width="300"><spring:message code="iqchartimport.mappings.tracnetIdentifierType" /></td>
 	    	<td>
 	    		<sform:select path="tracnetIDTypeId">
 	    			<c:if test="${mappings.tracnetIDTypeId == -1}">
@@ -32,7 +32,7 @@ $(function() {
 	    	</td>
 	    </tr>
 	    <tr>
-	    	<td style="font-weight: bold"><spring:message code="@MODULE_ID@.mappings.addressProvince" /></td>
+	    	<td style="font-weight: bold"><spring:message code="iqchartimport.mappings.addressProvince" /></td>
 	    	<td>
 	    		<sform:select path="addressProvince">
 	    			<sform:option value="">&lt;<spring:message code="general.none" />&gt;</sform:option>
@@ -43,10 +43,10 @@ $(function() {
 	    	</td>
 	    </tr>
 	    <tr>
-	    	<td style="font-weight: bold""><spring:message code="@MODULE_ID@.mappings.hivProgram" /></td>
+	    	<td style="font-weight: bold""><spring:message code="iqchartimport.mappings.hivProgram" /></td>
 	    	<td>
-	    		<sform:select path="hivProgramId">
-	    			<c:if test="${mappings.hivProgramId == -1}">
+	    		<sform:select path="HIVProgramId">
+	    			<c:if test="${mappings.HIVProgramId == -1}">
 		    			<sform:option value="-1" label="" />
 		    		</c:if>
 		    		<c:forEach items="${programs}" var="program">
@@ -54,12 +54,28 @@ $(function() {
 					</c:forEach>
 				</sform:select>
 				<c:if test="${fn:length(programs) == 0}">
-					<span class="error"><spring:message code="@MODULE_ID@.mappings.noExistingPrograms" /></span>
+					<span class="error"><spring:message code="iqchartimport.mappings.noExistingPrograms" /></span>
 				</c:if>
 	    	</td>
 	    </tr>
 	    <tr>
-	    	<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.mappings.siteLocation" /></td>
+	    	<td style="font-weight: bold""><spring:message code="iqchartimport.mappings.tbProgram" /></td>
+	    	<td>
+	    		<sform:select path="TBProgramId">
+	    			<c:if test="${mappings.TBProgramId == -1}">
+		    			<sform:option value="-1" label="" />
+		    		</c:if>
+		    		<c:forEach items="${programs}" var="program">
+						<sform:option value="${program.programId}" label="${program.name}" />
+					</c:forEach>
+				</sform:select>
+				<c:if test="${fn:length(programs) == 0}">
+					<span class="error"><spring:message code="iqchartimport.mappings.noExistingPrograms" /></span>
+				</c:if>
+	    	</td>
+	    </tr>
+	    <tr>
+	    	<td style="font-weight: bold" width="300"><spring:message code="iqchartimport.mappings.siteLocation" /></td>
 	    	<td>
 	    		<sform:select path="siteLocationId">
 	    			<c:if test="${mappings.siteLocationId == -1}">
@@ -72,7 +88,7 @@ $(function() {
 	    	</td>
 	    </tr>
 	    <tr>
-	    	<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.mappings.encounterProvider" /></td>
+	    	<td style="font-weight: bold" width="300"><spring:message code="iqchartimport.mappings.encounterProvider" /></td>
 	    	<td>
 	    		<c:choose>
 	    			<c:when test="${encounterProvider != null}">
@@ -81,7 +97,7 @@ $(function() {
 	    			<c:otherwise>
 	    				<spring:message code="general.none"/>
 	    				<input type="hidden" id="createProvider" name="createProvider" value="0" />
-	    				<input type="button" id="createProviderButton" value="<spring:message code="@MODULE_ID@.mappings.create"/>" />
+	    				<input type="button" id="createProviderButton" value="<spring:message code="iqchartimport.mappings.create"/>" />
 	    			</c:otherwise>
 	    		</c:choose>
 	    	</td>
