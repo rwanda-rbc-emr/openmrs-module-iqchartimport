@@ -25,6 +25,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.junit.Ignore;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
@@ -32,6 +33,7 @@ import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 /**
  * Utility methods for testing
  */
+@Ignore
 public class TestUtils {
 	
 	private static IQChartDatabase database = null;
