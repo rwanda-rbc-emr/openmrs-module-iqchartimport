@@ -29,7 +29,8 @@ function updateTaskStatus() {
 						$('#statusmsg').text('<spring:message code="@MODULE_ID@.import.failed" /> (' + task.exception + ')');	
 	        	}
 				else {
-					$('#progressbar').progressbar({ value: task.progress });
+					$('#progressbar').show();
+					$('#progressbar').progressbar("value", task.progress);
 					$('#statusmsg').hide();
 					$('#importbutton').attr('disabled', 'disabled');
 				}
@@ -41,6 +42,8 @@ function updateTaskStatus() {
 }
 
 $(function() {
+	$('#progressbar').progressbar();
+	
 	updateTaskStatus();
 });
 </script>
