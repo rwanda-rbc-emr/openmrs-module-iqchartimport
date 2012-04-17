@@ -85,7 +85,9 @@ public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	public void getPatient() {	
+	public void getPatient() {
+		Mappings.getInstance().load();
+		
 		for (int tracnetID : testIDs ) {
 			IQPatient iqPatient = session.getPatient(tracnetID);
 			Patient patient = builder.getPatient(tracnetID);
