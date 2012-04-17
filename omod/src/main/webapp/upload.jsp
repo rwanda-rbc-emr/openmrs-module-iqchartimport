@@ -14,7 +14,7 @@
 	    	</td>
 	    </tr>
 	</table>
-	<input type="submit" value="<spring:message code="@MODULE_ID@.general.upload" />" />
+	<input type="submit" value="<spring:message code="@MODULE_ID@.menu.upload" />" />
 	<c:if test="${not empty uploaderror}">
 		<span class="error"><c:out value="${uploaderror}" /></span>
 	</c:if>
