@@ -12,25 +12,21 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport;
+package org.openmrs.module.iqchartimport.db;
+
+import java.util.List;
+
+import org.openmrs.Drug;
 
 /**
- * Common PIH dictionary concepts
+ * Data object access interface
  */
-public class Dictionary {
+public interface IQChartImportDAO {
 
-	public static final int YES = 1065;
-	public static final int NO = 1066;
-	public static final int UNKNOWN = 1067;
-	public static final int NOT_APPLICABLE = 1175;
-	public static final int POSITIVE = 703;
-	public static final int NEGATIVE = 664;
-	public static final int TRANSFER_IN = 2536;
-	public static final int OTHER_NON_CODED = 5622;
-	
 	/**
-	 * Drugs
+	 * Gets drugs based on a collection of drug concept ids
+	 * @param conceptIds
+	 * @return the drugs
 	 */
-	public static final int TRIMETHOPRIM_AND_SULFAMETHOXAZOLE = 916;
-	public static final int FLUCONAZOLE = 747;
+	public List<Drug> getDrugsFromConcepts(String conceptIds);
 }

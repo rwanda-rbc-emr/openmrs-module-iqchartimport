@@ -16,7 +16,6 @@ package org.openmrs.module.iqchartimport;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;

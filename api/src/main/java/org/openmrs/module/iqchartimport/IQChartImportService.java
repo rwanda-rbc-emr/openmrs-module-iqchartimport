@@ -14,23 +14,21 @@
 
 package org.openmrs.module.iqchartimport;
 
-/**
- * Common PIH dictionary concepts
- */
-public class Dictionary {
+import java.util.List;
 
-	public static final int YES = 1065;
-	public static final int NO = 1066;
-	public static final int UNKNOWN = 1067;
-	public static final int NOT_APPLICABLE = 1175;
-	public static final int POSITIVE = 703;
-	public static final int NEGATIVE = 664;
-	public static final int TRANSFER_IN = 2536;
-	public static final int OTHER_NON_CODED = 5622;
-	
+import org.openmrs.Drug;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ * Module service interface
+ */
+@Transactional
+public interface IQChartImportService {
+
 	/**
-	 * Drugs
+	 * Gets all of the ARV drugs
+	 * @return the drugs
 	 */
-	public static final int TRIMETHOPRIM_AND_SULFAMETHOXAZOLE = 916;
-	public static final int FLUCONAZOLE = 747;
+	@Transactional(readOnly=true)
+	public List<Drug> getARVDrugs();
 }

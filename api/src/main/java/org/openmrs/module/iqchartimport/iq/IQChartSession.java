@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.iqchartimport.iq.code.ChangeCode;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
 import org.openmrs.module.iqchartimport.iq.code.HIVStatusPartCode;
 import org.openmrs.module.iqchartimport.iq.code.HospReasonCode;
@@ -37,6 +38,7 @@ import org.openmrs.module.iqchartimport.iq.code.WHOStageCode;
 import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 import org.openmrs.module.iqchartimport.iq.model.Hospitalization;
 import org.openmrs.module.iqchartimport.iq.model.Pregnancy;
+import org.openmrs.module.iqchartimport.iq.model.Regimen;
 import org.openmrs.module.iqchartimport.iq.model.TBTreatment;
 import org.openmrs.module.iqchartimport.iq.obs.BaseIQObs;
 import org.openmrs.module.iqchartimport.iq.obs.CD4Obs;
@@ -67,7 +69,9 @@ public class IQChartSession {
 	private static final String TABLE_TBTREATMENT = "dtl_TBTreat";
 	private static final String TABLE_PREGNANCY = "dtl_pregnancy";
 	private static final String TABLE_HOSPITALIZATION = "dtl_hosp";
+	private static final String TABLE_REGIMEN = "dtl_regimen";
 	private static final String TABLE_WHOSTAGE = "dtl_who";
+	private static final String TABLE_STANDARD_REGIMEN = "lst_stdregimen";
 
 	/**
 	 * Key names
@@ -302,10 +306,41 @@ public class IQChartSession {
 			
 			for (Map<String, Object> row : table) {
 				if ((Integer)row.get(PATIENT_KEY) == patient.getTracnetID()) {
-					hospitalizations.add(new Hospitalization((String)row.get("facility"), (Date)row.get("dateAdm"), (Date)row.get("dateDisch"), HospReasonCode.fromByte((Byte)row.get("reason"))));
+					String facility = (String)row.get("facility");
+					Date dateAdm = (Date)row.get("dateAdm");
+					Date dateDisch = (Date)row.get("dateDisch");
+					HospReasonCode hospReasonCode = HospReasonCode.fromByte((Byte)row.get("reason"));
+					hospitalizations.add(new Hospitalization(facility, dateAdm, dateDisch, hospReasonCode));
 				}
 			}
 			return hospitalizations;
+			
+		} catch (IOException e) {		
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the ARV regimens for the given patient
+	 * @param patient the patient
+	 * @return the regimens
+	 */
+	public List<Regimen> getPatientRegimens(IQPatient patient) {
+		List<Regimen> regimens = new ArrayList<Regimen>();
+		try {
+			Table table = database.getTable(TABLE_REGIMEN);
+			
+			for (Map<String, Object> row : table) {
+				if ((Integer)row.get(PATIENT_KEY) == patient.getTracnetID()) {
+					String regimen = (String)row.get("Regimen");
+					Date startDate = (Date)row.get("startdate");
+					Date endDate = (Date)row.get("enddate");
+					ChangeCode changeCode = ChangeCode.fromByte((Byte)row.get("changecode"));
+					String otherDetails = (String)row.get("OtherDetails");
+					regimens.add(new Regimen(regimen, startDate, endDate, changeCode, otherDetails));
+				}
+			}
+			return regimens;
 			
 		} catch (IOException e) {		
 		}
@@ -328,6 +363,25 @@ public class IQChartSession {
 				}
 			}
 			return tbTreatments;
+			
+		} catch (IOException e) {		
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the standard regimen names
+	 * @return the regimen names
+	 */
+	public List<String> getStdRegimens() {
+		List<String> stdRegimens = new ArrayList<String>();
+		try {
+			Table table = database.getTable(TABLE_STANDARD_REGIMEN);
+			
+			for (Map<String, Object> row : table)
+				stdRegimens.add((String)row.get("Regimen"));
+			
+			return stdRegimens;
 			
 		} catch (IOException e) {		
 		}

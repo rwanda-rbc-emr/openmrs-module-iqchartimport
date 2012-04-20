@@ -16,7 +16,7 @@ $(function() {
 <b class="boxHeader">
 	<spring:message code="iqchartimport.mappings.entityMappings" />
 </b>
-<sform:form id="mappingsForm" commandName="mappings" cssClass="box" action="mappings.form">
+<sform:form id="mappingsForm" commandName="mappings" cssClass="box" action="mappings.form" cssStyle="margin-bottom: 20px">
 	<table>
 		<tr>
 	    	<td style="font-weight: bold" width="300"><spring:message code="iqchartimport.mappings.tracnetIdentifierType" /></td>
@@ -105,5 +105,23 @@ $(function() {
 	</table>
 	<input type="submit" value="<spring:message code="general.save" />" />
 </sform:form>
+
+<b class="boxHeader">
+	<spring:message code="iqchartimport.mappings.arvDrugMappings" />
+</b>
+<form id="arvDrugsForm" class="box" action="mappings.form">
+	<table>
+		<tr>
+			<th>IQChart regimen component</th>
+			<th>OpenMRS drug</th>
+		</tr>
+		<c:forEach items="${regComponents}" var="regComponent">
+			<tr>
+				<td>${regComponent.name}</td>
+				<td>?</td>
+			</tr>
+		</c:forEach>
+	</table>
+</form>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>

@@ -141,4 +141,12 @@ public class IQChartSessionTest {
 		assertEquals(TestUtils.date(2007, 4, 19), tbTreatments.get(0).getStartDate());
 		assertEquals(TestUtils.date(2007, 11, 29), tbTreatments.get(0).getEndDate());
 	}
+	
+	@Test
+	public void getStdRegimens() {
+		List<String> stdRegimens = session.getStdRegimens();
+		assertEquals(27, stdRegimens.size());
+		assertEquals("AZT / 3TC / EFV 600", stdRegimens.get(0));
+		assertEquals("ABC/3TC/EFV", stdRegimens.get(26));
+	}
 }

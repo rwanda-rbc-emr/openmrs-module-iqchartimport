@@ -54,10 +54,10 @@ public class UploadController {
 			model.put("database", database);
 			
 			try {
-				IQChartSession iqChartDB = new IQChartSession(database);			
-				model.put("patientCount", iqChartDB.getNumPatients());
+				IQChartSession iqSession = new IQChartSession(database);			
+				model.put("patientCount", iqSession.getNumPatients());
 				
-				iqChartDB.close();
+				iqSession.close();
 			} catch (IOException e) {
 				model.put("parseerror", "Unable to parse database file");
 			}

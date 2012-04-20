@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.DrugOrder;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -66,6 +67,7 @@ public class PatientController {
 			Patient patient = builder.getPatient(tracnetID);
 			List<PatientProgram> patientPrograms = builder.getPatientPrograms(patient, tracnetID);
 			List<Encounter> encounters = builder.getPatientEncounters(patient, tracnetID);
+			List<DrugOrder> drugOrders = builder.getPatientDrugOrders(patient, tracnetID);
 			
 			// Find exit reason obs
 			List<Obs> exitObss = Utils.findObs(encounters, MappingUtils.getConcept(ExitCode.mappedQuestion));
@@ -75,6 +77,7 @@ public class PatientController {
 			model.put("patientPrograms", patientPrograms);
 			model.put("patientExitObs", patientExitObs);
 			model.put("encounters", encounters);
+			model.put("drugOrders", drugOrders);
 			
 			return "/module/iqchartimport/patient";
 		}

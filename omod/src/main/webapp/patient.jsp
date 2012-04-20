@@ -97,6 +97,36 @@ $(function() {
 </div>
 
 <b class="boxHeader">
+	<spring:message code="Order.header" />
+</b>
+<div class="box" style="margin-bottom: 20px">
+	<table id="encounters" width="100%" cellspacing="0">
+		<thead>
+			<tr>
+				<th><spring:message code="DrugOrder.drug"/></th>
+				<th><spring:message code="general.dateStart"/></th>
+				<th><spring:message code="DrugOrder.discontinuedDate"/></th>
+				<th><spring:message code="DrugOrder.discontinuedReason"/></th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items="${drugOrders}" var="drugOrder">
+				<tr>
+					<td>${drugOrder.drug.name}</td>
+					<td><openmrs:formatDate date="${drugOrder.startDate}" type="small" /></td>
+					<td><openmrs:formatDate date="${drugOrder.discontinuedDate}" type="small" /></td>
+					<td>
+						<c:if test="${drugOrder.discontinuedReason != null}">
+							${drugOrder.discontinuedReason.name}
+						</c:if>
+					</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+</div>
+
+<b class="boxHeader">
 	<spring:message code="Encounter.header" />
 </b>
 <div class="box">

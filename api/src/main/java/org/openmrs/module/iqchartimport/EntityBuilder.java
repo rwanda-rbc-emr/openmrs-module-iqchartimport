@@ -23,6 +23,8 @@ import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.Drug;
+import org.openmrs.DrugOrder;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
@@ -47,6 +49,7 @@ import org.openmrs.module.iqchartimport.iq.code.TBScreenCode;
 import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 import org.openmrs.module.iqchartimport.iq.code.WHOStageCode;
 import org.openmrs.module.iqchartimport.iq.model.Pregnancy;
+import org.openmrs.module.iqchartimport.iq.model.Regimen;
 import org.openmrs.module.iqchartimport.iq.model.TBTreatment;
 import org.openmrs.module.iqchartimport.iq.obs.BaseIQObs;
 import org.openmrs.module.iqchartimport.iq.obs.CD4Obs;
@@ -214,6 +217,44 @@ public class EntityBuilder {
 			sorted.add(encounters.get(date));
 				
 		return sorted;
+	}
+	
+	/**
+	 * Gets the patient's drug orders
+	 * @param patient the patient
+	 * @param tracnetID the patient's TRACnet ID
+	 * @return the drug orders
+	 */
+	public List<DrugOrder> getPatientDrugOrders(Patient patient, int tracnetID) {
+		List<DrugOrder> drugOrders = new ArrayList<DrugOrder>();
+		IQPatient iqPatient = session.getPatient(tracnetID);
+		
+		// Get regimens from IQChart and convert to OpenMRS drug orders
+		List<Regimen> iqRegimens = session.getPatientRegimens(iqPatient);
+		for (Regimen regimen : iqRegimens) {
+			
+			// Map regimen components to OpenMRS drugs
+			List<Drug> drugs = DrugMapping.getDrugs(regimen.getRegimen());
+			
+			Concept conceptDiscontinued = null;
+			if (regimen.getChangeCode() != null)
+				conceptDiscontinued = MappingUtils.getConcept(regimen.getChangeCode().mappedConcept);
+			
+			// Create order for each drug
+			for (Drug drug : drugs) {
+				DrugOrder order = new DrugOrder();
+				order.setPatient(patient);
+				order.setDrug(drug);
+				order.setStartDate(regimen.getStartDate());
+				order.setDiscontinuedDate(regimen.getEndDate());
+				order.setDiscontinuedReason(conceptDiscontinued);
+				order.setDiscontinuedReasonNonCoded(regimen.getOtherDetails());
+				
+				drugOrders.add(order);
+			}
+		}
+		
+		return drugOrders;
 	}
 
 	/**

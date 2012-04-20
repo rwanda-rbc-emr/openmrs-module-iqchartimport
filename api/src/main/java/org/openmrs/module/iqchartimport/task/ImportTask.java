@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.DrugOrder;
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -30,7 +31,7 @@ import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 
 /**
- * A database import task
+ * Database import task
  */
 public class ImportTask implements Runnable {
 
@@ -118,18 +119,19 @@ public class ImportTask implements Runnable {
 			
 			if (full) {			
 				// Import patient programs
-				for (PatientProgram patientProgram : builder.getPatientPrograms(patient, tracnetID)) {
-					
+				for (PatientProgram patientProgram : builder.getPatientPrograms(patient, tracnetID)) 					
 					Context.getProgramWorkflowService().savePatientProgram(patientProgram);
-				}
 				
 				// Import patient encounters
-				for (Encounter encounter : builder.getPatientEncounters(patient, tracnetID)) {
-					
+				for (Encounter encounter : builder.getPatientEncounters(patient, tracnetID)) {				
 					Context.getEncounterService().saveEncounter(encounter);
 					
 					++encountersImported;
 				}
+				
+				// Import drug orders
+				for (DrugOrder order : builder.getPatientDrugOrders(patient, tracnetID))
+					Context.getOrderService().saveOrder(order);
 			}
 			
 			// Break cleanly if thread has been interrupted
