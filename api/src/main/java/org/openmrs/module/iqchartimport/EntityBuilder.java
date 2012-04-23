@@ -243,12 +243,16 @@ public class EntityBuilder {
 			// Create order for each drug
 			for (Drug drug : drugs) {
 				DrugOrder order = new DrugOrder();
+				order.setOrderType(Context.getOrderService().getOrderType(1));
 				order.setPatient(patient);
 				order.setDrug(drug);
+				order.setConcept(drug.getConcept()); // See https://tickets.openmrs.org/browse/TRUNK-3008
 				order.setStartDate(regimen.getStartDate());
+				order.setDiscontinued(regimen.getEndDate() != null);
 				order.setDiscontinuedDate(regimen.getEndDate());
 				order.setDiscontinuedReason(conceptDiscontinued);
 				order.setDiscontinuedReasonNonCoded(regimen.getOtherDetails());
+				order.setVoided(false);
 				
 				drugOrders.add(order);
 			}
