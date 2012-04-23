@@ -39,6 +39,7 @@ import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 import org.openmrs.module.iqchartimport.iq.model.Hospitalization;
 import org.openmrs.module.iqchartimport.iq.model.Pregnancy;
 import org.openmrs.module.iqchartimport.iq.model.Regimen;
+import org.openmrs.module.iqchartimport.iq.model.TBMedication;
 import org.openmrs.module.iqchartimport.iq.model.TBTreatment;
 import org.openmrs.module.iqchartimport.iq.obs.BaseIQObs;
 import org.openmrs.module.iqchartimport.iq.obs.CD4Obs;
@@ -67,6 +68,7 @@ public class IQChartSession {
 	private static final String TABLE_WEIGHT = "dtl_weight";
 	private static final String TABLE_TBSCREEN = "dtl_TBScreen";
 	private static final String TABLE_TBTREATMENT = "dtl_TBTreat";
+	private static final String TABLE_TBMEDICATIONS = "dtl_meds";
 	private static final String TABLE_PREGNANCY = "dtl_pregnancy";
 	private static final String TABLE_HOSPITALIZATION = "dtl_hosp";
 	private static final String TABLE_REGIMEN = "dtl_regimen";
@@ -363,6 +365,28 @@ public class IQChartSession {
 				}
 			}
 			return tbTreatments;
+			
+		} catch (IOException e) {		
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the TB medications for the given patient
+	 * @param patient the patient
+	 * @return the TB medications
+	 */
+	public List<TBMedication> getPatientTBMedications(IQPatient patient) {
+		List<TBMedication> tbMedications = new ArrayList<TBMedication>();
+		try {
+			Table table = database.getTable(TABLE_TBMEDICATIONS);
+			
+			for (Map<String, Object> row : table) {
+				if ((Integer)row.get(PATIENT_KEY) == patient.getTracnetID()) {
+					tbMedications.add(new TBMedication((String)row.get("drug"), (Date)row.get("startdate"), (Date)row.get("enddate")));
+				}
+			}
+			return tbMedications;
 			
 		} catch (IOException e) {		
 		}

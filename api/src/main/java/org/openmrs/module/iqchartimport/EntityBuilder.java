@@ -16,6 +16,7 @@ package org.openmrs.module.iqchartimport;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -50,6 +51,7 @@ import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 import org.openmrs.module.iqchartimport.iq.code.WHOStageCode;
 import org.openmrs.module.iqchartimport.iq.model.Pregnancy;
 import org.openmrs.module.iqchartimport.iq.model.Regimen;
+import org.openmrs.module.iqchartimport.iq.model.TBMedication;
 import org.openmrs.module.iqchartimport.iq.model.TBTreatment;
 import org.openmrs.module.iqchartimport.iq.obs.BaseIQObs;
 import org.openmrs.module.iqchartimport.iq.obs.CD4Obs;
@@ -66,6 +68,18 @@ public class EntityBuilder {
 	protected static final Log log = LogFactory.getLog(EntityBuilder.class);
 	
 	private IQChartSession session;
+	private EntityCache cache = new EntityCache();
+	
+	/**
+	 * TB drug mapping
+	 */
+	private static Map<String, Object> tbDrugs = new HashMap<String, Object>();
+	static {
+		tbDrugs.put("Bactrim", Dictionary.TRIMETHOPRIM_AND_SULFAMETHOXAZOLE);
+		tbDrugs.put("Fluconazol", Dictionary.FLUCONAZOLE);
+		tbDrugs.put("Dapsone", Dictionary.DAPSONE);
+		tbDrugs.put("AZT", Dictionary.ZIDOVUDINE);
+	}
 	
 	/**
 	 * Creates a new entity builder
@@ -123,7 +137,7 @@ public class EntityBuilder {
 	public Location getSiteLocation() {
 		int siteLocationId = Mappings.getInstance().getSiteLocationId();
 		if (siteLocationId > 0)
-			return Context.getLocationService().getLocation(siteLocationId);	
+			return cache.getLocation(siteLocationId);	
 		else
 			throw new IncompleteMappingException();
 	}
@@ -229,16 +243,16 @@ public class EntityBuilder {
 		List<DrugOrder> drugOrders = new ArrayList<DrugOrder>();
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		
-		// Get regimens from IQChart and convert to OpenMRS drug orders
+		// Get ARV regimens from IQChart and convert to OpenMRS drug orders
 		List<Regimen> iqRegimens = session.getPatientRegimens(iqPatient);
 		for (Regimen regimen : iqRegimens) {
 			
 			// Map regimen components to OpenMRS drugs
-			List<Drug> drugs = DrugMapping.getDrugs(regimen.getRegimen());
+			List<Drug> drugs = DrugMapping.getARVDrugs(regimen.getRegimen());
 			
 			Concept conceptDiscontinued = null;
 			if (regimen.getChangeCode() != null)
-				conceptDiscontinued = MappingUtils.getConcept(regimen.getChangeCode().mappedConcept);
+				conceptDiscontinued = cache.getConcept(regimen.getChangeCode().mappedConcept);
 			
 			// Create order for each drug
 			for (Drug drug : drugs) {
@@ -258,6 +272,22 @@ public class EntityBuilder {
 			}
 		}
 		
+		// Get TB medications from IQChart and convert to OpenMRS drug orders (using concepts rather than actual drugs objects)
+		List<TBMedication> iqTBMedications = session.getPatientTBMedications(iqPatient);
+		for (TBMedication tbMedication : iqTBMedications) {
+		
+			DrugOrder order = new DrugOrder();
+			order.setOrderType(Context.getOrderService().getOrderType(1));
+			order.setPatient(patient);
+			order.setConcept(cache.getConcept(tbDrugs.get(tbMedication.getDrug())));
+			order.setStartDate(tbMedication.getStartDate());
+			order.setDiscontinued(tbMedication.getEndDate() != null);
+			order.setDiscontinuedDate(tbMedication.getEndDate());
+			order.setVoided(false);
+			
+			drugOrders.add(order);
+		}
+		
 		return drugOrders;
 	}
 
@@ -273,8 +303,8 @@ public class EntityBuilder {
 		
 		// Add 'civil status' obs
 		if (iqPatient.getMaritalStatusCode() != null) {
-			Concept conceptCivil = MappingUtils.getConcept(MaritalCode.mappedQuestion);
-			Concept conceptAns = MappingUtils.getConcept(iqPatient.getMaritalStatusCode().mappedAnswer);		
+			Concept conceptCivil = cache.getConcept(MaritalCode.mappedQuestion);
+			Concept conceptAns = cache.getConcept(iqPatient.getMaritalStatusCode().mappedAnswer);		
 			Obs obs = makeObs(patient, iqPatient.getEnrollDate(), conceptCivil);
 			obs.setValueCoded(conceptAns);
 			encounter.addObs(obs);
@@ -282,8 +312,8 @@ public class EntityBuilder {
 		
 		// Add 'mode of admission' obs
 		if (iqPatient.getModeCode() != null) {		
-			Concept conceptEnroll = MappingUtils.getConcept(ModeCode.mappedQuestion);
-			Concept conceptMode = MappingUtils.getConcept(iqPatient.getModeCode().mappedAnswer);		
+			Concept conceptEnroll = cache.getConcept(ModeCode.mappedQuestion);
+			Concept conceptMode = cache.getConcept(iqPatient.getModeCode().mappedAnswer);		
 			Obs obs = makeObs(patient, iqPatient.getEnrollDate(), conceptEnroll);
 			obs.setValueCoded(conceptMode);
 			encounter.addObs(obs);
@@ -291,8 +321,8 @@ public class EntityBuilder {
 		
 		// Add 'transfer in' obs
 		if (iqPatient.getTransferCode() != null) {
-			Concept conceptTransferIn = MappingUtils.getConcept(TransferCode.mappedQuestion);
-			Concept conceptAns = MappingUtils.getConcept(iqPatient.getTransferCode().mappedAnswer);
+			Concept conceptTransferIn = cache.getConcept(TransferCode.mappedQuestion);
+			Concept conceptAns = cache.getConcept(iqPatient.getTransferCode().mappedAnswer);
 			Obs obs = makeObs(patient, iqPatient.getEnrollDate(), conceptTransferIn);
 			obs.setValueCoded(conceptAns);
 			encounter.addObs(obs);
@@ -300,8 +330,8 @@ public class EntityBuilder {
 		
 		// Add 'partner HIV status' obs
 		if (iqPatient.getHIVStatusPartCode() != null) {
-			Concept conceptPartStatus = MappingUtils.getConcept(HIVStatusPartCode.mappedQuestion);
-			Concept conceptAns = MappingUtils.getConcept(iqPatient.getTransferCode().mappedAnswer);
+			Concept conceptPartStatus = cache.getConcept(HIVStatusPartCode.mappedQuestion);
+			Concept conceptAns = cache.getConcept(iqPatient.getTransferCode().mappedAnswer);
 			Obs obs = makeObs(patient, iqPatient.getEnrollDate(), conceptPartStatus);
 			obs.setValueCoded(conceptAns);
 			encounter.addObs(obs);
@@ -323,21 +353,21 @@ public class EntityBuilder {
 			Obs obs = makeObs(patient, iqObs.getDate(), null);
 			
 			if (iqObs instanceof HeightObs) {
-				obs.setConcept(MappingUtils.getConcept("@concept.height"));
+				obs.setConcept(cache.getConcept("@concept.height"));
 				obs.setValueNumeric((double)((HeightObs)iqObs).getHeight());		
 			}
 			else if (iqObs instanceof WeightObs) {
-				obs.setConcept(MappingUtils.getConcept("@concept.weight"));
+				obs.setConcept(cache.getConcept("@concept.weight"));
 				obs.setValueNumeric((double)((WeightObs)iqObs).getWeight());		
 			}
 			else if (iqObs instanceof CD4Obs) {
-				obs.setConcept(MappingUtils.getConcept("@concept.cd4_count"));
+				obs.setConcept(cache.getConcept("@concept.cd4_count"));
 				obs.setValueNumeric((double)((CD4Obs)iqObs).getCd4Count());		
 			}
 			else if (iqObs instanceof TBScreenObs) {
-				Concept conceptAns = MappingUtils.getConcept(((TBScreenObs)iqObs).getCode().mappedAnswer);
+				Concept conceptAns = cache.getConcept(((TBScreenObs)iqObs).getCode().mappedAnswer);
 				if (conceptAns != null) {
-					obs.setConcept(MappingUtils.getConcept(TBScreenCode.mappedQuestion));
+					obs.setConcept(cache.getConcept(TBScreenCode.mappedQuestion));
 					obs.setValueCoded(conceptAns);
 				}
 			}
@@ -347,8 +377,8 @@ public class EntityBuilder {
 				boolean isPediatric = (age < Constants.ADULT_START_AGE);
 				String stage = isPediatric ? ageDepStages[0] : ageDepStages[1];
 				
-				obs.setConcept(MappingUtils.getConcept(WHOStageCode.mappedQuestion));
-				obs.setValueCoded(MappingUtils.getConcept(stage));
+				obs.setConcept(cache.getConcept(WHOStageCode.mappedQuestion));
+				obs.setValueCoded(cache.getConcept(stage));
 			}
 
 			if (obs.getConcept() != null)
@@ -368,8 +398,8 @@ public class EntityBuilder {
 		
 		// Add 'exit reason' obs
 		if (iqPatient.getExitCode() != null) {		
-			Concept conceptExited = MappingUtils.getConcept(ExitCode.mappedQuestion);
-			Concept conceptReason = MappingUtils.getConcept(iqPatient.getExitCode().mappedAnswer);
+			Concept conceptExited = cache.getConcept(ExitCode.mappedQuestion);
+			Concept conceptReason = cache.getConcept(iqPatient.getExitCode().mappedAnswer);
 			
 			if (conceptReason != null) {
 				Obs obs = makeObs(patient, iqPatient.getExitDate(), conceptExited);
@@ -388,10 +418,10 @@ public class EntityBuilder {
 	protected void addPregnancyObsToEncounters(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		List<Pregnancy> pregnancies = session.getPatientPregnancies(iqPatient);
-		Concept conceptPregnancy = MappingUtils.getConcept("PATIENT PREGNANCY STATUS");
-		Concept conceptYes = MappingUtils.getConcept(Dictionary.YES);
-		Concept conceptNo = MappingUtils.getConcept(Dictionary.NO);
-		Concept conceptNA = MappingUtils.getConcept(Dictionary.NOT_APPLICABLE);
+		Concept conceptPregnancy = cache.getConcept("PATIENT PREGNANCY STATUS");
+		Concept conceptYes = cache.getConcept(Dictionary.YES);
+		Concept conceptNo = cache.getConcept(Dictionary.NO);
+		Concept conceptNA = cache.getConcept(Dictionary.NOT_APPLICABLE);
 		
 		for (Date date : encounters.keySet()) {
 			Obs obs = makeObs(patient, date, conceptPregnancy);
@@ -517,13 +547,13 @@ public class EntityBuilder {
 		boolean isPediatric = (age < Constants.ADULT_START_AGE);
 		
 		if (isInitial && isPediatric)
-			return MappingUtils.getEncounterType("PEDSINITIAL");
+			return cache.getEncounterType("PEDSINITIAL");
 		else if (isInitial && !isPediatric)
-			return MappingUtils.getEncounterType("ADULTINITIAL");
+			return cache.getEncounterType("ADULTINITIAL");
 		else if (!isInitial && isPediatric)
-			return MappingUtils.getEncounterType("PEDSRETURN");
+			return cache.getEncounterType("PEDSRETURN");
 		else
-			return MappingUtils.getEncounterType("ADULTRETURN");
+			return cache.getEncounterType("ADULTRETURN");
 	}
 	
 	/**

@@ -28,7 +28,7 @@ import org.openmrs.Program;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.iqchartimport.DrugMapping;
-import org.openmrs.module.iqchartimport.DrugMapping.Component;
+import org.openmrs.module.iqchartimport.DrugMapping.ARVComponent;
 import org.openmrs.module.iqchartimport.MappingUtils;
 import org.openmrs.module.iqchartimport.Mappings;
 import org.openmrs.module.iqchartimport.Utils;
@@ -67,7 +67,7 @@ public class MappingsController {
 		if (database != null) {
 			IQChartSession iqSession = new IQChartSession(database);
 			List<String> stdRegimens = iqSession.getStdRegimens();
-			List<Component> regComponents = DrugMapping.getRegimenComponents(stdRegimens);
+			List<ARVComponent> regComponents = DrugMapping.getRegimenComponents(stdRegimens);
 			
 			model.put("regComponents", regComponents);
 			

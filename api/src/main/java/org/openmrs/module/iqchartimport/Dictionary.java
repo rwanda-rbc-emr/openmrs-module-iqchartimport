@@ -33,4 +33,7 @@ public class Dictionary {
 	 */
 	public static final int TRIMETHOPRIM_AND_SULFAMETHOXAZOLE = 916;
 	public static final int FLUCONAZOLE = 747;
+	public static final int DAPSONE = 92;
+	public static final int ZIDOVUDINE = 797;
+	
 }

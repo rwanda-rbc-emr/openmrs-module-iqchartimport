@@ -31,9 +31,9 @@ import org.openmrs.api.context.Context;
 public class DrugMapping {
 	
 	/**
-	 * Represents a component of an IQChart regimen, e.g. D4T30, EFV
+	 * Represents a component of an IQChart ARV regimen, e.g. D4T30, EFV
 	 */
-	public static class Component {
+	public static class ARVComponent {
 		private String name;
 		private String drugAbbrev;
 		private Integer dose;
@@ -43,8 +43,8 @@ public class DrugMapping {
 		 * @param name the string
 		 * @return the component
 		 */
-		static Component parse(String name) {
-			Component component = new Component();
+		static ARVComponent parse(String name) {
+			ARVComponent component = new ARVComponent();
 			component.name = name;
 			
 			int c = name.length();
@@ -88,11 +88,11 @@ public class DrugMapping {
 	 * @param regimen the regimen, e.g. "AZT / D4T / EFV 600"
 	 * @return the drugs
 	 */
-	public static List<Drug> getDrugs(String regimen) {
-		List<Component> components = getRegimenComponents(regimen);
+	public static List<Drug> getARVDrugs(String regimen) {
+		List<ARVComponent> components = getRegimenComponents(regimen);
 		List<Drug> drugs = new ArrayList<Drug>();
 		
-		for (Component component : components)
+		for (ARVComponent component : components)
 			drugs.add(getDrug(component));
 		
 		return drugs;
@@ -103,7 +103,7 @@ public class DrugMapping {
 	 * @param component the regimen component
 	 * @return the drug
 	 */
-	public static Drug getDrug(Component component) {
+	public static Drug getDrug(ARVComponent component) {
 		// TODO map....
 		return Context.getConceptService().getDrug(1);
 	}
@@ -113,7 +113,7 @@ public class DrugMapping {
 	 * @param regimen the regimen
 	 * @return the components
 	 */
-	public static List<Component> getRegimenComponents(String regimen) {
+	public static List<ARVComponent> getRegimenComponents(String regimen) {
 		return getRegimenComponents(Collections.singleton(regimen));
 	}
 	
@@ -122,9 +122,9 @@ public class DrugMapping {
 	 * @param regimens the regimens
 	 * @return the unique components
 	 */
-	public static List<Component> getRegimenComponents(Collection<String> regimens) {
+	public static List<ARVComponent> getRegimenComponents(Collection<String> regimens) {
 		Set<String> names = new TreeSet<String>();
-		List<Component> components = new ArrayList<Component>();
+		List<ARVComponent> components = new ArrayList<ARVComponent>();
 		
 		for (String regimen : regimens) {
 			for (String component : regimen.split("/"))
@@ -132,7 +132,7 @@ public class DrugMapping {
 		}
 		
 		for (String name : names)
-			components.add(Component.parse(name));
+			components.add(ARVComponent.parse(name));
 		
 		return components;
 	}

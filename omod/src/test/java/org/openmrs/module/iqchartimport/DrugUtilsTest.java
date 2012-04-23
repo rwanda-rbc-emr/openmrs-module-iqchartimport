@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
-import org.openmrs.module.iqchartimport.DrugMapping.Component;
+import org.openmrs.module.iqchartimport.DrugMapping.ARVComponent;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
@@ -34,15 +34,15 @@ public class DrugUtilsTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void Component_parse() {
-		Component comp1 = Component.parse("D4T30");
+		ARVComponent comp1 = ARVComponent.parse("D4T30");
 		assertEquals("D4T30", comp1.getName());
 		assertEquals("D4T", comp1.getDrugAbbreviation());
 		assertEquals(new Integer(30), comp1.getDose());
-		Component comp2 = Component.parse("D4T 40");
+		ARVComponent comp2 = ARVComponent.parse("D4T 40");
 		assertEquals("D4T 40", comp2.getName());
 		assertEquals("D4T", comp2.getDrugAbbreviation());
 		assertEquals(new Integer(40), comp2.getDose());
-		Component comp3 = Component.parse("D4T");
+		ARVComponent comp3 = ARVComponent.parse("D4T");
 		assertEquals("D4T", comp3.getName());
 		assertEquals("D4T", comp3.getDrugAbbreviation());
 		assertNull(comp3.getDose());
@@ -54,7 +54,7 @@ public class DrugUtilsTest extends BaseModuleContextSensitiveTest {
 		regimens.add("AZT / 3TC / EFV 600");
 		regimens.add("ABC/3TC/EFV");
 		
-		List<Component> components = DrugMapping.getRegimenComponents(regimens);
+		List<ARVComponent> components = DrugMapping.getRegimenComponents(regimens);
 		
 		assertEquals(5, components.size());
 		assertEquals("3TC", components.get(0).getName());
