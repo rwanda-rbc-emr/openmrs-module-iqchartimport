@@ -24,7 +24,7 @@ public enum TransferCode {
 	NEW (Dictionary.NO),
 	TRANSFER (Dictionary.YES);
 	
-	public static final Object mappedQuestion = "TRANSFER IN";
+	public static final Object mappedQuestion = Dictionary.TRANSFER_IN;
 	public final Object mappedAnswer;
 	
 	/**
