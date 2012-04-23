@@ -68,7 +68,7 @@ public class ImportController {
 		// Start import if there's no running import task
 		ImportTask task = TaskEngine.getCurrentTask();
 		if (task == null || task.isCompleted())
-			TaskEngine.startImport(database, false);
+			TaskEngine.startImport(database, true);
 	
 		return showForm(request, model);
 	}
