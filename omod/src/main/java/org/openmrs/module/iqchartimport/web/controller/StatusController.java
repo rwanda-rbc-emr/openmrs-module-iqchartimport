@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.iqchartimport.Utils;
+import org.openmrs.module.iqchartimport.task.ImportIssue;
 import org.openmrs.module.iqchartimport.task.TaskEngine;
 import org.openmrs.module.iqchartimport.task.ImportTask;
 import org.springframework.stereotype.Controller;
@@ -42,29 +43,36 @@ public class StatusController {
 		Utils.checkSuperUser();
 		
 		ImportTask task = TaskEngine.getCurrentTask();
-		String json = null;
+		StringBuilder json = new StringBuilder();
 		
 		if (task != null) {
 			String completed = task.isCompleted() ? "true" : "false";
 			String exception = (task.getException() != null) ? ("'" + task.getException().getClass().getName() + "'") : "null";
 			String exceptionMessage = (task.getException() != null && task.getException().getMessage() != null) ? ("'" + task.getException().getMessage() + "'") : "null";
+
+			json.append("{\n");
+			json.append("  task: {\n");
+			json.append("    completed: " + completed + ",\n");
+			json.append("    exception: " + exception + ",\n");
+			json.append("    exceptionMessage: " + exceptionMessage + ",\n");
+			json.append("    progress: " + task.getProgress() + ",\n");
+			json.append("    timeTaken: " + task.getTimeTaken() + ",\n");
+			json.append("    importedPatients: " + task.getPatientsImported() + ",\n");
+			json.append("    importedEncounters: " + task.getEncountersImported() + ",\n");
+			json.append("    issues: [\n");
 			
-			json = 
-				"{ " +
-				"  task: { " +
-				"    completed: " + completed + ", " +
-				"    exception: " + exception + ", " +
-				"    exceptionMessage: " + exceptionMessage + ", " +
-				"    progress: " + task.getProgress() + ", " +
-				"    importedPatients: " + task.getPatientsImported() + ", " +
-				"    importedEncounters: " + task.getEncountersImported() +
-				"  } " +
-				"}";
+			for (ImportIssue issue : task.getIssues()) {
+				json.append("      { patientId: " + issue.getPatient().getPatientId() + ", message: \"" + issue.getMessage() + "\" },\n");
+			}
+			
+			json.append("    ]\n");
+			json.append("  }\n");
+			json.append("}");
 		}
 		else
-			json = "{ task: null }";
+			json.append("{ task: null, issues: null }");
 		
 		response.setContentType("application/json");			
-		response.getWriter().write(json);
+		response.getWriter().write(json.toString());
 	}
 }

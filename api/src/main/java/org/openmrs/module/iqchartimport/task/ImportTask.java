@@ -15,6 +15,8 @@
 package org.openmrs.module.iqchartimport.task;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -39,13 +41,15 @@ public class ImportTask implements Runnable {
 			
 	private UserContext userContext;
 	private IQChartDatabase database;
+	private Date startTime = null;
+	private Date endTime = null;
 	private boolean full = false;
-	private boolean completed = false;
 	private int totalPatients = 0;
 	private int patientsProcessed = 0;
 	private int patientsImported = 0;
 	private int encountersImported = 0;
 	private Exception exception;
+	private List<ImportIssue> issues = new ArrayList<ImportIssue>();
 	
 	/**
 	 * Creates a new import task
@@ -61,6 +65,7 @@ public class ImportTask implements Runnable {
 	@Override
 	public void run() {
 		IQChartSession session = null;
+		startTime = new Date();
 		
 		try {
 			log.info("Starting IQChart database import");
@@ -87,7 +92,7 @@ public class ImportTask implements Runnable {
 			} catch (IOException e) {
 				log.error("Unable to close OpenMRS session");
 			}
-			completed = true;
+			endTime = new Date();
 		}
 	}
 	
@@ -118,20 +123,32 @@ public class ImportTask implements Runnable {
 			Context.getPatientService().savePatient(patient);
 			
 			if (full) {			
-				// Import patient programs
+				// Save patient programs
 				for (PatientProgram patientProgram : builder.getPatientPrograms(patient, tracnetID)) 					
 					Context.getProgramWorkflowService().savePatientProgram(patientProgram);
 				
-				// Import patient encounters
-				for (Encounter encounter : builder.getPatientEncounters(patient, tracnetID)) {				
-					Context.getEncounterService().saveEncounter(encounter);
-					
+				// Check for patients where initial encounter is not the first
+				List<Encounter> encounters = builder.getPatientEncounters(patient, tracnetID);
+				if (!encounters.get(0).getEncounterType().getName().endsWith("INITIAL")) {
+					issues.add(new ImportIssue(patient, "First encounter is not the initial encounter."));
+				}
+				
+				// Save patient encounters
+				for (Encounter encounter : encounters) {	
+					Context.getEncounterService().saveEncounter(encounter);		
 					++encountersImported;
 				}
 				
-				// Import drug orders
-				for (DrugOrder order : builder.getPatientDrugOrders(patient, tracnetID))
-					Context.getOrderService().saveOrder(order);
+				// Save drug orders
+				for (DrugOrder order : builder.getPatientDrugOrders(patient, tracnetID)) {
+					Date discontinuedDate = order.getDiscontinuedDate();
+					if (discontinuedDate != null && order.getStartDate().after(discontinuedDate)) {
+						issues.add(new ImportIssue(patient, "Drug order discontinued date before start date. Removing."));
+						order.setDiscontinuedDate(null);
+					}
+					else
+						Context.getOrderService().saveOrder(order);
+				}
 			}
 			
 			// Break cleanly if thread has been interrupted
@@ -147,7 +164,7 @@ public class ImportTask implements Runnable {
 	 * @return true if task is complete
 	 */
 	public boolean isCompleted() {
-		return completed;
+		return (endTime != null);
 	}
 	
 	/**
@@ -155,7 +172,7 @@ public class ImportTask implements Runnable {
 	 * @return the progress (0...100)
 	 */
 	public int getProgress() {
-		if (completed)
+		if (isCompleted())
 			return 100;
 		else
 			return (totalPatients > 0) ? (100 * patientsProcessed / totalPatients) : 0;
@@ -183,5 +200,23 @@ public class ImportTask implements Runnable {
 	 */
 	public Exception getException() {
 		return exception;
+	}
+
+	/**
+	 * Gets the issues
+	 * @return the issues
+	 */
+	public List<ImportIssue> getIssues() {
+		return issues;
+	}
+	
+	/**
+	 * Gets time taken by the task. If task is still running then it's the time taken so far.
+	 * If task has completed then its the time that was taken to complete
+	 * @return the time in seconds
+	 */
+	public int getTimeTaken() {
+		Date end = (endTime != null) ? endTime : new Date(); 
+		return (int)((end.getTime() - startTime.getTime()) / 1000);
 	}
 }

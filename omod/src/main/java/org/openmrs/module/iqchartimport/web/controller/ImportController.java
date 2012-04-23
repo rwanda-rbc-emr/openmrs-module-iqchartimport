@@ -49,7 +49,7 @@ public class ImportController {
 		
 		model.put("task", TaskEngine.getCurrentTask());
 		
-		// Temporary!!!
+		// Developer hack - end users shouldn't be stopping imports once they've started
 		if (request.getParameter("stop") != null)
 			TaskEngine.stopCurrentTask();
 		
