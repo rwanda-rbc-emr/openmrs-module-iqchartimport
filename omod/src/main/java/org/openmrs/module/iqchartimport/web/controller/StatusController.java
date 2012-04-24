@@ -47,14 +47,19 @@ public class StatusController {
 		
 		if (task != null) {
 			String completed = task.isCompleted() ? "true" : "false";
-			String exception = (task.getException() != null) ? ("'" + task.getException().getClass().getName() + "'") : "null";
-			String exceptionMessage = (task.getException() != null && task.getException().getMessage() != null) ? ("'" + task.getException().getMessage() + "'") : "null";
-
+			String exception;
+			if (task.getException() != null) {
+				String clazz = "'" + task.getException().getClass().getName() + "'";
+				String message = (task.getException().getMessage() != null) ? ("'" + task.getException().getMessage() + "'") : "null";
+				exception = "{ clazz: " + clazz + ", message: " + message + " }";		
+			}
+			else
+				exception = "null";
+			
 			json.append("{\n");
 			json.append("  task: {\n");
 			json.append("    completed: " + completed + ",\n");
 			json.append("    exception: " + exception + ",\n");
-			json.append("    exceptionMessage: " + exceptionMessage + ",\n");
 			json.append("    progress: " + task.getProgress() + ",\n");
 			json.append("    timeTaken: " + task.getTimeTaken() + ",\n");
 			json.append("    importedPatients: " + task.getImportedPatients() + ",\n");

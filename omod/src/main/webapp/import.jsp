@@ -16,13 +16,20 @@ function updateTaskStatus() {
 				$('#statusmsg').text('<spring:message code="@MODULE_ID@.import.ready" />');
 			}
 			else {
+				$('#timetaken').text(task.timeTaken + ' secs');
+				
+				if (task.exception != null)	
+					$('#exception').text(task.exception.clazz + (task.exception.message ? (' (' + task.exception.message + ')') : ''));
+				else
+					$('#exception').text('');
+				
 				if (task.completed) {
 					$('#importbutton').removeAttr('disabled');
 					
 					if (task.exception == null)				
 						$('#statusmsg').text('<spring:message code="@MODULE_ID@.import.finished" /> (' + task.importedPatients + ' patients imported)');
-					else					
-						$('#statusmsg').text('<spring:message code="@MODULE_ID@.import.failed" /> (' + task.exception + ')');	
+					else			
+						$('#statusmsg').text('<spring:message code="@MODULE_ID@.import.failed" />');
 	        	}
 				else {
 					$('#progressbar').progressbar("value", task.progress);
@@ -59,6 +66,18 @@ $(function() {
 	    		<div id="progressbar" style="width: 400px; position: relative;">
 	    			<div id="statusmsg" style="width: 400px; position: absolute; left: 0; top: 0; text-align: center; z-index: 10;"></div>
 	    		</div>
+	    	</td>
+	    </tr>
+	    <tr>
+	    	<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.import.exception" /></td>
+	    	<td>
+	    		<div id="exception"></div>
+	    	</td>
+	    </tr>
+	    <tr>
+	    	<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.import.timeTaken" /></td>
+	    	<td>
+	    		<div id="timetaken"></div>
 	    	</td>
 	    </tr>
 	    <tr>
