@@ -71,7 +71,7 @@ public class ImportTaskTest extends BaseModuleContextSensitiveTest {
 		assertNull(task.getException());
 		
 		// Check number of patients added to DB
-		assertEquals(2601, task.getPatientsImported());
+		assertEquals(2601, task.getImportedPatients());
 		assertEquals(2601, patientSvc.getAllPatients().size() - initialPatients);
 		
 		// Check we can find the test patients

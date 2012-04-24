@@ -73,7 +73,7 @@ public class EntityBuilder {
 	/**
 	 * TB drug mapping
 	 */
-	private static Map<String, Object> tbDrugs = new HashMap<String, Object>();
+	private static Map<String, Integer> tbDrugs = new HashMap<String, Integer>();
 	static {
 		tbDrugs.put("Bactrim", Dictionary.TRIMETHOPRIM_AND_SULFAMETHOXAZOLE);
 		tbDrugs.put("Fluconazol", Dictionary.FLUCONAZOLE);
@@ -257,7 +257,7 @@ public class EntityBuilder {
 			// Create order for each drug
 			for (Drug drug : drugs) {
 				DrugOrder order = new DrugOrder();
-				order.setOrderType(Context.getOrderService().getOrderType(1));
+				order.setOrderType(cache.getOrderType(1));
 				order.setPatient(patient);
 				order.setDrug(drug);
 				order.setConcept(drug.getConcept()); // See https://tickets.openmrs.org/browse/TRUNK-3008
@@ -275,11 +275,15 @@ public class EntityBuilder {
 		// Get TB medications from IQChart and convert to OpenMRS drug orders (using concepts rather than actual drugs objects)
 		List<TBMedication> iqTBMedications = session.getPatientTBMedications(iqPatient);
 		for (TBMedication tbMedication : iqTBMedications) {
+			
+			Integer drugConceptId = tbDrugs.get(tbMedication.getDrug());
+			if (drugConceptId == null)
+				throw new IncompleteMappingException("Missing TB drug: " + tbMedication.getDrug());
 		
 			DrugOrder order = new DrugOrder();
-			order.setOrderType(Context.getOrderService().getOrderType(1));
+			order.setOrderType(cache.getOrderType(1));
 			order.setPatient(patient);
-			order.setConcept(cache.getConcept(tbDrugs.get(tbMedication.getDrug())));
+			order.setConcept(cache.getConcept(drugConceptId));
 			order.setStartDate(tbMedication.getStartDate());
 			order.setDiscontinued(tbMedication.getEndDate() != null);
 			order.setDiscontinuedDate(tbMedication.getEndDate());
