@@ -45,9 +45,11 @@ public class ImportTask implements Runnable {
 	private Date endTime = null;
 	private boolean full = false;
 	private int totalPatients = 0;
-	private int patientsProcessed = 0;
-	private int patientsImported = 0;
-	private int encountersImported = 0;
+	private int processedPatients = 0;
+	private int importedPatients = 0;
+	private int importedEncounters = 0;
+	private int importedObservations = 0;
+	private int importedOrders = 0;
 	private Exception exception;
 	private List<ImportIssue> issues = new ArrayList<ImportIssue>();
 	
@@ -108,7 +110,7 @@ public class ImportTask implements Runnable {
 		
 		// Import each patient
 		for (Patient patient : patients) {
-			++patientsProcessed;
+			++processedPatients;
 			
 			// Get TRACnet ID
 			PatientIdentifier tracnetIdentifier = patient.getPatientIdentifier();
@@ -136,7 +138,8 @@ public class ImportTask implements Runnable {
 				// Save patient encounters
 				for (Encounter encounter : encounters) {	
 					Context.getEncounterService().saveEncounter(encounter);		
-					++encountersImported;
+					++importedEncounters;
+					importedObservations += encounter.getObs().size();
 				}
 				
 				// Save drug orders
@@ -148,6 +151,8 @@ public class ImportTask implements Runnable {
 					}
 					else
 						Context.getOrderService().saveOrder(order);
+					
+					++importedOrders;
 				}
 			}
 			
@@ -155,7 +160,7 @@ public class ImportTask implements Runnable {
 			if (Thread.currentThread().isInterrupted())
 				break;
 			
-			++patientsImported;
+			++importedPatients;
 		}
 	}
 	
@@ -175,23 +180,39 @@ public class ImportTask implements Runnable {
 		if (isCompleted())
 			return 100;
 		else
-			return (totalPatients > 0) ? (100 * patientsProcessed / totalPatients) : 0;
+			return (totalPatients > 0) ? (100 * processedPatients / totalPatients) : 0;
 	}
 	
 	/**
 	 * Gets the number of patients imported
 	 * @return the number
 	 */
-	public int getPatientsImported() {
-		return patientsImported;
+	public int getImportedPatients() {
+		return importedPatients;
 	}
 
 	/**
 	 * Gets the number of encounters imported
 	 * @return the number
 	 */
-	public int getEncountersImported() {
-		return encountersImported;
+	public int getImportedEncounters() {
+		return importedEncounters;
+	}
+	
+	/**
+	 * Gets the number of observations imported
+	 * @return the number
+	 */
+	public int getImportedObservations() {
+		return importedObservations;
+	}
+
+	/**
+	 * Gets the number of orders imported
+	 * @return the number
+	 */
+	public int getImportedOrders() {
+		return importedOrders;
 	}
 
 	/**

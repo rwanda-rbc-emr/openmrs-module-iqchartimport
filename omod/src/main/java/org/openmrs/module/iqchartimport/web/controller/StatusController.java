@@ -57,8 +57,10 @@ public class StatusController {
 			json.append("    exceptionMessage: " + exceptionMessage + ",\n");
 			json.append("    progress: " + task.getProgress() + ",\n");
 			json.append("    timeTaken: " + task.getTimeTaken() + ",\n");
-			json.append("    importedPatients: " + task.getPatientsImported() + ",\n");
-			json.append("    importedEncounters: " + task.getEncountersImported() + ",\n");
+			json.append("    importedPatients: " + task.getImportedPatients() + ",\n");
+			json.append("    importedEncounters: " + task.getImportedEncounters() + ",\n");
+			json.append("    importedObservations: " + task.getImportedObservations() + ",\n");
+			json.append("    importedOrders: " + task.getImportedOrders() + ",\n");
 			json.append("    issues: [\n");
 			
 			for (ImportIssue issue : task.getIssues()) {
