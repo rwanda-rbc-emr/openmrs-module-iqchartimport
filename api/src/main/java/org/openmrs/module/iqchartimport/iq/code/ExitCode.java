@@ -14,17 +14,18 @@
 
 package org.openmrs.module.iqchartimport.iq.code;
 
+import org.openmrs.module.iqchartimport.Dictionary;
+
 /**
  * Patient program exit code
  */
 public enum ExitCode {
 	
-	// TODO missing mappings
-	OTHER (null),
+	OTHER (Dictionary.UNKNOWN),
 	TRANSFERRED ("PATIENT TRANSFERRED OUT"),
 	DECEASED ("@concept.patientDied"),
 	LOST ("PATIENT DEFAULTED"),
-	STOPPED_BY_DOCTOR (null),
+	STOPPED_BY_DOCTOR (Dictionary.UNKNOWN),
 	STOPPED_BY_PATIENT ("PATIENT REFUSED");
 	
 	public static final Object mappedQuestion = "@concept.reasonExitedCare";

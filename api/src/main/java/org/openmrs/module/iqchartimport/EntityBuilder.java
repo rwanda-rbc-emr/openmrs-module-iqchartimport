@@ -405,11 +405,9 @@ public class EntityBuilder {
 			Concept conceptExited = cache.getConcept(ExitCode.mappedQuestion);
 			Concept conceptReason = cache.getConcept(iqPatient.getExitCode().mappedAnswer);
 			
-			if (conceptReason != null) {
-				Obs obs = makeObs(patient, iqPatient.getExitDate(), conceptExited);
-				obs.setValueCoded(conceptReason);
-				encounter.addObs(obs);
-			}
+			Obs obs = makeObs(patient, iqPatient.getExitDate(), conceptExited);
+			obs.setValueCoded(conceptReason);
+			encounter.addObs(obs);
 		}
 	}
 	

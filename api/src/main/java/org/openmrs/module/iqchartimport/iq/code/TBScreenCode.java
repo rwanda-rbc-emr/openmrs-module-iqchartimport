@@ -21,10 +21,9 @@ import org.openmrs.module.iqchartimport.Dictionary;
  */
 public enum TBScreenCode {
 	
-	// TODO missing mappings
 	NEGATIVE (Dictionary.NEGATIVE),
 	POSITIVE (Dictionary.POSITIVE),
-	NOT_DETECTED (null);
+	NOT_DETECTED (Dictionary.NEGATIVE);
 	
 	public static final Object mappedQuestion = "TB SCREENING";
 	public final Object mappedAnswer;
