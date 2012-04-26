@@ -5,6 +5,19 @@
 <%@ include file="template/localHeader.jsp"%>
 
 <script type="text/javascript">	
+
+/**
+ * Formats a seconds value into a string like 'X mins Y secs'
+ */
+function formatTime(time) {
+	var mins = Math.floor(time / 60);
+	var secs = Math.floor(time - (mins * 60));
+	return mins + (mins == 1 ? ' min ' : ' mins ') + secs + (secs == 1 ? ' sec' : ' secs');
+}
+
+/**
+ * Updates the page controls based on the currently running task
+ */
 function updateTaskStatus() {
     $.ajax({
         url: 'status.form',
@@ -16,7 +29,14 @@ function updateTaskStatus() {
 				$('#statusmsg').text('<spring:message code="@MODULE_ID@.import.ready" />');
 			}
 			else {
-				$('#timetaken').text(task.timeTaken + ' secs');
+				$('#timetaken').text(formatTime(task.timeTaken));
+				
+				if (task.timeTaken > 30 && task.progress > 0) {
+					var timeRem = (100 - task.progress) * (task.timeTaken / task.progress);
+					$('#timeremaining').text(formatTime(timeRem));
+				}
+				else
+					$('#timeremaining').text('');
 				
 				if (task.exception != null)	
 					$('#exception').text(task.exception.clazz + (task.exception.message ? (' (' + task.exception.message + ')') : ''));
@@ -33,7 +53,7 @@ function updateTaskStatus() {
 	        	}
 				else {
 					$('#progressbar').progressbar("value", task.progress);
-					$('#statusmsg').text(task.progress + "%");
+					$('#statusmsg').text(Math.floor(task.progress) + "%");
 					$('#importbutton').attr('disabled', 'disabled');
 				}
 				
@@ -78,6 +98,12 @@ $(function() {
 	    	<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.import.timeTaken" /></td>
 	    	<td>
 	    		<div id="timetaken"></div>
+	    	</td>
+	    </tr>
+	    <tr>
+	    	<td style="font-weight: bold" width="300"><spring:message code="@MODULE_ID@.import.timeRemaining" /></td>
+	    	<td>
+	    		<div id="timeremaining"></div>
 	    	</td>
 	    </tr>
 	    <tr>

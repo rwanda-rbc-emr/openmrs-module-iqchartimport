@@ -176,11 +176,11 @@ public class ImportTask implements Runnable {
 	 * Gets the import progress
 	 * @return the progress (0...100)
 	 */
-	public int getProgress() {
+	public float getProgress() {
 		if (isCompleted())
-			return 100;
+			return 100.0f;
 		else
-			return (totalPatients > 0) ? (100 * processedPatients / totalPatients) : 0;
+			return (totalPatients > 0) ? (100.0f * processedPatients / totalPatients) : 0.0f;
 	}
 	
 	/**
