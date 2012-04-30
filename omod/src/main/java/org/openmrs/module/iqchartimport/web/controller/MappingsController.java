@@ -16,19 +16,28 @@ package org.openmrs.module.iqchartimport.web.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
+import org.openmrs.Drug;
 import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.iqchartimport.RegimenComponent;
 import org.openmrs.module.iqchartimport.Constants;
+import org.openmrs.module.iqchartimport.DrugMapping;
 import org.openmrs.module.iqchartimport.MappingUtils;
 import org.openmrs.module.iqchartimport.Mappings;
 import org.openmrs.module.iqchartimport.Utils;
+import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
+import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.web.WebConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -52,6 +61,33 @@ public class MappingsController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String showPage(HttpServletRequest request, ModelMap model) throws IOException {
 		Utils.checkSuperUser();
+		
+		IQChartDatabase database = IQChartDatabase.load(request.getSession(), Constants.SESSION_ATTR_DATABASE);
+		
+		// If database is loaded then show drug mappings
+		if (database != null) {
+			IQChartSession session = new IQChartSession(database);
+			
+			List<String> stdRegimens = session.getStdRegimens();
+			Set<RegimenComponent> components = DrugMapping.getRegimenComponents(stdRegimens);
+			Map<RegimenComponent, Concept> drugConcepts = new TreeMap<RegimenComponent, Concept>();
+			Map<RegimenComponent, Drug> drugMappings = new TreeMap<RegimenComponent, Drug>();
+			
+			for (RegimenComponent component : components) {
+				Integer conceptId = DrugMapping.getDrugConceptId(component.getDrug());
+				Concept concept = (conceptId != null) ? Context.getConceptService().getConcept(conceptId) : null;
+				drugConcepts.put(component, concept);
+				
+				Integer drugId = DrugMapping.getDrugId(component);
+				Drug drug = (drugId != null) ? Context.getConceptService().getDrug(drugId) : null;
+				drugMappings.put(component, drug);
+			}
+			
+			model.put("drugConcepts", drugConcepts);
+			model.put("drugMappings", drugMappings);
+			
+			session.close();
+		}
 		
 		List<PatientIdentifierType> identifierTypes = Context.getPatientService().getAllPatientIdentifierTypes();
 		List<Program> programs = Context.getProgramWorkflowService().getAllPrograms();

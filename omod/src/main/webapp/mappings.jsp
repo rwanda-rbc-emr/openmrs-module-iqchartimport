@@ -106,4 +106,42 @@ $(function() {
 	<input type="submit" value="<spring:message code="general.save" />" />
 </sform:form>
 
+<b class="boxHeader">
+	<spring:message code="iqchartimport.mappings.drugMappings" />
+</b>
+<form id="drugsForm" class="box">
+	<c:choose>
+		<c:when test="${drugMappings != null}">
+			<table width="100%">
+				<tr>
+					<th width="300"><spring:message code="DrugOrder.drug" /></th>
+					<th><spring:message code="ConceptDrug.concept" /></th>
+					<th><spring:message code="ConceptDrug.doseStrength" /></th>
+					<th><spring:message code="iqchartimport.mappings.mappedDrug" /></th>
+				</tr>
+				<c:forEach items="${drugMappings}" var="mapping">
+					<tr>
+						<td>${mapping.key.name}</td>
+						<td>${drugConcepts[mapping.key].name}</td>
+						<td>${mapping.key.dose}</td>
+						<td>
+							<c:choose>
+								<c:when test="${mapping.value != null}">
+									<a href="${pageContext.request.contextPath}/admin/concepts/conceptDrug.form?drugId=${mapping.value.drugId}">${mapping.value.name}</a>
+								</c:when>
+								<c:otherwise>
+									<i><spring:message code="iqchartimport.mappings.missing" /></i>
+								</c:otherwise>
+							</c:choose>
+						</td>
+					</tr>
+				</c:forEach>
+			</table>
+		</c:when>
+		<c:otherwise>
+			No database loaded
+		</c:otherwise>
+	</c:choose>
+</form>
+
 <%@ include file="/WEB-INF/template/footer.jsp"%>

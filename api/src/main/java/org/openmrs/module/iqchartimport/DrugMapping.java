@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.openmrs.api.context.Context;
 
@@ -60,72 +62,19 @@ public class DrugMapping {
 	}
 	
 	/**
-	 * Represents a component of an IQChart ARV regimen, e.g. D4T30, EFV
-	 */
-	protected static class ARVComponent {
-		private String name;
-		private String drugAbbrev;
-		private Double dose;
-		
-		/**
-		 * Parses a component from the given string
-		 * @param name the string
-		 * @return the component
-		 */
-		protected static ARVComponent parse(String name) {
-			ARVComponent component = new ARVComponent();
-			component.name = name;
-			
-			int c = name.length();
-			for (; c > 0; --c) {
-				if (Character.isLetter(name.charAt(c - 1)))
-					break;
-			}
-			component.drugAbbrev = name.substring(0, c);
-			String strDose = name.substring(c).trim();
-			component.dose = strDose.length() > 0 ? Double.parseDouble(strDose) : null;
-			return component;
-		}
-		
-		/**
-		 * Gets the name
-		 * @return the name
-		 */
-		public String getName() {
-			return name;
-		}
-		
-		/**
-		 * Gets the drug abbreviation part
-		 * @return the drug abbreviation
-		 */
-		public String getDrugAbbreviation() {
-			return drugAbbrev;
-		}
-		
-		/**
-		 * Gets the dose part
-		 * @return the dose
-		 */
-		public Double getDose() {
-			return dose;
-		}
-	}
-	
-	/**
 	 * Gets a list of OpenMRS drugs from an IQChart regimen
 	 * @param regimen the regimen, e.g. "AZT / D4T / EFV 600"
 	 * @return the drugs ids
 	 * @throws IncompleteMappingException if a drug can't be found
 	 */
 	public static List<Integer> getRegimenDrugIds(String regimen) {
-		List<ARVComponent> components = getRegimenComponents(regimen);
+		List<RegimenComponent> components = getRegimenComponents(regimen);
 		List<Integer> drugIds = new ArrayList<Integer>();
 		
-		for (ARVComponent component : components) {
+		for (RegimenComponent component : components) {
 			Integer drugId = getDrugId(component);
 			if (drugId == null) {
-				String drugInfo = "Concept ID=" + conceptMap.get(component.getDrugAbbreviation()) + " dose=" + component.getDose();
+				String drugInfo = "Concept ID=" + conceptMap.get(component.getDrug()) + " dose=" + component.getDose();
 				throw new IncompleteMappingException("Missing drug: " + component.getName() + " (" + drugInfo + ")");
 			}
 			drugIds.add(drugId);
@@ -148,8 +97,8 @@ public class DrugMapping {
 	 * @param component the regimen component
 	 * @return the drug id or null
 	 */
-	protected static Integer getDrugId(ARVComponent component) {
-		Integer conceptId = conceptMap.get(component.getDrugAbbreviation());
+	public static Integer getDrugId(RegimenComponent component) {
+		Integer conceptId = conceptMap.get(component.getDrug());
 		Double dosage = component.getDose();
 		return Context.getService(IQChartImportService.class).getDrugIdByConceptAndDosage(conceptId, dosage);
 	}
@@ -159,12 +108,28 @@ public class DrugMapping {
 	 * @param regimen the regimen
 	 * @return the components
 	 */
-	protected static List<ARVComponent> getRegimenComponents(String regimen) {
-		List<ARVComponent> components = new ArrayList<ARVComponent>();
+	public static List<RegimenComponent> getRegimenComponents(String regimen) {
+		List<RegimenComponent> components = new ArrayList<RegimenComponent>();
 		
 		for (String comp : regimen.split("/")) {
-			ARVComponent component = ARVComponent.parse(comp.trim());
+			RegimenComponent component = RegimenComponent.parse(comp.trim());
 			components.add(component);
+		}
+		return components;
+	}
+	
+	/**
+	 * Gets all the components from a list of regimens in alphabetical order
+	 * @param regimen the regimen
+	 * @return the components
+	 */
+	public static Set<RegimenComponent> getRegimenComponents(List<String> regimens) {
+		Set<RegimenComponent> components = new TreeSet<RegimenComponent>();
+		
+		for (String regimen : regimens) {
+			for (RegimenComponent component : getRegimenComponents(regimen)) {
+				components.add(component);
+			}
 		}
 		return components;
 	}

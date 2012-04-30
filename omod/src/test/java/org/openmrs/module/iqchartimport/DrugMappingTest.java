@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
-import org.openmrs.module.iqchartimport.DrugMapping.ARVComponent;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
@@ -33,31 +32,31 @@ public class DrugMappingTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void Component_parse() {
-		ARVComponent comp1 = ARVComponent.parse("D4T30");
+		RegimenComponent comp1 = RegimenComponent.parse("D4T30");
 		assertEquals("D4T30", comp1.getName());
-		assertEquals("D4T", comp1.getDrugAbbreviation());
+		assertEquals("D4T", comp1.getDrug());
 		assertEquals(new Double(30.0), comp1.getDose());
 		
-		ARVComponent comp2 = ARVComponent.parse("D4T 40");
+		RegimenComponent comp2 = RegimenComponent.parse("D4T 40");
 		assertEquals("D4T 40", comp2.getName());
-		assertEquals("D4T", comp2.getDrugAbbreviation());
+		assertEquals("D4T", comp2.getDrug());
 		assertEquals(new Double(40.0), comp2.getDose());
 		
-		ARVComponent comp3 = ARVComponent.parse("D4T");
+		RegimenComponent comp3 = RegimenComponent.parse("D4T");
 		assertEquals("D4T", comp3.getName());
-		assertEquals("D4T", comp3.getDrugAbbreviation());
+		assertEquals("D4T", comp3.getDrug());
 		assertNull(comp3.getDose());
 	}
 	
 	@Test
 	public void getRegimenComponents() {	
-		List<ARVComponent> components1 = DrugMapping.getRegimenComponents("AZT / 3TC / EFV 600");
+		List<RegimenComponent> components1 = DrugMapping.getRegimenComponents("AZT / 3TC / EFV 600");
 		assertEquals(3, components1.size());
 		assertEquals("AZT", components1.get(0).getName());
 		assertEquals("3TC", components1.get(1).getName());
 		assertEquals("EFV 600", components1.get(2).getName());
 		
-		List<ARVComponent> components2 = DrugMapping.getRegimenComponents("ABC/3TC/EFV");
+		List<RegimenComponent> components2 = DrugMapping.getRegimenComponents("ABC/3TC/EFV");
 		assertEquals(3, components2.size());
 		assertEquals("ABC", components2.get(0).getName());
 		assertEquals("3TC", components2.get(1).getName());
