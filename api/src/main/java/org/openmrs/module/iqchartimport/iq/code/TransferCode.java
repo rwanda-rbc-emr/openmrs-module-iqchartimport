@@ -14,17 +14,17 @@
 
 package org.openmrs.module.iqchartimport.iq.code;
 
-import org.openmrs.module.iqchartimport.Dictionary;
+import org.openmrs.module.iqchartimport.PIHDictionary;
 
 /**
  * Patient transfer code
  */
 public enum TransferCode {
 	
-	NEW (Dictionary.NO),
-	TRANSFER (Dictionary.YES);
+	NEW (PIHDictionary.NO),
+	TRANSFER (PIHDictionary.YES);
 	
-	public static final Object mappedQuestion = Dictionary.TRANSFER_IN;
+	public static final Object mappedQuestion = PIHDictionary.TRANSFER_IN;
 	public final Object mappedAnswer;
 	
 	/**

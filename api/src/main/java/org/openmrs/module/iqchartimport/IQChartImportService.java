@@ -14,9 +14,6 @@
 
 package org.openmrs.module.iqchartimport;
 
-import java.util.List;
-
-import org.openmrs.Drug;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -26,9 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 public interface IQChartImportService {
 
 	/**
-	 * Gets all of the ARV drugs
-	 * @return the drugs
+	 * Gets a drug by concept and dosage
+	 * @return the drug id
 	 */
 	@Transactional(readOnly=true)
-	public List<Drug> getARVDrugs();
+	public Integer getDrugIdByConceptAndDosage(int conceptId, Double dosage);
 }

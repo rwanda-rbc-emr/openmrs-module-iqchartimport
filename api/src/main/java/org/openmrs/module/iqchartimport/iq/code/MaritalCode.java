@@ -14,7 +14,7 @@
 
 package org.openmrs.module.iqchartimport.iq.code;
 
-import org.openmrs.module.iqchartimport.Dictionary;
+import org.openmrs.module.iqchartimport.PIHDictionary;
 
 /**
  * Patient marital status code
@@ -26,7 +26,7 @@ public enum MaritalCode {
 	WIDOWED ("WIDOWED"),
 	DIVORCED ("DIVORCED"),
 	LIVINGWITHPARTNER ("LIVING WITH PARTNER"),
-	OTHER (Dictionary.UNKNOWN);
+	OTHER (PIHDictionary.UNKNOWN);
 	
 	public static final Object mappedQuestion = "CIVIL STATUS";
 	public final Object mappedAnswer;

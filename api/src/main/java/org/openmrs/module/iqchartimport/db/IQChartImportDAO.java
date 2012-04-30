@@ -14,19 +14,16 @@
 
 package org.openmrs.module.iqchartimport.db;
 
-import java.util.List;
-
-import org.openmrs.Drug;
-
 /**
  * Data object access interface
  */
 public interface IQChartImportDAO {
 
 	/**
-	 * Gets drugs based on a collection of drug concept ids
-	 * @param conceptIds
-	 * @return the drugs
+	 * Gets a drug by concept and dosage
+	 * @param conceptId
+	 * @param dosage
+	 * @return the drug id or null
 	 */
-	public List<Drug> getDrugsFromConcepts(String conceptIds);
+	public Integer getDrugIdByConceptAndDosage(int conceptId, Double dosage);
 }

@@ -16,7 +16,6 @@ package org.openmrs.module.iqchartimport;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -28,20 +27,22 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 /**
  * Test cases for DrugUtils class
  */
-public class DrugUtilsTest extends BaseModuleContextSensitiveTest {
+public class DrugMappingTest extends BaseModuleContextSensitiveTest {
 
-	protected static final Log log = LogFactory.getLog(DrugUtilsTest.class);
+	protected static final Log log = LogFactory.getLog(DrugMappingTest.class);
 	
 	@Test
 	public void Component_parse() {
 		ARVComponent comp1 = ARVComponent.parse("D4T30");
 		assertEquals("D4T30", comp1.getName());
 		assertEquals("D4T", comp1.getDrugAbbreviation());
-		assertEquals(new Integer(30), comp1.getDose());
+		assertEquals(new Double(30.0), comp1.getDose());
+		
 		ARVComponent comp2 = ARVComponent.parse("D4T 40");
 		assertEquals("D4T 40", comp2.getName());
 		assertEquals("D4T", comp2.getDrugAbbreviation());
-		assertEquals(new Integer(40), comp2.getDose());
+		assertEquals(new Double(40.0), comp2.getDose());
+		
 		ARVComponent comp3 = ARVComponent.parse("D4T");
 		assertEquals("D4T", comp3.getName());
 		assertEquals("D4T", comp3.getDrugAbbreviation());
@@ -49,15 +50,17 @@ public class DrugUtilsTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	public void getRegimenComponents() {
-		List<String> regimens = new ArrayList<String>();
-		regimens.add("AZT / 3TC / EFV 600");
-		regimens.add("ABC/3TC/EFV");
+	public void getRegimenComponents() {	
+		List<ARVComponent> components1 = DrugMapping.getRegimenComponents("AZT / 3TC / EFV 600");
+		assertEquals(3, components1.size());
+		assertEquals("AZT", components1.get(0).getName());
+		assertEquals("3TC", components1.get(1).getName());
+		assertEquals("EFV 600", components1.get(2).getName());
 		
-		List<ARVComponent> components = DrugMapping.getRegimenComponents(regimens);
-		
-		assertEquals(5, components.size());
-		assertEquals("3TC", components.get(0).getName());
-		assertEquals("EFV 600", components.get(4).getName());
+		List<ARVComponent> components2 = DrugMapping.getRegimenComponents("ABC/3TC/EFV");
+		assertEquals(3, components2.size());
+		assertEquals("ABC", components2.get(0).getName());
+		assertEquals("3TC", components2.get(1).getName());
+		assertEquals("EFV", components2.get(2).getName());
 	}
 }

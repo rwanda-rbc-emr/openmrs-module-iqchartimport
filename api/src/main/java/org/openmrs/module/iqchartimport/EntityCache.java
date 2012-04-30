@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openmrs.Concept;
+import org.openmrs.Drug;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.OrderType;
@@ -32,6 +33,7 @@ public class EntityCache {
 	private Map<String, EncounterType> encounterTypes = new HashMap<String, EncounterType>();
 	private Map<Object, Concept> concepts = new HashMap<Object, Concept>();
 	private Map<Integer, OrderType> orderTypes = new HashMap<Integer, OrderType>();
+	private Map<Integer, Drug> drugs = new HashMap<Integer, Drug>();
 	
 	/**
 	 * Gets a location
@@ -87,5 +89,19 @@ public class EntityCache {
 		OrderType orderType = Context.getOrderService().getOrderType(identifier);
 		orderTypes.put(identifier, orderType);
 		return orderType;
+	}
+	
+	/**
+	 * Gets a drug
+	 * @param identifier the identifier
+	 * @return the drug
+	 */
+	public Drug getDrug(Integer identifier) {
+		if (drugs.containsKey(identifier))
+			return drugs.get(identifier);
+		
+		Drug drug = Context.getConceptService().getDrug(identifier);
+		drugs.put(identifier, drug);
+		return drug;
 	}
 }

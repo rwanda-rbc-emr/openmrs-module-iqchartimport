@@ -74,9 +74,9 @@ public class TestUtils {
 	 * @param existing the existing ticks as returned by the last call to this function
 	 * @return the existing ticks
 	 */
-	public static int progressBar(int progress, int existing) {
+	public static int progressBar(float progress, int existing) {
 		final int TOTAL_TICKS = 50;
-		final int progressTicks = (progress * TOTAL_TICKS) / 100;
+		final int progressTicks = (int)((progress * TOTAL_TICKS) / 100.0f);
 		final int newTicks = progressTicks - existing;
 		
 		for (int i = 0; i < newTicks; ++i)

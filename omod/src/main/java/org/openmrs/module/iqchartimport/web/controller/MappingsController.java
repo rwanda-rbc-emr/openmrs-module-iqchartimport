@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,13 +26,9 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.Constants;
-import org.openmrs.module.iqchartimport.DrugMapping;
-import org.openmrs.module.iqchartimport.DrugMapping.ARVComponent;
 import org.openmrs.module.iqchartimport.MappingUtils;
 import org.openmrs.module.iqchartimport.Mappings;
 import org.openmrs.module.iqchartimport.Utils;
-import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
-import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.web.WebConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -57,22 +52,6 @@ public class MappingsController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String showPage(HttpServletRequest request, ModelMap model) throws IOException {
 		Utils.checkSuperUser();
-		
-		//IQChartImportService service = Context.getService(IQChartImportService.class);
-		//List<Drug> arvDrugs = service.getARVDrugs();
-		
-		HttpSession session = request.getSession();
-		IQChartDatabase database = IQChartDatabase.load(session, Constants.SESSION_ATTR_DATABASE);
-		
-		if (database != null) {
-			IQChartSession iqSession = new IQChartSession(database);
-			List<String> stdRegimens = iqSession.getStdRegimens();
-			List<ARVComponent> regComponents = DrugMapping.getRegimenComponents(stdRegimens);
-			
-			model.put("regComponents", regComponents);
-			
-			iqSession.close();
-		}
 		
 		List<PatientIdentifierType> identifierTypes = Context.getPatientService().getAllPatientIdentifierTypes();
 		List<Program> programs = Context.getProgramWorkflowService().getAllPrograms();

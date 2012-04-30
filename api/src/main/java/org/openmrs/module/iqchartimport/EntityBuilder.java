@@ -16,7 +16,6 @@ package org.openmrs.module.iqchartimport;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -69,17 +68,6 @@ public class EntityBuilder {
 	
 	private IQChartSession session;
 	private EntityCache cache = new EntityCache();
-	
-	/**
-	 * TB drug mapping
-	 */
-	private static Map<String, Integer> tbDrugs = new HashMap<String, Integer>();
-	static {
-		tbDrugs.put("Bactrim", Dictionary.TRIMETHOPRIM_AND_SULFAMETHOXAZOLE);
-		tbDrugs.put("Fluconazol", Dictionary.FLUCONAZOLE);
-		tbDrugs.put("Dapsone", Dictionary.DAPSONE);
-		tbDrugs.put("AZT", Dictionary.ZIDOVUDINE);
-	}
 	
 	/**
 	 * Creates a new entity builder
@@ -248,14 +236,15 @@ public class EntityBuilder {
 		for (Regimen regimen : iqRegimens) {
 			
 			// Map regimen components to OpenMRS drugs
-			List<Drug> drugs = DrugMapping.getARVDrugs(regimen.getRegimen());
+			List<Integer> drugIds = DrugMapping.getRegimenDrugIds(regimen.getRegimen());
 			
 			Concept conceptDiscontinued = null;
 			if (regimen.getChangeCode() != null)
 				conceptDiscontinued = cache.getConcept(regimen.getChangeCode().mappedConcept);
 			
 			// Create order for each drug
-			for (Drug drug : drugs) {
+			for (Integer drugId : drugIds) {
+				Drug drug = cache.getDrug(drugId);
 				DrugOrder order = new DrugOrder();
 				order.setOrderType(cache.getOrderType(1));
 				order.setPatient(patient);
@@ -276,7 +265,7 @@ public class EntityBuilder {
 		List<TBMedication> iqTBMedications = session.getPatientTBMedications(iqPatient);
 		for (TBMedication tbMedication : iqTBMedications) {
 			
-			Integer drugConceptId = tbDrugs.get(tbMedication.getDrug());
+			Integer drugConceptId = DrugMapping.getDrugConceptId(tbMedication.getDrug());
 			if (drugConceptId == null)
 				throw new IncompleteMappingException("Missing TB drug: " + tbMedication.getDrug());
 		
@@ -421,9 +410,9 @@ public class EntityBuilder {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		List<Pregnancy> pregnancies = session.getPatientPregnancies(iqPatient);
 		Concept conceptPregnancy = cache.getConcept("PATIENT PREGNANCY STATUS");
-		Concept conceptYes = cache.getConcept(Dictionary.YES);
-		Concept conceptNo = cache.getConcept(Dictionary.NO);
-		Concept conceptNA = cache.getConcept(Dictionary.NOT_APPLICABLE);
+		Concept conceptYes = cache.getConcept(PIHDictionary.YES);
+		Concept conceptNo = cache.getConcept(PIHDictionary.NO);
+		Concept conceptNA = cache.getConcept(PIHDictionary.NOT_APPLICABLE);
 		
 		for (Date date : encounters.keySet()) {
 			Obs obs = makeObs(patient, date, conceptPregnancy);

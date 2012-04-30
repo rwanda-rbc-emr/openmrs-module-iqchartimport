@@ -173,6 +173,27 @@
 		<parent_location>NULL</parent_location>
 		<uuid>8d6c993e-c2cc-11de-8d13-0010c6dffd0f</uuid>
 	</location>
+	<concept>
+		<concept_id>747</concept_id>
+		<retired>0</retired>
+		<short_name></short_name>
+		<description></description>
+		<form_text>NULL</form_text>
+		<datatype_id>4</datatype_id>
+		<class_id>3</class_id>
+		<is_set>0</is_set>
+		<creator>1</creator>
+		<date_created>2004-03-20 00:00:00</date_created>
+		<default_charge>NULL</default_charge>
+		<version></version>
+		<changed_by>1</changed_by>
+		<date_changed>2009-02-24 09:30:24</date_changed>
+		<retired_by>NULL</retired_by>
+		<date_retired>NULL</date_retired>
+		<retire_reason>NULL</retire_reason>
+		<uuid>3cd3ec30-26fe-102b-80cb-0017a47871b2</uuid>
+	</concept>
+	<drug drug_id="361" concept_id="747" name="Fluconazole" combination="false" dose_strength="200.0" units="mg" creator="1" date_created="2005-02-24 00:00:00.0" retired="false" uuid="6241d995-3870-4cb3-9bdf-be49d5cec3ba"/>
 	<global_property property="concept.cd4_count" property_value="5497" uuid="8d793bee-c2cc-11de-8d13-0010c6df0001" />		
 	<global_property property="iqchartimport.tracnetIDTypeId" property_value="1" uuid="8d793bee-c2cc-11de-8d13-0010c6df1001" />		
 	<global_property property="iqchartimport.addressCountry" property_value="Testland" uuid="8d793bee-c2cc-11de-8d13-0010c6df1002" />	

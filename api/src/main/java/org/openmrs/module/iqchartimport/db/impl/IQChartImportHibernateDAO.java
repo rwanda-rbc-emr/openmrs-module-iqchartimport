@@ -14,12 +14,10 @@
 
 package org.openmrs.module.iqchartimport.db.impl;
 
-import java.util.List;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
-import org.openmrs.Drug;
 import org.openmrs.module.iqchartimport.db.IQChartImportDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -30,6 +28,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class IQChartImportHibernateDAO implements IQChartImportDAO {
 	
+	protected static final Log log = LogFactory.getLog(IQChartImportHibernateDAO.class);
+	
 	/**
 	 * Hibernate session factory
 	 */
@@ -37,14 +37,13 @@ public class IQChartImportHibernateDAO implements IQChartImportDAO {
 	private SessionFactory sessionFactory;
 
 	/**
-	 * @see IQChartImportDAO#getDrugsFromConcepts(String)
+	 * @see IQChartImportDAO#getDrugIdByConceptAndDosage(int, Double)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<Drug> getDrugsFromConcepts(String conceptIds) {
+	public Integer getDrugIdByConceptAndDosage(int conceptId, Double dosage) {
 		Session session = sessionFactory.getCurrentSession();
-		return session.createCriteria(Drug.class).add(
-				Restrictions.sqlRestriction("concept_id IN (" + conceptIds + ")")
-		).list();
+		String dose = (dosage != null) ? dosage.toString() : "NULL"; 
+		String sql = "SELECT drug_id FROM drug WHERE concept_id = " + conceptId + " AND dose_strength = " + dose;
+		return (Integer)session.createSQLQuery(sql).uniqueResult();
 	}
 }

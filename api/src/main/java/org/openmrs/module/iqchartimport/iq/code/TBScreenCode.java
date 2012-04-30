@@ -14,16 +14,16 @@
 
 package org.openmrs.module.iqchartimport.iq.code;
 
-import org.openmrs.module.iqchartimport.Dictionary;
+import org.openmrs.module.iqchartimport.PIHDictionary;
 
 /**
  * TB screening result code
  */
 public enum TBScreenCode {
 	
-	NEGATIVE (Dictionary.NEGATIVE),
-	POSITIVE (Dictionary.POSITIVE),
-	NOT_DETECTED (Dictionary.NEGATIVE);
+	NEGATIVE (PIHDictionary.NEGATIVE),
+	POSITIVE (PIHDictionary.POSITIVE),
+	NOT_DETECTED (PIHDictionary.NEGATIVE);
 	
 	public static final Object mappedQuestion = "TB SCREENING";
 	public final Object mappedAnswer;

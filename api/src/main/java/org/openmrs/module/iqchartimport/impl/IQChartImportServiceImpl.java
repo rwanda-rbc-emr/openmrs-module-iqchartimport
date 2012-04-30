@@ -14,10 +14,6 @@
 
 package org.openmrs.module.iqchartimport.impl;
 
-import java.util.List;
-
-import org.openmrs.Drug;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.IQChartImportService;
 import org.openmrs.module.iqchartimport.db.IQChartImportDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +27,10 @@ public class IQChartImportServiceImpl implements IQChartImportService {
 	private IQChartImportDAO dao;
 	
 	/**
-	 * @see IQChartImportService#getARVDrugs()
+	 * @see IQChartImportService#getDrugIdByConceptAndDosage(int, Double)
 	 */
 	@Override
-	public List<Drug> getARVDrugs() {
-		String conceptIds = Context.getAdministrationService().getGlobalProperty("camerwa.arvConceptIdList");
-		return dao.getDrugsFromConcepts(conceptIds);
+	public Integer getDrugIdByConceptAndDosage(int conceptId, Double dosage) {
+		return dao.getDrugIdByConceptAndDosage(conceptId, dosage);
 	}
 }
