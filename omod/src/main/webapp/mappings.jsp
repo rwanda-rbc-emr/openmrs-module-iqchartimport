@@ -111,23 +111,30 @@ $(function() {
 </b>
 <form id="drugsForm" class="box">
 	<c:choose>
-		<c:when test="${drugMappings != null}">
+		<c:when test="${arvComponents != null}">
 			<table width="100%">
 				<tr>
 					<th width="300"><spring:message code="DrugOrder.drug" /></th>
-					<th><spring:message code="ConceptDrug.concept" /></th>
-					<th><spring:message code="ConceptDrug.doseStrength" /></th>
-					<th><spring:message code="iqchartimport.mappings.mappedDrug" /></th>
+					<th><spring:message code="iqchartimport.mappings.mappedPedsDrug" /></th>
+					<th><spring:message code="iqchartimport.mappings.mappedAdultDrug" /></th>
 				</tr>
-				<c:forEach items="${drugMappings}" var="mapping">
+				<c:forEach items="${arvComponents}" var="component">
 					<tr>
-						<td>${mapping.key.name}</td>
-						<td>${drugConcepts[mapping.key].name}</td>
-						<td>${mapping.key.dose}</td>
+						<td>${component}</td>
 						<td>
 							<c:choose>
-								<c:when test="${mapping.value != null}">
-									<a href="${pageContext.request.contextPath}/admin/concepts/conceptDrug.form?drugId=${mapping.value.drugId}">${mapping.value.name}</a>
+								<c:when test="${pedsDrugMappings[component] != null}">
+									<a href="${pageContext.request.contextPath}/admin/concepts/conceptDrug.form?drugId=${pedsDrugMappings[component].drugId}">${pedsDrugMappings[component].name}</a>
+								</c:when>
+								<c:otherwise>
+									<i><spring:message code="iqchartimport.mappings.missing" /></i>
+								</c:otherwise>
+							</c:choose>
+						</td>
+						<td>
+							<c:choose>
+								<c:when test="${adultDrugMappings[component] != null}">
+									<a href="${pageContext.request.contextPath}/admin/concepts/conceptDrug.form?drugId=${adultDrugMappings[component].drugId}">${adultDrugMappings[component].name}</a>
 								</c:when>
 								<c:otherwise>
 									<i><spring:message code="iqchartimport.mappings.missing" /></i>

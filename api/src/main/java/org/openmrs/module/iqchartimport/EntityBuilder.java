@@ -235,8 +235,12 @@ public class EntityBuilder {
 		List<Regimen> iqRegimens = session.getPatientRegimens(iqPatient);
 		for (Regimen regimen : iqRegimens) {
 			
+			// Calc patient age at time of order creation
+			int age = patient.getAge(regimen.getStartDate());
+			boolean isPediatric = (age < Constants.ADULT_START_AGE);
+			
 			// Map regimen components to OpenMRS drugs
-			List<Integer> drugIds = DrugMapping.getRegimenDrugIds(regimen.getRegimen());
+			List<Integer> drugIds = DrugMapping.getRegimenDrugIds(regimen.getRegimen(), isPediatric);
 			
 			Concept conceptDiscontinued = null;
 			if (regimen.getChangeCode() != null)

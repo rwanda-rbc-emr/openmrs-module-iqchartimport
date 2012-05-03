@@ -21,63 +21,76 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.openmrs.api.context.Context;
-
-
 /**
  * Drug mapping functions
  */
 public class DrugMapping {
 	
 	/**
-	 * TB drug mapping
+	 * Drug mapping
 	 */
 	private static Map<String, Integer> conceptMap = new HashMap<String, Integer>();
+	private static Map<String, Integer[]> drugMap = new HashMap<String, Integer[]>();
+	
 	static {
-		/**
-		 * ARV drugs
-		 */
-		conceptMap.put("ABC", PIHDictionary.ABACAVIR);
-		conceptMap.put("DDI", PIHDictionary.DIDANOSINE);
-		conceptMap.put("EFV", PIHDictionary.EFAVIRENZ);
-		conceptMap.put("IDV", PIHDictionary.INDINAVIR);
-		conceptMap.put("3TC", PIHDictionary.LAMIVUDINE);
-		conceptMap.put("LPVr", PIHDictionary.LOPINAVIR_AND_RITONAVIR);
-		conceptMap.put("LPV/r", PIHDictionary.LOPINAVIR_AND_RITONAVIR);
-		conceptMap.put("KALETRA", PIHDictionary.LOPINAVIR_AND_RITONAVIR);
-		conceptMap.put("NFV", PIHDictionary.NELFINAVIR);
-		conceptMap.put("NVP", PIHDictionary.NEVIRAPINE);
-		conceptMap.put("RTV", PIHDictionary.RITONAVIR);
-		conceptMap.put("D4T", PIHDictionary.STAVUDINE);
-		conceptMap.put("TDF", PIHDictionary.TENOFOVIR);
-		conceptMap.put("AZT", PIHDictionary.ZIDOVUDINE);
+		drugMap.put("3TC", new Integer[] { PIHDictionary.Drugs.LAMIVUDINE_ORAL_10, PIHDictionary.Drugs.LAMIVUDINE_150 });
+		drugMap.put("ABC", new Integer[] { PIHDictionary.Drugs.ABACAVIR_SYRUP_20, PIHDictionary.Drugs.ABACAVIR_300 });
+		drugMap.put("AZT", new Integer[] { PIHDictionary.Drugs.ZIDOVUDINE_SYRUP_10 });
+		drugMap.put("D4T", null);
+		drugMap.put("D4T30", new Integer[] { PIHDictionary.Drugs.STAVUDINE_30 });
+		drugMap.put("D4T40", new Integer[] { PIHDictionary.Drugs.STAVUDINE_40 });
+		drugMap.put("D4T12", null);
+		drugMap.put("D4T20", new Integer[] { PIHDictionary.Drugs.STAVUDINE_20 });
+		drugMap.put("D4T6", null);
+		drugMap.put("DDI", null);
+		drugMap.put("EFV", null);
+		drugMap.put("EFV600", new Integer[] { PIHDictionary.Drugs.EFAVIRENZ_600 });
+		drugMap.put("EFV800", null);
+		drugMap.put("KALETRA", null); // LOPINAVIR AND RITONAVIR
+		drugMap.put("LPVr", null); // LOPINAVIR AND RITONAVIR
+		drugMap.put("NVP", new Integer[] { PIHDictionary.Drugs.NEVIRAPINE_ORAL_10, PIHDictionary.Drugs.NEVIRAPINE_200 });
+		drugMap.put("TDF", new Integer[] { PIHDictionary.Drugs.TENOFOVIR_300 });	
 		
 		/**
-		 * Other drugs
+		 * Drugs used for TB
 		 */
 		conceptMap.put("Bactrim", PIHDictionary.TRIMETHOPRIM_AND_SULFAMETHOXAZOLE);
 		conceptMap.put("Fluconazol", PIHDictionary.FLUCONAZOLE); // IQChart uses mispelling
 		conceptMap.put("Fluconazole", PIHDictionary.FLUCONAZOLE);
 		conceptMap.put("Dapsone", PIHDictionary.DAPSONE);
+		conceptMap.put("AZT", PIHDictionary.ZIDOVUDINE);
+	}
+	
+	/**
+	 * Gets drug id for an IQChart regimen component
+	 * @param component the regimen component
+	 * @param peds true if patient is a child
+	 * @return the drug id
+	 * @throws IncompleteMappingException if a drug can't be found
+	 */
+	public static Integer getDrugId(String component, boolean peds) {
+		Integer[] componentDrugIds = drugMap.get(component);
+		
+		if (componentDrugIds == null)
+			throw new IncompleteMappingException("Missing drug mapping for " + component);
+		else if (componentDrugIds.length == 2)
+			return componentDrugIds[peds ? 0 : 1];
+		else
+			return componentDrugIds[0];
 	}
 	
 	/**
 	 * Gets a list of OpenMRS drugs from an IQChart regimen
 	 * @param regimen the regimen, e.g. "AZT / D4T / EFV 600"
+	 * @param peds true if patient is a child
 	 * @return the drugs ids
 	 * @throws IncompleteMappingException if a drug can't be found
 	 */
-	public static List<Integer> getRegimenDrugIds(String regimen) {
-		List<RegimenComponent> components = getRegimenComponents(regimen);
+	public static List<Integer> getRegimenDrugIds(String regimen, boolean peds) {
 		List<Integer> drugIds = new ArrayList<Integer>();
 		
-		for (RegimenComponent component : components) {
-			Integer drugId = getDrugId(component);
-			if (drugId == null) {
-				String drugInfo = "Concept ID=" + conceptMap.get(component.getDrug()) + " dose=" + component.getDose();
-				throw new IncompleteMappingException("Missing drug: " + component.getName() + " (" + drugInfo + ")");
-			}
-			drugIds.add(drugId);
+		for (String component : getRegimenComponents(regimen)) {
+			drugIds.add(getDrugId(component, peds));
 		}
 		
 		return drugIds;
@@ -93,28 +106,16 @@ public class DrugMapping {
 	}
 	
 	/**
-	 * Gets an OpenMRS drug from an IQChart regimen component
-	 * @param component the regimen component
-	 * @return the drug id or null
-	 */
-	public static Integer getDrugId(RegimenComponent component) {
-		Integer conceptId = conceptMap.get(component.getDrug());
-		Double dosage = component.getDose();
-		return Context.getService(IQChartImportService.class).getDrugIdByConceptAndDosage(conceptId, dosage);
-	}
-	
-	/**
-	 * Gets the components from a regimen
+	 * Gets components from a regimen
 	 * @param regimen the regimen
 	 * @return the components
 	 */
-	public static List<RegimenComponent> getRegimenComponents(String regimen) {
-		List<RegimenComponent> components = new ArrayList<RegimenComponent>();
+	public static List<String> getRegimenComponents(String regimen) {
+		List<String> components = new ArrayList<String>();
 		
-		for (String comp : regimen.split("/")) {
-			RegimenComponent component = RegimenComponent.parse(comp.trim());
-			components.add(component);
-		}
+		for (String component : regimen.split("/"))
+			components.add(component.trim().replace("/", "").replace(" ", ""));
+		
 		return components;
 	}
 	
@@ -123,11 +124,11 @@ public class DrugMapping {
 	 * @param regimen the regimen
 	 * @return the components
 	 */
-	public static Set<RegimenComponent> getRegimenComponents(List<String> regimens) {
-		Set<RegimenComponent> components = new TreeSet<RegimenComponent>();
+	public static Set<String> getRegimenComponents(List<String> regimens) {
+		Set<String> components = new TreeSet<String>();
 		
 		for (String regimen : regimens) {
-			for (RegimenComponent component : getRegimenComponents(regimen)) {
+			for (String component : getRegimenComponents(regimen)) {
 				components.add(component);
 			}
 		}

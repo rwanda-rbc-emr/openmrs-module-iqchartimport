@@ -24,13 +24,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Concept;
 import org.openmrs.Drug;
 import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.iqchartimport.RegimenComponent;
+import org.openmrs.module.iqchartimport.IncompleteMappingException;
 import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.iqchartimport.DrugMapping;
 import org.openmrs.module.iqchartimport.MappingUtils;
@@ -69,22 +68,32 @@ public class MappingsController {
 			IQChartSession session = new IQChartSession(database);
 			
 			List<String> stdRegimens = session.getStdRegimens();
-			Set<RegimenComponent> components = DrugMapping.getRegimenComponents(stdRegimens);
-			Map<RegimenComponent, Concept> drugConcepts = new TreeMap<RegimenComponent, Concept>();
-			Map<RegimenComponent, Drug> drugMappings = new TreeMap<RegimenComponent, Drug>();
+			Set<String> arvComponents = DrugMapping.getRegimenComponents(stdRegimens);
+			Map<String, Drug> pedsDrugMappings = new TreeMap<String, Drug>();
+			Map<String, Drug> adultDrugMappings = new TreeMap<String, Drug>();
 			
-			for (RegimenComponent component : components) {
-				Integer conceptId = DrugMapping.getDrugConceptId(component.getDrug());
-				Concept concept = (conceptId != null) ? Context.getConceptService().getConcept(conceptId) : null;
-				drugConcepts.put(component, concept);
-				
-				Integer drugId = DrugMapping.getDrugId(component);
-				Drug drug = (drugId != null) ? Context.getConceptService().getDrug(drugId) : null;
-				drugMappings.put(component, drug);
+			for (String component : arvComponents) {
+				try {
+					Integer drugId = DrugMapping.getDrugId(component, true);
+					Drug drug = (drugId != null) ? Context.getConceptService().getDrug(drugId) : null;
+					pedsDrugMappings.put(component, drug);
+				}
+				catch (IncompleteMappingException ex) {	
+					pedsDrugMappings.put(component, null);
+				}
+				try {
+					Integer drugId = DrugMapping.getDrugId(component, false);
+					Drug drug = (drugId != null) ? Context.getConceptService().getDrug(drugId) : null;
+					adultDrugMappings.put(component, drug);
+				}
+				catch (IncompleteMappingException ex) {	
+					adultDrugMappings.put(component, null);
+				}
 			}
 			
-			model.put("drugConcepts", drugConcepts);
-			model.put("drugMappings", drugMappings);
+			model.put("arvComponents", arvComponents);
+			model.put("pedsDrugMappings", pedsDrugMappings);
+			model.put("adultDrugMappings", adultDrugMappings);
 			
 			session.close();
 		}

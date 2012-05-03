@@ -14,6 +14,8 @@
 
 package org.openmrs.module.iqchartimport;
 
+import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -23,9 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 public interface IQChartImportService {
 
 	/**
-	 * Gets a drug by concept and dosage
-	 * @return the drug id
+	 * Gets drugs by concept and dosage
+	 * @return the drug ids
 	 */
 	@Transactional(readOnly=true)
-	public Integer getDrugIdByConceptAndDosage(int conceptId, Double dosage);
+	public List<Integer> getDrugIdsByConceptAndDosage(int conceptId, Double dosage);
 }
