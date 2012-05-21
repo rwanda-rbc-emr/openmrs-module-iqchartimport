@@ -240,7 +240,7 @@ public class EntityBuilder {
 			boolean isPediatric = (age < Constants.ADULT_START_AGE);
 			
 			// Map regimen components to OpenMRS drugs
-			List<Integer> drugIds = DrugMapping.getRegimenDrugIds(regimen.getRegimen(), isPediatric);
+			Integer[] drugIds = DrugMapping.getRegimenDrugIds(regimen.getRegimen(), isPediatric, false);
 			
 			Concept conceptDiscontinued = null;
 			if (regimen.getChangeCode() != null)

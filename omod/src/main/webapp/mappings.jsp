@@ -111,33 +111,46 @@ $(function() {
 </b>
 <form id="drugsForm" class="box">
 	<c:choose>
-		<c:when test="${arvComponents != null}">
+		<c:when test="${regimens != null}">
 			<table width="100%">
 				<tr>
 					<th width="300"><spring:message code="DrugOrder.drug" /></th>
-					<th><spring:message code="iqchartimport.mappings.mappedPedsDrug" /></th>
-					<th><spring:message code="iqchartimport.mappings.mappedAdultDrug" /></th>
+					<th><spring:message code="iqchartimport.mappings.mappedPedsDrugs" /></th>
+					<th><spring:message code="iqchartimport.mappings.mappedAdultDrugs" /></th>
 				</tr>
-				<c:forEach items="${arvComponents}" var="component">
-					<tr>
-						<td>${component}</td>
+				<c:forEach items="${regimens}" var="regimen" varStatus="rowStatus">
+					<tr class="<c:choose><c:when test="${rowStatus.index % 2 == 0}">evenRow</c:when><c:otherwise>oddRow</c:otherwise></c:choose>">
 						<td>
 							<c:choose>
-								<c:when test="${pedsDrugMappings[component] != null}">
-									<a href="${pageContext.request.contextPath}/admin/concepts/conceptDrug.form?drugId=${pedsDrugMappings[component].drugId}">${pedsDrugMappings[component].name}</a>
+								<c:when test="${pedsRegMappings[regimen] == null && adultRegMappings[regimen] == null}">
+									<span style="color: #C00">${regimen}</span>
 								</c:when>
 								<c:otherwise>
-									<i><spring:message code="iqchartimport.mappings.missing" /></i>
+									${regimen}
 								</c:otherwise>
 							</c:choose>
 						</td>
 						<td>
 							<c:choose>
-								<c:when test="${adultDrugMappings[component] != null}">
-									<a href="${pageContext.request.contextPath}/admin/concepts/conceptDrug.form?drugId=${adultDrugMappings[component].drugId}">${adultDrugMappings[component].name}</a>
+								<c:when test="${pedsRegMappings[regimen] != null}">
+									<c:forEach items="${pedsRegMappings[regimen]}" var="drug">
+										<a href="${pageContext.request.contextPath}/admin/concepts/conceptDrug.form?drugId=${drug.drugId}">${drug.name}</a>
+									</c:forEach>
 								</c:when>
 								<c:otherwise>
-									<i><spring:message code="iqchartimport.mappings.missing" /></i>
+									<i><spring:message code="iqchartimport.mappings.none" /></i>
+								</c:otherwise>
+							</c:choose>
+						</td>
+						<td>
+							<c:choose>
+								<c:when test="${adultRegMappings[regimen] != null}">
+									<c:forEach items="${adultRegMappings[regimen]}" var="drug">
+										<a href="${pageContext.request.contextPath}/admin/concepts/conceptDrug.form?drugId=${drug.drugId}">${drug.name}</a>
+									</c:forEach>
+								</c:when>
+								<c:otherwise>
+									<i><spring:message code="iqchartimport.mappings.none" /></i>
 								</c:otherwise>
 							</c:choose>
 						</td>

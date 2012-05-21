@@ -17,7 +17,6 @@ package org.openmrs.module.iqchartimport.web.controller;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -67,33 +66,30 @@ public class MappingsController {
 		if (database != null) {
 			IQChartSession session = new IQChartSession(database);
 			
-			List<String> stdRegimens = session.getStdRegimens();
-			Set<String> arvComponents = DrugMapping.getRegimenComponents(stdRegimens);
-			Map<String, Drug> pedsDrugMappings = new TreeMap<String, Drug>();
-			Map<String, Drug> adultDrugMappings = new TreeMap<String, Drug>();
+			List<String> regimens = session.getStdRegimens();
+			Map<String, Drug[]> pedsRegMappings = new TreeMap<String, Drug[]>();
+			Map<String, Drug[]> adultRegMappings = new TreeMap<String, Drug[]>();
 			
-			for (String component : arvComponents) {
+			for (String regimen : regimens) {
 				try {
-					Integer drugId = DrugMapping.getDrugId(component, true);
-					Drug drug = (drugId != null) ? Context.getConceptService().getDrug(drugId) : null;
-					pedsDrugMappings.put(component, drug);
+					Integer[] drugIds = DrugMapping.getRegimenDrugIds(regimen, true, true);
+					pedsRegMappings.put(regimen, getDrugs(drugIds));
 				}
 				catch (IncompleteMappingException ex) {	
-					pedsDrugMappings.put(component, null);
+					pedsRegMappings.put(regimen, null);
 				}
 				try {
-					Integer drugId = DrugMapping.getDrugId(component, false);
-					Drug drug = (drugId != null) ? Context.getConceptService().getDrug(drugId) : null;
-					adultDrugMappings.put(component, drug);
+					Integer[] drugIds = DrugMapping.getRegimenDrugIds(regimen, false, true);
+					adultRegMappings.put(regimen, getDrugs(drugIds));
 				}
 				catch (IncompleteMappingException ex) {	
-					adultDrugMappings.put(component, null);
+					adultRegMappings.put(regimen, null);
 				}
 			}
 			
-			model.put("arvComponents", arvComponents);
-			model.put("pedsDrugMappings", pedsDrugMappings);
-			model.put("adultDrugMappings", adultDrugMappings);
+			model.put("regimens", regimens);
+			model.put("pedsRegMappings", pedsRegMappings);
+			model.put("adultRegMappings", adultRegMappings);
 			
 			session.close();
 		}
@@ -129,5 +125,12 @@ public class MappingsController {
 		}
 		
 		return "redirect:mappings.form";
+	}
+	
+	private static Drug[] getDrugs(Integer[] drugIds) {
+		Drug[] drugs = new Drug[drugIds.length];
+		for (int d = 0; d < drugIds.length; ++d)
+			drugs[d] = Context.getConceptService().getDrug(drugIds[d]);
+		return drugs;
 	}
 }

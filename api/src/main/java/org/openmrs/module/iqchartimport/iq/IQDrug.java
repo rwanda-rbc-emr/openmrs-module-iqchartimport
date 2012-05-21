@@ -14,30 +14,30 @@
 
 package org.openmrs.module.iqchartimport.iq;
 
-import org.openmrs.module.iqchartimport.PIHDictionary;
+import org.openmrs.module.iqchartimport.Drugs;
 
 /**
  * ARV drugs used by IQChart
  */
 public enum IQDrug {
 
-	_3TC (PIHDictionary.Drugs.LAMIVUDINE_ORAL_10, PIHDictionary.Drugs.LAMIVUDINE_150),
-	ABC (PIHDictionary.Drugs.ABACAVIR_SYRUP_20, PIHDictionary.Drugs.ABACAVIR_300),
-	AZT (PIHDictionary.Drugs.ZIDOVUDINE_SYRUP_10, null),
+	_3TC (Drugs.LAMIVUDINE_10_ORAL, Drugs.LAMIVUDINE_150),
+	ABC (Drugs.ABACAVIR_20_SYRUP, Drugs.ABACAVIR_300),
+	AZT (Drugs.ZIDOVUDINE_10_SYRUP, null),
 	D4T (null, null),
-	D4T30 (PIHDictionary.Drugs.STAVUDINE_30, PIHDictionary.Drugs.STAVUDINE_30),
-	D4T40 (PIHDictionary.Drugs.STAVUDINE_40, PIHDictionary.Drugs.STAVUDINE_40),
+	D4T30 (Drugs.STAVUDINE_30, Drugs.STAVUDINE_30),
+	D4T40 (Drugs.STAVUDINE_40, Drugs.STAVUDINE_40),
 	D4T12 (null, null),
-	D4T20 (PIHDictionary.Drugs.STAVUDINE_20, PIHDictionary.Drugs.STAVUDINE_20),
+	D4T20 (Drugs.STAVUDINE_20, Drugs.STAVUDINE_20),
 	D4T6 (null, null),
 	DDI (null, null), // DIDANOSINE
 	EFV (null, null),
-	EFV600 (PIHDictionary.Drugs.EFAVIRENZ_600, PIHDictionary.Drugs.EFAVIRENZ_600),
+	EFV600 (Drugs.EFAVIRENZ_600, Drugs.EFAVIRENZ_600),
 	EFV800 (null, null),
 	KALETRA (null, null), //LOPINAVIR AND RITONAVIR
 	LPVr (null, null), //LOPINAVIR AND RITONAVIR
-	NVP (PIHDictionary.Drugs.NEVIRAPINE_ORAL_10, PIHDictionary.Drugs.NEVIRAPINE_200),
-	TDF (PIHDictionary.Drugs.TENOFOVIR_300, PIHDictionary.Drugs.TENOFOVIR_300);
+	NVP (Drugs.NEVIRAPINE_10_ORAL, Drugs.NEVIRAPINE_200),
+	TDF (Drugs.TENOFOVIR_300, Drugs.TENOFOVIR_300);
 	
 	private Integer mappedPedsDrugId;
 	private Integer mappedAdultDrugId;

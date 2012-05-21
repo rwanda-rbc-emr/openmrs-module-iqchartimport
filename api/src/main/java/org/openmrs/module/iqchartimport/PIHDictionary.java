@@ -50,49 +50,4 @@ public class PIHDictionary {
 	public static final int TRIMETHOPRIM_AND_SULFAMETHOXAZOLE = 916; // COTRIMOXAZOLE or BACTRIM
 	public static final int FLUCONAZOLE = 747;
 	public static final int DAPSONE = 92;
-	
-	/**
-	 * Concept drugs
-	 */
-	public static class Drugs {
-		/**
-		 * Adult ARVs
-		 */
-		public static final int ABACAVIR_300 = 426;
-		public static final int DIDANOSINE_100 = 456;
-		public static final int DIDANOSINE_200 = 457;
-		public static final int DIDANOSINE_250 = 420;
-		public static final int DIDANOSINE_400 = 421;
-		public static final int EFAVIRENZ_600 = 424;
-		public static final int INDINAVIR_400 = 446;
-		public static final int LAMIVUDINE_150 = 425;
-		public static final int NEVIRAPINE_200 = 427;
-		public static final int RITONAVIR_100 =	444;
-		public static final int TENOFOVIR_300 = 438;
-		public static final int ZIDOVUDINE_100 = 463;	
-		public static final int ZIDOVUDINE_300 = 419;
-		public static final int ZIDOVUDINE_250 = 464;	
-		public static final int NELFINAVIR_50 = 451;
-		public static final int NELFINAVIR_250 = 458;	
-		
-		/**
-		 * Pediatric ARVs
-		 */
-		public static final int ABACAVIR_SYRUP_20 = 448;
-		public static final int DIDANOSINE_SYRUP_10 = 459;
-		public static final int DIDANOSINE_25 = 460;
-		public static final int DIDANOSINE_50 = 461;
-		public static final int EFAVIRENZ_50 = 422;
-		public static final int EFAVIRENZ_100 = 462;
-		public static final int EFAVIRENZ_200 = 423;
-		public static final int EFAVIRENZ_SYRUP_30 = 449;
-		public static final int LAMIVUDINE_ORAL_10 = 450;
-		public static final int NEVIRAPINE_ORAL_10 = 452;
-		public static final int STAVUDINE_SYRUP_1 = 453;
-		public static final int STAVUDINE_15 = 434;
-		public static final int STAVUDINE_20 = 435;
-		public static final int STAVUDINE_30 = 436;
-		public static final int STAVUDINE_40 = 437;
-		public static final int ZIDOVUDINE_SYRUP_10 = 447;
-	}
 }

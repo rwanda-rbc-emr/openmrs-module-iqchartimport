@@ -14,12 +14,8 @@
 
 package org.openmrs.module.iqchartimport;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Drug mapping functions
@@ -27,30 +23,63 @@ import java.util.TreeSet;
 public class DrugMapping {
 	
 	/**
+	 * Regimen of drugs
+	 */
+	static class Regimen {
+
+		public Integer[] drugIds;
+		
+		public Regimen(Integer ... drugIds) {
+			this.drugIds = drugIds;
+		}
+	}
+	
+	/**
 	 * Drug mapping
 	 */
 	private static Map<String, Integer> conceptMap = new HashMap<String, Integer>();
-	private static Map<String, Integer[]> drugMap = new HashMap<String, Integer[]>();
+	private static Map<String, Regimen> adultRegimens = new HashMap<String, Regimen>();
+	private static Map<String, Regimen> pedsRegimens = new HashMap<String, Regimen>();
 	
 	static {
-		drugMap.put("3TC", new Integer[] { PIHDictionary.Drugs.LAMIVUDINE_ORAL_10, PIHDictionary.Drugs.LAMIVUDINE_150 });
-		drugMap.put("ABC", new Integer[] { PIHDictionary.Drugs.ABACAVIR_SYRUP_20, PIHDictionary.Drugs.ABACAVIR_300 });
-		drugMap.put("AZT", new Integer[] { PIHDictionary.Drugs.ZIDOVUDINE_SYRUP_10 });
-		drugMap.put("D4T", null);
-		drugMap.put("D4T30", new Integer[] { PIHDictionary.Drugs.STAVUDINE_30 });
-		drugMap.put("D4T40", new Integer[] { PIHDictionary.Drugs.STAVUDINE_40 });
-		drugMap.put("D4T12", null);
-		drugMap.put("D4T20", new Integer[] { PIHDictionary.Drugs.STAVUDINE_20 });
-		drugMap.put("D4T6", null);
-		drugMap.put("DDI", null);
-		drugMap.put("EFV", null);
-		drugMap.put("EFV600", new Integer[] { PIHDictionary.Drugs.EFAVIRENZ_600 });
-		drugMap.put("EFV800", null);
-		drugMap.put("KALETRA", null); // LOPINAVIR AND RITONAVIR
-		drugMap.put("LPVr", null); // LOPINAVIR AND RITONAVIR
-		drugMap.put("NVP", new Integer[] { PIHDictionary.Drugs.NEVIRAPINE_ORAL_10, PIHDictionary.Drugs.NEVIRAPINE_200 });
-		drugMap.put("TDF", new Integer[] { PIHDictionary.Drugs.TENOFOVIR_300 });	
+		/**
+		 * Adult ARV regimens
+		 */
+		adultRegimens.put("AZT/3TC/EFV600", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_150_300, Drugs.EFAVIRENZ_600));
+		adultRegimens.put("AZT/3TC/EFV800", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_150_300, Drugs.EFAVIRENZ_600, Drugs.EFAVIRENZ_200));
+		adultRegimens.put("AZT/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_NEVIRAPINE_150_300_200));
+		adultRegimens.put("D4T30/3TC/EFV600", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_30, Drugs.EFAVIRENZ_600));
+		adultRegimens.put("D4T30/3TC/EFV800", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_30, Drugs.EFAVIRENZ_600, Drugs.EFAVIRENZ_200));
+		adultRegimens.put("D4T30/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_NEVIRAPINE_150_30_200));
+		adultRegimens.put("D4T40/3TC/EFV600", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_40, Drugs.EFAVIRENZ_600));
+		adultRegimens.put("D4T40/3TC/EFV800", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_40, Drugs.EFAVIRENZ_600, Drugs.EFAVIRENZ_200));
+		adultRegimens.put("D4T40/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_NEVIRAPINE_150_40_200));
+		adultRegimens.put("D4T30/3TC/ABC", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_30, Drugs.ABACAVIR_300));
+		adultRegimens.put("D4T40/3TC/ABC", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_40, Drugs.ABACAVIR_300)); 
+		adultRegimens.put("TDF/3TC/NVP", new Regimen(Drugs.TENOFOVIR_LAMIVUDINE_300_300, Drugs.NEVIRAPINE_200));
+		adultRegimens.put("ABC/3TC/NVP", new Regimen(Drugs.ABACAVIR_300, Drugs.LAMIVUDINE_150, Drugs.NEVIRAPINE_200));
+		adultRegimens.put("AZT/3TC/KALETRA", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_150_300, Drugs.LOPINAVIR_RITONAVIR_200_50));
+		adultRegimens.put("D4T/DDI/LPVr", new Regimen(Drugs.STAVUDINE_20, Drugs.STAVUDINE_20, Drugs.DIDANOSINE_400, Drugs.LOPINAVIR_RITONAVIR_200_50));
+		adultRegimens.put("AZT/3TC/ABC", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_150_300, Drugs.ABACAVIR_300));
+		adultRegimens.put("D4T/3TC/KALETRA", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_30, Drugs.LOPINAVIR_RITONAVIR_200_50));
+		adultRegimens.put("TDF/3TC/EFV", new Regimen(Drugs.TENOFOVIR_LAMIVUDINE_EFAVIRENZ_300_300_600));
+		adultRegimens.put("TDF/3TC/KALETRA", new Regimen(Drugs.TENOFOVIR_LAMIVUDINE_300_300, Drugs.LOPINAVIR_RITONAVIR_200_50));
+		//adultRegimens.put("DDI/KALETRA", new Regimen()); // Typo missing 3TC
+		//adultRegimens.put("DDI/3TC/KALETRA", new Regimen());
+		adultRegimens.put("AZT/3TC/EFV", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_150_300, Drugs.EFAVIRENZ_600));
+		adultRegimens.put("ABC/3TC/KALETRA", new Regimen(Drugs.ABACAVIR_300, Drugs.LAMIVUDINE_150, Drugs.LOPINAVIR_RITONAVIR_200_50));
+		adultRegimens.put("TDF/3TC/ABC", new Regimen(Drugs.TENOFOVIR_LAMIVUDINE_300_300, Drugs.ABACAVIR_300));
+		adultRegimens.put("AZT/TDF/3TC/KALETRA", new Regimen(Drugs.ZIDOVUDINE_300, Drugs.TENOFOVIR_LAMIVUDINE_300_300, Drugs.LOPINAVIR_RITONAVIR_200_50));
+		adultRegimens.put("ABC/3TC/EFV", new Regimen(Drugs.ABACAVIR_300, Drugs.LAMIVUDINE_150, Drugs.EFAVIRENZ_600));
 		
+		/**
+		 * Pediatric ARV regimens
+		 */
+		pedsRegimens.put("AZT/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_NEVIRAPINE_30_60_50));
+		pedsRegimens.put("D4T20/3TC/NVP", new Regimen(Drugs.STAVUDINE_20, Drugs.LAMIVUDINE_10_ORAL, Drugs.NEVIRAPINE_10_ORAL));
+		pedsRegimens.put("D4T12/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_NEVIRAPINE_60_12_100));
+		pedsRegimens.put("D4T6/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_NEVIRAPINE_30_6_50));
+				
 		/**
 		 * Drugs used for TB
 		 */
@@ -62,38 +91,25 @@ public class DrugMapping {
 	}
 	
 	/**
-	 * Gets drug id for an IQChart regimen component
-	 * @param component the regimen component
-	 * @param peds true if patient is a child
-	 * @return the drug id
-	 * @throws IncompleteMappingException if a drug can't be found
-	 */
-	public static Integer getDrugId(String component, boolean peds) {
-		Integer[] componentDrugIds = drugMap.get(component);
-		
-		if (componentDrugIds == null)
-			throw new IncompleteMappingException("Missing drug mapping for " + component);
-		else if (componentDrugIds.length == 2)
-			return componentDrugIds[peds ? 0 : 1];
-		else
-			return componentDrugIds[0];
-	}
-	
-	/**
 	 * Gets a list of OpenMRS drugs from an IQChart regimen
 	 * @param regimen the regimen, e.g. "AZT / D4T / EFV 600"
 	 * @param peds true if patient is a child
+	 * @param strict true if only drugs appropriate for age should be returned
 	 * @return the drugs ids
 	 * @throws IncompleteMappingException if a drug can't be found
 	 */
-	public static List<Integer> getRegimenDrugIds(String regimen, boolean peds) {
-		List<Integer> drugIds = new ArrayList<Integer>();
+	public static Integer[] getRegimenDrugIds(String regimen, boolean peds, boolean strict) {
+		String regimenClean = regimen.replace(" ", "");
 		
-		for (String component : getRegimenComponents(regimen)) {
-			drugIds.add(getDrugId(component, peds));
-		}
+		Map<String, Regimen> regimens1 = peds ? pedsRegimens : adultRegimens;
+		Map<String, Regimen> regimens2 = peds ? adultRegimens : pedsRegimens;
 		
-		return drugIds;
+		if (regimens1.containsKey(regimenClean))
+			return regimens1.get(regimenClean).drugIds;
+		else if (!strict && regimens2.containsKey(regimenClean))
+			return regimens2.get(regimenClean).drugIds;
+		else
+			throw new IncompleteMappingException("Unrecognized regimen: '" + regimen + "'");			
 	}
 	
 	/**
@@ -103,35 +119,5 @@ public class DrugMapping {
 	 */
 	public static Integer getDrugConceptId(String drug) {
 		return conceptMap.get(drug);
-	}
-	
-	/**
-	 * Gets components from a regimen
-	 * @param regimen the regimen
-	 * @return the components
-	 */
-	public static List<String> getRegimenComponents(String regimen) {
-		List<String> components = new ArrayList<String>();
-		
-		for (String component : regimen.split("/"))
-			components.add(component.trim().replace("/", "").replace(" ", ""));
-		
-		return components;
-	}
-	
-	/**
-	 * Gets all the components from a list of regimens in alphabetical order
-	 * @param regimen the regimen
-	 * @return the components
-	 */
-	public static Set<String> getRegimenComponents(List<String> regimens) {
-		Set<String> components = new TreeSet<String>();
-		
-		for (String regimen : regimens) {
-			for (String component : getRegimenComponents(regimen)) {
-				components.add(component);
-			}
-		}
-		return components;
 	}
 }
