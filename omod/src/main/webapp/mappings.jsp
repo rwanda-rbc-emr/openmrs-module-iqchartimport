@@ -114,7 +114,7 @@ $(function() {
 		<c:when test="${regimens != null}">
 			<table width="100%">
 				<tr>
-					<th width="300"><spring:message code="DrugOrder.drug" /></th>
+					<th width="300"><spring:message code="iqchartimport.mappings.regimen" /></th>
 					<th><spring:message code="iqchartimport.mappings.mappedPedsDrugs" /></th>
 					<th><spring:message code="iqchartimport.mappings.mappedAdultDrugs" /></th>
 				</tr>
