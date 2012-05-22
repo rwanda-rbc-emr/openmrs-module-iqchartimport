@@ -115,42 +115,22 @@ $(function() {
 			<table width="100%">
 				<tr>
 					<th width="300"><spring:message code="iqchartimport.mappings.regimen" /></th>
-					<th><spring:message code="iqchartimport.mappings.mappedPedsDrugs" /></th>
-					<th><spring:message code="iqchartimport.mappings.mappedAdultDrugs" /></th>
+					<th><spring:message code="iqchartimport.mappings.mappedConcepts" /></th>
 				</tr>
 				<c:forEach items="${regimens}" var="regimen" varStatus="rowStatus">
 					<tr class="<c:choose><c:when test="${rowStatus.index % 2 == 0}">evenRow</c:when><c:otherwise>oddRow</c:otherwise></c:choose>">
 						<td>
-							<c:choose>
-								<c:when test="${pedsRegMappings[regimen] == null && adultRegMappings[regimen] == null}">
-									<span style="color: #C00">${regimen}</span>
-								</c:when>
-								<c:otherwise>
-									${regimen}
-								</c:otherwise>
-							</c:choose>
+							${regimen}
 						</td>
 						<td>
 							<c:choose>
-								<c:when test="${pedsRegMappings[regimen] != null}">
-									<c:forEach items="${pedsRegMappings[regimen]}" var="drug">
-										<a href="${pageContext.request.contextPath}/admin/concepts/conceptDrug.form?drugId=${drug.drugId}">${drug.name}</a>
-									</c:forEach>
+								<c:when test="${conceptMappings[regimen] == null}">
+									<c:out value="${conceptErrors[regimen]}" />
 								</c:when>
 								<c:otherwise>
-									<i><spring:message code="iqchartimport.mappings.none" /></i>
-								</c:otherwise>
-							</c:choose>
-						</td>
-						<td>
-							<c:choose>
-								<c:when test="${adultRegMappings[regimen] != null}">
-									<c:forEach items="${adultRegMappings[regimen]}" var="drug">
-										<a href="${pageContext.request.contextPath}/admin/concepts/conceptDrug.form?drugId=${drug.drugId}">${drug.name}</a>
+									<c:forEach items="${conceptMappings[regimen]}" var="concept">
+										<a href="${pageContext.request.contextPath}/dictionary/concept.htm?conceptId=${concept.conceptId}">${concept.name}</a>
 									</c:forEach>
-								</c:when>
-								<c:otherwise>
-									<i><spring:message code="iqchartimport.mappings.none" /></i>
 								</c:otherwise>
 							</c:choose>
 						</td>

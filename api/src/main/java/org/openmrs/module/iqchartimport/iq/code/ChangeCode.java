@@ -14,7 +14,7 @@
 
 package org.openmrs.module.iqchartimport.iq.code;
 
-import org.openmrs.module.iqchartimport.PIHDictionary;
+import org.openmrs.module.iqchartimport.Dictionary;
 
 /**
  * Patient program exit code
@@ -28,7 +28,7 @@ public enum ChangeCode {
 	PREGNANCY ("PATIENT PREGNANT"),
 	STOCK_OUT ("DRUG OUT OF STOCK"),
 	IMMUNE_SYSTEM_FUNCTIONING ("CD4 IMPROVED"),
-	OTHER (PIHDictionary.OTHER_NON_CODED);
+	OTHER (Dictionary.OTHER_NON_CODED);
 	
 	public final Object mappedConcept;
 	

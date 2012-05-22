@@ -23,7 +23,6 @@ import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
-import org.openmrs.Drug;
 import org.openmrs.DrugOrder;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
@@ -235,25 +234,21 @@ public class EntityBuilder {
 		List<Regimen> iqRegimens = session.getPatientRegimens(iqPatient);
 		for (Regimen regimen : iqRegimens) {
 			
-			// Calc patient age at time of order creation
-			int age = patient.getAge(regimen.getStartDate());
-			boolean isPediatric = (age < Constants.ADULT_START_AGE);
-			
-			// Map regimen components to OpenMRS drugs
-			Integer[] drugIds = DrugMapping.getRegimenDrugIds(regimen.getRegimen(), isPediatric, false);
+			// Map regimen components to OpenMRS drug concepts
+			Integer[] drugConceptIds = DrugMapping.getRegimenConceptIds(regimen.getRegimen());
 			
 			Concept conceptDiscontinued = null;
 			if (regimen.getChangeCode() != null)
 				conceptDiscontinued = cache.getConcept(regimen.getChangeCode().mappedConcept);
 			
 			// Create order for each drug
-			for (Integer drugId : drugIds) {
-				Drug drug = cache.getDrug(drugId);
+			for (Integer drugConceptId : drugConceptIds) {
+				Concept drugConcept = cache.getConcept(drugConceptId);
 				DrugOrder order = new DrugOrder();
 				order.setOrderType(cache.getOrderType(1));
 				order.setPatient(patient);
-				order.setDrug(drug);
-				order.setConcept(drug.getConcept()); // See https://tickets.openmrs.org/browse/TRUNK-3008
+				order.setDrug(null);
+				order.setConcept(drugConcept);
 				order.setStartDate(regimen.getStartDate());
 				order.setDiscontinued(regimen.getEndDate() != null);
 				order.setDiscontinuedDate(regimen.getEndDate());
@@ -414,9 +409,9 @@ public class EntityBuilder {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		List<Pregnancy> pregnancies = session.getPatientPregnancies(iqPatient);
 		Concept conceptPregnancy = cache.getConcept("PATIENT PREGNANCY STATUS");
-		Concept conceptYes = cache.getConcept(PIHDictionary.YES);
-		Concept conceptNo = cache.getConcept(PIHDictionary.NO);
-		Concept conceptNA = cache.getConcept(PIHDictionary.NOT_APPLICABLE);
+		Concept conceptYes = cache.getConcept(Dictionary.YES);
+		Concept conceptNo = cache.getConcept(Dictionary.NO);
+		Concept conceptNA = cache.getConcept(Dictionary.NOT_APPLICABLE);
 		
 		for (Date date : encounters.keySet()) {
 			Obs obs = makeObs(patient, date, conceptPregnancy);

@@ -14,14 +14,14 @@
 
 package org.openmrs.module.iqchartimport.iq.code;
 
-import org.openmrs.module.iqchartimport.PIHDictionary;
+import org.openmrs.module.iqchartimport.Dictionary;
 
 /**
  * Patient admission mode code
  */
 public enum ModeCode {
 	
-	OTHER (PIHDictionary.UNKNOWN),
+	OTHER (Dictionary.UNKNOWN),
 	VCT ("VCT PROGRAM"),
 	PMTCT ("PMTCT PROGRAM"),
 	HOSPITALIZATION ("INPATIENT HOSPITALIZATION"),

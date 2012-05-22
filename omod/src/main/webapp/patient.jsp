@@ -112,7 +112,7 @@ $(function() {
 		<tbody>
 			<c:forEach items="${drugOrders}" var="drugOrder">
 				<tr>
-					<td>${drugOrder.drug.name}</td>
+					<td>${drugOrder.drug != null ? drugOrder.drug.name : drugOrder.concept.name}</td>
 					<td><openmrs:formatDate date="${drugOrder.startDate}" type="small" /></td>
 					<td><openmrs:formatDate date="${drugOrder.discontinuedDate}" type="small" /></td>
 					<td>

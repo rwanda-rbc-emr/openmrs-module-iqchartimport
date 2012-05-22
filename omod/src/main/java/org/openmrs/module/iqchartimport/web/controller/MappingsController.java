@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.Drug;
 import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
@@ -67,29 +68,23 @@ public class MappingsController {
 			IQChartSession session = new IQChartSession(database);
 			
 			List<String> regimens = session.getStdRegimens();
-			Map<String, Drug[]> pedsRegMappings = new TreeMap<String, Drug[]>();
-			Map<String, Drug[]> adultRegMappings = new TreeMap<String, Drug[]>();
+			Map<String, Concept[]> conceptMappings = new TreeMap<String, Concept[]>();
+			Map<String, String> conceptErrors = new TreeMap<String, String>();
 			
 			for (String regimen : regimens) {
 				try {
-					Integer[] drugIds = DrugMapping.getRegimenDrugIds(regimen, true, true);
-					pedsRegMappings.put(regimen, getDrugs(drugIds));
+					Integer[] conceptIds = DrugMapping.getRegimenConceptIds(regimen);
+					conceptMappings.put(regimen, getConcepts(conceptIds));
 				}
 				catch (IncompleteMappingException ex) {	
-					pedsRegMappings.put(regimen, null);
-				}
-				try {
-					Integer[] drugIds = DrugMapping.getRegimenDrugIds(regimen, false, true);
-					adultRegMappings.put(regimen, getDrugs(drugIds));
-				}
-				catch (IncompleteMappingException ex) {	
-					adultRegMappings.put(regimen, null);
+					conceptMappings.put(regimen, null);
+					conceptErrors.put(regimen, ex.getMessage());
 				}
 			}
 			
 			model.put("regimens", regimens);
-			model.put("pedsRegMappings", pedsRegMappings);
-			model.put("adultRegMappings", adultRegMappings);
+			model.put("conceptMappings", conceptMappings);
+			model.put("conceptErrors", conceptErrors);
 			
 			session.close();
 		}
@@ -127,7 +122,14 @@ public class MappingsController {
 		return "redirect:mappings.form";
 	}
 	
-	private static Drug[] getDrugs(Integer[] drugIds) {
+	protected static Concept[] getConcepts(Integer[] conceptIds) {
+		Concept[] concepts = new Concept[conceptIds.length];
+		for (int c = 0; c < conceptIds.length; ++c)
+			concepts[c] = Context.getConceptService().getConcept(conceptIds[c]);
+		return concepts;
+	}
+	
+	protected static Drug[] getDrugs(Integer[] drugIds) {
 		Drug[] drugs = new Drug[drugIds.length];
 		for (int d = 0; d < drugIds.length; ++d)
 			drugs[d] = Context.getConceptService().getDrug(drugIds[d]);

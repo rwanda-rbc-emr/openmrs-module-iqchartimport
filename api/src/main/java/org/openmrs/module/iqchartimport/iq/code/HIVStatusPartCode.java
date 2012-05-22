@@ -14,16 +14,16 @@
 
 package org.openmrs.module.iqchartimport.iq.code;
 
-import org.openmrs.module.iqchartimport.PIHDictionary;
+import org.openmrs.module.iqchartimport.Dictionary;
 
 /**
  * Patient's partner HIV status code
  */
 public enum HIVStatusPartCode {
 	
-	NEGATIVE (PIHDictionary.NEGATIVE),
-	POSITIVE (PIHDictionary.POSITIVE),
-	UNKNOWN (PIHDictionary.UNKNOWN),
+	NEGATIVE (Dictionary.NEGATIVE),
+	POSITIVE (Dictionary.POSITIVE),
+	UNKNOWN (Dictionary.UNKNOWN),
 	NOTTESTED ("NO TEST");
 	
 	public static final Object mappedQuestion = "TESTING STATUS OF PARTNER";

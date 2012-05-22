@@ -17,7 +17,7 @@ package org.openmrs.module.iqchartimport;
 /**
  * Common PIH dictionary concepts
  */
-public class PIHDictionary {
+public class Dictionary {
 
 	public static final int YES = 1065;
 	public static final int NO = 1066;

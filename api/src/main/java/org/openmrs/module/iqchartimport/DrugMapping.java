@@ -37,7 +37,7 @@ public class DrugMapping {
 	/**
 	 * Drug mapping
 	 */
-	private static Map<String, Integer> conceptMap = new HashMap<String, Integer>();
+	private static Map<String, Integer> conceptMap = new HashMap<String, Integer>();	
 	private static Map<String, Regimen> adultRegimens = new HashMap<String, Regimen>();
 	private static Map<String, Regimen> pedsRegimens = new HashMap<String, Regimen>();
 	
@@ -79,15 +79,32 @@ public class DrugMapping {
 		pedsRegimens.put("D4T20/3TC/NVP", new Regimen(Drugs.STAVUDINE_20, Drugs.LAMIVUDINE_10_ORAL, Drugs.NEVIRAPINE_10_ORAL));
 		pedsRegimens.put("D4T12/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_NEVIRAPINE_60_12_100));
 		pedsRegimens.put("D4T6/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_NEVIRAPINE_30_6_50));
+		
+		/**
+		 * ARV drugs
+		 */
+		conceptMap.put("ABC", Dictionary.ABACAVIR);
+		conceptMap.put("DDI", Dictionary.DIDANOSINE);
+		conceptMap.put("EFV", Dictionary.EFAVIRENZ);
+		conceptMap.put("IDV", Dictionary.INDINAVIR);
+		conceptMap.put("3TC", Dictionary.LAMIVUDINE);
+		conceptMap.put("LPVr", Dictionary.LOPINAVIR_AND_RITONAVIR);
+		conceptMap.put("LPV/r", Dictionary.LOPINAVIR_AND_RITONAVIR);
+		conceptMap.put("KALETRA", Dictionary.LOPINAVIR_AND_RITONAVIR);
+		conceptMap.put("NFV", Dictionary.NELFINAVIR);
+		conceptMap.put("NVP", Dictionary.NEVIRAPINE);
+		conceptMap.put("RTV", Dictionary.RITONAVIR);
+		conceptMap.put("D4T", Dictionary.STAVUDINE);
+		conceptMap.put("TDF", Dictionary.TENOFOVIR);
+		conceptMap.put("AZT", Dictionary.ZIDOVUDINE);
 				
 		/**
 		 * Drugs used for TB
 		 */
-		conceptMap.put("Bactrim", PIHDictionary.TRIMETHOPRIM_AND_SULFAMETHOXAZOLE);
-		conceptMap.put("Fluconazol", PIHDictionary.FLUCONAZOLE); // IQChart uses mispelling
-		conceptMap.put("Fluconazole", PIHDictionary.FLUCONAZOLE);
-		conceptMap.put("Dapsone", PIHDictionary.DAPSONE);
-		conceptMap.put("AZT", PIHDictionary.ZIDOVUDINE);
+		conceptMap.put("Bactrim", Dictionary.TRIMETHOPRIM_AND_SULFAMETHOXAZOLE);
+		conceptMap.put("Fluconazol", Dictionary.FLUCONAZOLE); // IQChart uses mispelling
+		conceptMap.put("Fluconazole", Dictionary.FLUCONAZOLE);
+		conceptMap.put("Dapsone", Dictionary.DAPSONE);
 	}
 	
 	/**
@@ -119,5 +136,42 @@ public class DrugMapping {
 	 */
 	public static Integer getDrugConceptId(String drug) {
 		return conceptMap.get(drug);
+	}
+	
+	/**
+	 * Gets a list of OpenMRS drug concepts from an IQChart regimen
+	 * @param regimen the regimen, e.g. "AZT / D4T / EFV 600"
+	 * @return the drugs ids
+	 * @throws IncompleteMappingException if a drug can't be found
+	 */
+	public static Integer[] getRegimenConceptIds(String regimen) {
+		String[] components = regimen.split("/");
+		Integer[] conceptIds = new Integer[components.length];
+		
+		for (int c = 0; c < components.length; ++c) {
+			String component = trimEndNumerals(components[c].trim());
+			if (conceptMap.containsKey(component))
+				conceptIds[c] = conceptMap.get(component);
+			else
+				throw new IncompleteMappingException("Unrecognized regimen component: '" + component + "'");
+		}
+		
+		return conceptIds;
+	}
+	
+	/**
+	 * Trims numeral characters from the end of a string
+	 * @param input the input sting
+	 * @return the input without trailing numerals
+	 */
+	protected static String trimEndNumerals(String input) {
+		if (input == null || input.length() == 0)
+			return input;
+		
+		int last = input.length() - 1;
+		while (Character.isDigit(input.charAt(last)) || Character.isWhitespace(input.charAt(last)))
+			--last;
+		
+		return input.substring(0, last + 1);
 	}
 }
