@@ -413,6 +413,7 @@ public class EntityBuilder {
 		Concept conceptNo = cache.getConcept(Dictionary.NO);
 		Concept conceptNA = cache.getConcept(Dictionary.NOT_APPLICABLE);
 		
+		outer:
 		for (Date date : encounters.keySet()) {
 			Obs obs = makeObs(patient, date, conceptPregnancy);
 			
@@ -424,7 +425,7 @@ public class EntityBuilder {
 				for (Pregnancy pregnancy : pregnancies) {
 					if (pregnancy.getDateEnd() == null && date.after(pregnancy.getDateStart()) && date.before(pregnancy.getEstDelivery())) {
 						// Don't add any obs... because we just don't know what happened
-						continue;
+						continue outer;
 					}
 				}
 				
