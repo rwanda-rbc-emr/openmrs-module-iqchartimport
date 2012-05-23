@@ -61,55 +61,31 @@ public class MappingUtils {
 		
 		return encType;
 	}
-
+	
 	/**
-	 * Gets a concept by id, name or global property
-	 * @param identifier the id, name or global property
+	 * Gets a concept by its ID
+	 * @param identifier the concept ID or name
 	 * @return the concept
-	 * @throws IncompleteMappingException if concept doesn't exist
+	 * @throws IncompleteMappingException if there is no such concept
 	 */
-	public static Concept getConcept(Object identifier) {
-		// If name is null, return null
-		if (identifier == null)
-			return null;
-		
-		if (identifier instanceof Integer)
-			return getConceptById((Integer)identifier);
-		
-		String str = (String)identifier;
-			
-		// If string is prefixed with @ then it's a global property
-		if (str.startsWith("@")) {
-			String property = str.substring(1);
-			String propVal = Context.getAdministrationService().getGlobalProperty(property);
-			
-			if (propVal == null || propVal.length() == 0) 
-				throw new IncompleteMappingException("Missing '" + property + "' global property");
-			
-			try {
-				return getConceptById(Integer.parseInt(propVal));
-			}
-			catch (NumberFormatException ex) {
-				throw new IncompleteMappingException("Invalid '" + property + "' global property");
-			}
-		}
-
-		Concept concept = Context.getConceptService().getConcept(str);
+	public static Concept getConcept(Integer conceptId) {
+		Concept concept = Context.getConceptService().getConcept(conceptId);
 		if (concept == null) 
-			throw new IncompleteMappingException("Missing '" + str + "' concept");
+			throw new IncompleteMappingException("Missing concept with id " + conceptId);
 		
 		return concept;
 	}
 	
 	/**
-	 * 
-	 * @param conceptId
-	 * @return
+	 * Gets a concept by its name
+	 * @param identifier the concept name
+	 * @return the concept
+	 * @throws IncompleteMappingException if there is no such concept
 	 */
-	private static Concept getConceptById(int conceptId) {
-		Concept concept = Context.getConceptService().getConcept(conceptId);
+	public static Concept getConcept(String name) {
+		Concept concept = Context.getConceptService().getConcept(name);
 		if (concept == null) 
-			throw new IncompleteMappingException("Missing " + conceptId + " concept");
+			throw new IncompleteMappingException("Missing '" + name + "' concept");
 		
 		return concept;
 	}

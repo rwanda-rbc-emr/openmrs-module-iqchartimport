@@ -28,7 +28,7 @@ public enum MaritalCode {
 	LIVINGWITHPARTNER ("LIVING WITH PARTNER"),
 	OTHER (Dictionary.UNKNOWN);
 	
-	public static final Object mappedQuestion = "CIVIL STATUS";
+	public static final Integer mappedQuestion = Dictionary.CIVIL_STATUS;
 	public final Object mappedAnswer;
 	
 	/**

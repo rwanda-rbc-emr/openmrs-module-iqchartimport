@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.iqchartimport.EntityBuilder;
 import org.openmrs.module.iqchartimport.Utils;
 import org.openmrs.module.iqchartimport.task.ImportIssue;
 import org.openmrs.module.iqchartimport.task.TaskEngine;
@@ -46,6 +47,8 @@ public class StatusController {
 		StringBuilder json = new StringBuilder();
 		
 		if (task != null) {
+			EntityBuilder builder = task.getEntityBuilder();
+			
 			String completed = task.isCompleted() ? "true" : "false";
 			String exception;
 			if (task.getException() != null) {
@@ -66,6 +69,7 @@ public class StatusController {
 			json.append("    importedEncounters: " + task.getImportedEncounters() + ",\n");
 			json.append("    importedObservations: " + task.getImportedObservations() + ",\n");
 			json.append("    importedOrders: " + task.getImportedOrders() + ",\n");
+			json.append("    cache: { hitCount: " + builder.getCache().getHitCount() + ", missCount: " + builder.getCache().getMissCount() + " },\n");
 			json.append("    issues: [\n");
 			
 			for (ImportIssue issue : task.getIssues()) {

@@ -56,9 +56,7 @@ public class MappingUtilsTest extends BaseModuleContextSensitiveTest {
 		// Test by ID
 		assertEquals(new Integer(5497), MappingUtils.getConcept(5497).getConceptId());
 		// Test by name
-		assertEquals(new Integer(5497), MappingUtils.getConcept("CD4 COUNT").getConceptId());
-		// Test by global property lookup
-		assertEquals(new Integer(5497), MappingUtils.getConcept("@concept.cd4_count").getConceptId());	
+		assertEquals(new Integer(5497), MappingUtils.getConcept("CD4 COUNT").getConceptId());	
 	}
 	
 	@Test
@@ -72,12 +70,6 @@ public class MappingUtilsTest extends BaseModuleContextSensitiveTest {
 		try {
 			// Test by name
 			MappingUtils.getConcept("XXXXXXX");			
-			fail("MappingUtils.getConcept should have thrown exception");
-		}
-		catch (IncompleteMappingException ex) {}
-		try {
-			// Test by global property lookup
-			MappingUtils.getConcept("@XXXXXXX");			
 			fail("MappingUtils.getConcept should have thrown exception");
 		}
 		catch (IncompleteMappingException ex) {}

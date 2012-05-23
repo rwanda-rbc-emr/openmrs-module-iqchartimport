@@ -41,6 +41,7 @@ public class ImportTask implements Runnable {
 			
 	private UserContext userContext;
 	private IQChartDatabase database;
+	private EntityBuilder builder;
 	private Date startTime = null;
 	private Date endTime = null;
 	private boolean full = false;
@@ -103,7 +104,7 @@ public class ImportTask implements Runnable {
 	 * @param session the session
 	 */
 	private void doImport(IQChartSession session) {
-		EntityBuilder builder = new EntityBuilder(session);
+		builder = new EntityBuilder(session);
 		
 		List<Patient> patients = builder.getPatients();
 		totalPatients = patients.size();
@@ -239,5 +240,13 @@ public class ImportTask implements Runnable {
 	public int getTimeTaken() {
 		Date end = (endTime != null) ? endTime : new Date(); 
 		return (int)((end.getTime() - startTime.getTime()) / 1000);
+	}
+	
+	/**
+	 * Gets the entity builder used by this task
+	 * @return the entity builder
+	 */
+	public EntityBuilder getEntityBuilder() {
+		return builder;
 	}
 }

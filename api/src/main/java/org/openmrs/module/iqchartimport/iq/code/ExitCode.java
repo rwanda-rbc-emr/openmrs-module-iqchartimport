@@ -23,12 +23,12 @@ public enum ExitCode {
 	
 	OTHER (Dictionary.UNKNOWN),
 	TRANSFERRED ("PATIENT TRANSFERRED OUT"),
-	DECEASED ("@concept.patientDied"),
+	DECEASED (Dictionary.PATIENT_DIED),
 	LOST ("PATIENT DEFAULTED"),
 	STOPPED_BY_DOCTOR (Dictionary.UNKNOWN),
 	STOPPED_BY_PATIENT ("PATIENT REFUSED");
 	
-	public static final Object mappedQuestion = "@concept.reasonExitedCare";
+	public static final Integer mappedQuestion = Dictionary.REASON_FOR_EXITING_CARE;
 	public final Object mappedAnswer;
 	
 	/**

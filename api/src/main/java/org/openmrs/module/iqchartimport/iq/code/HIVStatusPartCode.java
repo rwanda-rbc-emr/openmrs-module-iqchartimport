@@ -24,16 +24,16 @@ public enum HIVStatusPartCode {
 	NEGATIVE (Dictionary.NEGATIVE),
 	POSITIVE (Dictionary.POSITIVE),
 	UNKNOWN (Dictionary.UNKNOWN),
-	NOTTESTED ("NO TEST");
+	NOTTESTED (Dictionary.NO_TEST);
 	
-	public static final Object mappedQuestion = "TESTING STATUS OF PARTNER";
-	public final Object mappedAnswer;
+	public static final Integer mappedQuestion = Dictionary.TESTING_STATUS_OF_PARTNER;
+	public final Integer mappedAnswer;
 	
 	/**
 	 * Constructs new enum value
 	 * @param mappedAnswer the mapped answer
 	 */
-	HIVStatusPartCode(Object mappedAnswer) {
+	HIVStatusPartCode(Integer mappedAnswer) {
 		this.mappedAnswer = mappedAnswer;
 	}
 	

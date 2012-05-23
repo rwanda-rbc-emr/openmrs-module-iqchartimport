@@ -15,10 +15,25 @@
 package org.openmrs.module.iqchartimport;
 
 /**
- * Common PIH dictionary concepts
+ * Common PIH/MOH dictionary concepts
  */
 public class Dictionary {
+	
+	/**
+	 * Questions
+	 */
+	public static final int CIVIL_STATUS = 1054;
+	public static final int WEIGHT_KG = 5089;
+	public static final int HEIGHT_CM = 5090;
+	public static final int PREGNANCY_STATUS = 5272;
+	public static final int CD4_COUNT = 5497;
+	public static final int REASON_FOR_EXITING_CARE = 1811;
+	public static final int TB_SCREENING = 2136;
+	public static final int TESTING_STATUS_OF_PARTNER = 3082;
 
+	/**
+	 * Answers
+	 */
 	public static final int YES = 1065;
 	public static final int NO = 1066;
 	public static final int UNKNOWN = 1067;
@@ -27,6 +42,8 @@ public class Dictionary {
 	public static final int NEGATIVE = 664;
 	public static final int TRANSFER_IN = 2536;
 	public static final int OTHER_NON_CODED = 5622;
+	public static final int PATIENT_DIED = 1742;
+	public static final int NO_TEST = 3083;
 	
 	/**
 	 * ARV drug concepts

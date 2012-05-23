@@ -25,14 +25,14 @@ public enum TBScreenCode {
 	POSITIVE (Dictionary.POSITIVE),
 	NOT_DETECTED (Dictionary.NEGATIVE);
 	
-	public static final Object mappedQuestion = "TB SCREENING";
-	public final Object mappedAnswer;
+	public static final Integer mappedQuestion = Dictionary.TB_SCREENING;
+	public final Integer mappedAnswer;
 	
 	/**
 	 * Constructs new enum value
 	 * @param mappedAnswer the mapped answer
 	 */
-	TBScreenCode(Object mappedAnswer) {
+	TBScreenCode(Integer mappedAnswer) {
 		this.mappedAnswer = mappedAnswer;
 	}
 	

@@ -135,7 +135,10 @@ public class DrugMapping {
 	 * @return the drug concept id or null
 	 */
 	public static Integer getDrugConceptId(String drug) {
-		return conceptMap.get(drug);
+		if (conceptMap.containsKey(drug))
+			return conceptMap.get(drug);
+		else
+			throw new IncompleteMappingException("Unrecognized drug: '" + drug + "'");
 	}
 	
 	/**
@@ -150,10 +153,7 @@ public class DrugMapping {
 		
 		for (int c = 0; c < components.length; ++c) {
 			String component = trimEndNumerals(components[c].trim());
-			if (conceptMap.containsKey(component))
-				conceptIds[c] = conceptMap.get(component);
-			else
-				throw new IncompleteMappingException("Unrecognized regimen component: '" + component + "'");
+			conceptIds[c] = getDrugConceptId(component);
 		}
 		
 		return conceptIds;

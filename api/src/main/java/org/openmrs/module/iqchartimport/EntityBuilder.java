@@ -77,6 +77,14 @@ public class EntityBuilder {
 	}
 	
 	/**
+	 * Gets the entity cache
+	 * @return the cache
+	 */
+	public EntityCache getCache() {
+		return cache;
+	}
+	
+	/**
 	 * Gets the TRACnetID identifier type to use for imported patients. Depending on module
 	 * options this will load existing identifier type or create a new one.
 	 * @return the identifier type
@@ -262,12 +270,9 @@ public class EntityBuilder {
 		
 		// Get TB medications from IQChart and convert to OpenMRS drug orders (using concepts rather than actual drugs objects)
 		List<TBMedication> iqTBMedications = session.getPatientTBMedications(iqPatient);
-		for (TBMedication tbMedication : iqTBMedications) {
-			
+		for (TBMedication tbMedication : iqTBMedications) {			
 			Integer drugConceptId = DrugMapping.getDrugConceptId(tbMedication.getDrug());
-			if (drugConceptId == null)
-				throw new IncompleteMappingException("Missing TB drug: " + tbMedication.getDrug());
-		
+
 			DrugOrder order = new DrugOrder();
 			order.setOrderType(cache.getOrderType(1));
 			order.setPatient(patient);
@@ -345,15 +350,15 @@ public class EntityBuilder {
 			Obs obs = makeObs(patient, iqObs.getDate(), null);
 			
 			if (iqObs instanceof HeightObs) {
-				obs.setConcept(cache.getConcept("@concept.height"));
+				obs.setConcept(cache.getConcept(Dictionary.HEIGHT_CM));
 				obs.setValueNumeric((double)((HeightObs)iqObs).getHeight());		
 			}
 			else if (iqObs instanceof WeightObs) {
-				obs.setConcept(cache.getConcept("@concept.weight"));
+				obs.setConcept(cache.getConcept(Dictionary.WEIGHT_KG));
 				obs.setValueNumeric((double)((WeightObs)iqObs).getWeight());		
 			}
 			else if (iqObs instanceof CD4Obs) {
-				obs.setConcept(cache.getConcept("@concept.cd4_count"));
+				obs.setConcept(cache.getConcept(Dictionary.CD4_COUNT));
 				obs.setValueNumeric((double)((CD4Obs)iqObs).getCd4Count());		
 			}
 			else if (iqObs instanceof TBScreenObs) {
@@ -408,7 +413,7 @@ public class EntityBuilder {
 	protected void addPregnancyObsToEncounters(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		List<Pregnancy> pregnancies = session.getPatientPregnancies(iqPatient);
-		Concept conceptPregnancy = cache.getConcept("PATIENT PREGNANCY STATUS");
+		Concept conceptPregnancy = cache.getConcept(Dictionary.PREGNANCY_STATUS);
 		Concept conceptYes = cache.getConcept(Dictionary.YES);
 		Concept conceptNo = cache.getConcept(Dictionary.NO);
 		Concept conceptNA = cache.getConcept(Dictionary.NOT_APPLICABLE);

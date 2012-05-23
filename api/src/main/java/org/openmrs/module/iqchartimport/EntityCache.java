@@ -35,15 +35,21 @@ public class EntityCache {
 	private Map<Integer, OrderType> orderTypes = new HashMap<Integer, OrderType>();
 	private Map<Integer, Drug> drugs = new HashMap<Integer, Drug>();
 	
+	private int hitCount = 0;
+	private int missCount = 0;
+	
 	/**
 	 * Gets a location
 	 * @param identifier the identifier
 	 * @return the location
 	 */
 	public Location getLocation(Integer identifier) {
-		if (locations.containsKey(identifier))
+		if (locations.containsKey(identifier)) {
+			++hitCount;
 			return locations.get(identifier);
+		}
 		
+		++missCount;
 		Location location = Context.getLocationService().getLocation(identifier);
 		locations.put(identifier, location);
 		return location;
@@ -55,9 +61,12 @@ public class EntityCache {
 	 * @return the encounter type
 	 */
 	public EncounterType getEncounterType(String identifier) {
-		if (encounterTypes.containsKey(identifier))
+		if (encounterTypes.containsKey(identifier)) {
+			++hitCount;
 			return encounterTypes.get(identifier);
+		}
 		
+		++missCount;
 		EncounterType encounterType = MappingUtils.getEncounterType(identifier);
 		encounterTypes.put(identifier, encounterType);
 		return encounterType;
@@ -69,10 +78,13 @@ public class EntityCache {
 	 * @return the concept
 	 */
 	public Concept getConcept(Object identifier) {
-		if (concepts.containsKey(identifier))
+		if (concepts.containsKey(identifier)) {
+			++hitCount;
 			return concepts.get(identifier);
+		}
 		
-		Concept concept = MappingUtils.getConcept(identifier);
+		++missCount;
+		Concept concept = (identifier instanceof String) ? MappingUtils.getConcept((String)identifier) : MappingUtils.getConcept((Integer)identifier);
 		concepts.put(identifier, concept);
 		return concept;
 	}
@@ -83,9 +95,12 @@ public class EntityCache {
 	 * @return the order type
 	 */
 	public OrderType getOrderType(Integer identifier) {
-		if (orderTypes.containsKey(identifier))
+		if (orderTypes.containsKey(identifier)) {
+			++hitCount;
 			return orderTypes.get(identifier);
+		}
 		
+		++missCount;
 		OrderType orderType = Context.getOrderService().getOrderType(identifier);
 		orderTypes.put(identifier, orderType);
 		return orderType;
@@ -97,11 +112,30 @@ public class EntityCache {
 	 * @return the drug
 	 */
 	public Drug getDrug(Integer identifier) {
-		if (drugs.containsKey(identifier))
+		if (drugs.containsKey(identifier)) {
+			++hitCount;
 			return drugs.get(identifier);
+		}
 		
+		++missCount;
 		Drug drug = Context.getConceptService().getDrug(identifier);
 		drugs.put(identifier, drug);
 		return drug;
+	}
+	
+	/**
+	 * Gets the cache hit count
+	 * @return the hit count
+	 */
+	public int getHitCount() {
+		return hitCount;
+	}
+	
+	/**
+	 * Gets the cache hit count
+	 * @return the hit count
+	 */
+	public int getMissCount() {
+		return missCount;
 	}
 }
