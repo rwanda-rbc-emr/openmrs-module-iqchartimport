@@ -53,7 +53,7 @@ public class StatusController {
 			String exception;
 			if (task.getException() != null) {
 				String clazz = "'" + task.getException().getClass().getName() + "'";
-				String message = (task.getException().getMessage() != null) ? ("'" + task.getException().getMessage() + "'") : "null";
+				String message = (task.getException().getMessage() != null) ? ("'" + task.getException().getMessage().replace("'", "\\'") + "'") : "null";
 				exception = "{ clazz: " + clazz + ", message: " + message + " }";		
 			}
 			else
