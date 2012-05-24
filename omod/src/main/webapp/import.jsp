@@ -38,10 +38,14 @@ function updateTaskStatus() {
 				else
 					$('#timeremaining').text('');
 				
-				if (task.exception != null)	
+				if (task.exception != null)	{
 					$('#exception').text(task.exception.clazz + (task.exception.message ? (' (' + task.exception.message + ')') : ''));
-				else
+					$('#exception').addClass('error');
+				}
+				else {
 					$('#exception').text('');
+					$('#exception').removeClass('error');
+				}
 				
 				if (task.completed) {
 					$('#importbutton').removeAttr('disabled');
