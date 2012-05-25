@@ -251,12 +251,10 @@ public class EntityBuilder {
 			
 			// Create order for each drug
 			for (Integer drugConceptId : drugConceptIds) {
-				Concept drugConcept = cache.getConcept(drugConceptId);
 				DrugOrder order = new DrugOrder();
 				order.setOrderType(cache.getOrderType(1));
 				order.setPatient(patient);
-				order.setDrug(null);
-				order.setConcept(drugConcept);
+				order.setConcept(cache.getConcept(drugConceptId));
 				order.setStartDate(regimen.getStartDate());
 				order.setDiscontinued(regimen.getEndDate() != null);
 				order.setDiscontinuedDate(regimen.getEndDate());
@@ -418,7 +416,7 @@ public class EntityBuilder {
 		Concept conceptNo = cache.getConcept(Dictionary.NO);
 		Concept conceptNA = cache.getConcept(Dictionary.NOT_APPLICABLE);
 		
-		outer:
+		nextEncounter:
 		for (Date date : encounters.keySet()) {
 			Obs obs = makeObs(patient, date, conceptPregnancy);
 			
@@ -430,14 +428,14 @@ public class EntityBuilder {
 				for (Pregnancy pregnancy : pregnancies) {
 					if (pregnancy.getDateEnd() == null && date.after(pregnancy.getDateStart()) && date.before(pregnancy.getEstDelivery())) {
 						// Don't add any obs... because we just don't know what happened
-						continue outer;
+						continue nextEncounter;
 					}
 				}
 				
 				// Check each of patient's pregnancies 
 				boolean pregOnDate = false;
 				for (Pregnancy pregnancy : pregnancies) {
-					if (date.after(pregnancy.getDateStart()) && date.before(pregnancy.getDateEnd())) {
+					if (pregnancy.getDateEnd() != null && date.after(pregnancy.getDateStart()) && date.before(pregnancy.getDateEnd())) {
 						pregOnDate = true;
 						break;
 					}
