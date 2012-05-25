@@ -237,6 +237,7 @@ public class EntityBuilder {
 	public List<DrugOrder> getPatientDrugOrders(Patient patient, int tracnetID) {
 		List<DrugOrder> drugOrders = new ArrayList<DrugOrder>();
 		IQPatient iqPatient = session.getPatient(tracnetID);
+		Date patientExitDate = iqPatient.getExitDate();
 		
 		// Get ARV regimens from IQChart and convert to OpenMRS drug orders
 		List<Regimen> iqRegimens = session.getPatientRegimens(iqPatient);
@@ -244,6 +245,9 @@ public class EntityBuilder {
 			
 			// Map regimen components to OpenMRS drug concepts
 			Integer[] drugConceptIds = DrugMapping.getRegimenConceptIds(regimen.getRegimen());
+			
+			// Automatic end date if patient has exited care
+			Date endDate = (regimen.getEndDate() == null && patientExitDate != null) ? patientExitDate : regimen.getEndDate();
 			
 			Concept conceptDiscontinued = null;
 			if (regimen.getChangeCode() != null)
@@ -256,8 +260,8 @@ public class EntityBuilder {
 				order.setPatient(patient);
 				order.setConcept(cache.getConcept(drugConceptId));
 				order.setStartDate(regimen.getStartDate());
-				order.setDiscontinued(regimen.getEndDate() != null);
-				order.setDiscontinuedDate(regimen.getEndDate());
+				order.setDiscontinued(endDate != null);
+				order.setDiscontinuedDate(endDate);
 				order.setDiscontinuedReason(conceptDiscontinued);
 				order.setDiscontinuedReasonNonCoded(regimen.getOtherDetails());
 				order.setVoided(false);
@@ -270,14 +274,17 @@ public class EntityBuilder {
 		List<TBMedication> iqTBMedications = session.getPatientTBMedications(iqPatient);
 		for (TBMedication tbMedication : iqTBMedications) {			
 			Integer drugConceptId = DrugMapping.getDrugConceptId(tbMedication.getDrug());
+			
+			// Automatic end date if patient has exited care
+			Date endDate = (tbMedication.getEndDate() == null && patientExitDate != null) ? patientExitDate : tbMedication.getEndDate();
 
 			DrugOrder order = new DrugOrder();
 			order.setOrderType(cache.getOrderType(1));
 			order.setPatient(patient);
 			order.setConcept(cache.getConcept(drugConceptId));
 			order.setStartDate(tbMedication.getStartDate());
-			order.setDiscontinued(tbMedication.getEndDate() != null);
-			order.setDiscontinuedDate(tbMedication.getEndDate());
+			order.setDiscontinued(endDate != null);
+			order.setDiscontinuedDate(endDate);
 			order.setVoided(false);
 			
 			drugOrders.add(order);
