@@ -74,7 +74,7 @@ public class Drugs {
 	/**
 	 * Pediatric combination ARVs
 	 */
-	//public static final int ABACAVIR_LAMIVUDINE_60_30 = ???;
+	public static final int ABACAVIR_LAMIVUDINE_60_30 = 479;
 	public static final int LAMIVUDINE_STAVUDINE_NEVIRAPINE_30_6_50 = 474;
 	public static final int LAMIVUDINE_STAVUDINE_NEVIRAPINE_60_12_100 = 475;
 	public static final int LAMIVUDINE_ZIDOVUDINE_NEVIRAPINE_30_60_50 = 476;
