@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport.web.controller;
+package org.openmrs.module.iqchartimport.web.controller.json;
 
 import java.io.IOException;
 
