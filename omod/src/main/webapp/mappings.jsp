@@ -15,7 +15,7 @@ $(function() {
 	});
 	
 	$(".drugs-select").each(function() {
-		var iqDrug = $(this).attr("iqDrug");
+		var iqDrug = $(this).attr("iq-drug");
 		var mapping = drugMappings[iqDrug];
 		
 		// Add all drugs to the select box
@@ -134,7 +134,7 @@ var drugMappings = {
 <b class="boxHeader">
 	<spring:message code="iqchartimport.mappings.drugMappings" />
 </b>
-<form id="drugsForm" class="box">
+<form id="drugsForm" class="box" method="post">
 	<c:choose>
 		<c:when test="${iqDrugs != null}">
 			<table width="100%">
@@ -144,11 +144,9 @@ var drugMappings = {
 				</tr>
 				<c:forEach items="${iqDrugs}" var="iqDrug" varStatus="rowStatus">
 					<tr class="<c:choose><c:when test="${rowStatus.index % 2 == 0}">evenRow</c:when><c:otherwise>oddRow</c:otherwise></c:choose>">
+						<td>${iqDrug}</td>
 						<td>
-							<span id="iqdrug-${rowStatus.index}">${iqDrug}</span>
-						</td>
-						<td>
-							<select id="drugs-${rowStatus.index}" data-placeholder="Choose drugs..." iqDrug="${iqDrug}" class="drugs-select" multiple style="width:600px;"></select>
+							<select name="drugs-${rowStatus.index}" data-placeholder="Choose drugs..." iq-drug="${iqDrug}" class="drugs-select" multiple style="width:600px;"></select>
 						</td>
 					</tr>
 				</c:forEach>
