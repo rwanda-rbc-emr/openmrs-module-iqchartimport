@@ -36,4 +36,5 @@ public class Constants {
 	public static final String PROP_HIV_PROGRAM_ID = MODULE_ID + ".hivProgramId";
 	public static final String PROP_TB_PROGRAM_ID = MODULE_ID + ".tbProgramId";
 	public static final String PROP_SITE_LOCATION_ID = MODULE_ID + ".encounterLocationId";
+	public static final String PROP_DRUG_MAPPINGS = MODULE_ID + ".drugMappings";
 }

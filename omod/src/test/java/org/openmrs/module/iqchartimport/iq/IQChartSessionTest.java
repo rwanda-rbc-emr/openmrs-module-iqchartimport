@@ -18,6 +18,7 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -144,9 +145,9 @@ public class IQChartSessionTest {
 	
 	@Test
 	public void getStdRegimens() {
-		List<String> stdRegimens = session.getStdRegimens();
-		assertEquals(27, stdRegimens.size());
-		assertEquals("AZT / 3TC / EFV 600", stdRegimens.get(0));
-		assertEquals("ABC/3TC/EFV", stdRegimens.get(26));
+		Set<String> stdRegimens = session.getStdRegimens(false);
+		assertEquals(26, stdRegimens.size());
+		//assertEquals("AZT / 3TC / EFV 600", stdRegimens.get(0));
+		//assertEquals("ABC/3TC/EFV", stdRegimens.get(26));
 	}
 }

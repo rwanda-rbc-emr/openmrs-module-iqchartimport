@@ -15,15 +15,18 @@
 package org.openmrs.module.iqchartimport.web.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Concept;
 import org.openmrs.Drug;
 import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
@@ -67,24 +70,34 @@ public class MappingsController {
 		if (database != null) {
 			IQChartSession session = new IQChartSession(database);
 			
-			List<String> regimens = session.getStdRegimens();
-			Map<String, Concept[]> conceptMappings = new TreeMap<String, Concept[]>();
-			Map<String, String> conceptErrors = new TreeMap<String, String>();
+			// Get set of all ARV and TB drugs/regimens
+			Set<String> iqARVDrugs = session.getStdRegimens(true);
+			Set<String> iqTBDrugs = session.getStdTBDrugs();
+			Set<String> allIQDrugSet = new TreeSet<String>();
+			allIQDrugSet.addAll(iqARVDrugs);
+			allIQDrugSet.addAll(iqTBDrugs);
+			List<String> iqDrugs = new ArrayList<String>(allIQDrugSet);
 			
-			for (String regimen : regimens) {
+			List<Drug> drugs = Context.getConceptService().getAllDrugs();
+			Map<String, List<Integer>> drugMappings = new HashMap<String, List<Integer>>();
+			
+			DrugMapping.load();
+			
+			for (String iqDrug : iqDrugs) {
 				try {
-					Integer[] conceptIds = DrugMapping.getRegimenConceptIds(regimen);
-					conceptMappings.put(regimen, getConcepts(conceptIds));
+					List<Integer> drugIds = DrugMapping.getDrugIds(iqDrug);
+					drugMappings.put(iqDrug, drugIds);
 				}
-				catch (IncompleteMappingException ex) {	
-					conceptMappings.put(regimen, null);
-					conceptErrors.put(regimen, ex.getMessage());
-				}
+				catch (IncompleteMappingException ex) {}
 			}
 			
-			model.put("regimens", regimens);
-			model.put("conceptMappings", conceptMappings);
-			model.put("conceptErrors", conceptErrors);
+			// Store the IQChart drug list in the session
+			HttpSession httpSession = request.getSession();
+			httpSession.setAttribute("iqDrugs", iqDrugs);
+				
+			model.put("drugs", drugs);
+			model.put("iqDrugs", iqDrugs);
+			model.put("drugMappings", drugMappings);
 			
 			session.close();
 		}
@@ -114,25 +127,46 @@ public class MappingsController {
 			MappingUtils.createEncounterProvider();
 			request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Provider created");
 		}
-		else {
-			mappings.save();
-			request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Mappings saved");
+		else if (request.getParameter("siteLocationId") != null) {
+			handleEntityMappingsSubmit(request, mappings);
 		}
+		else
+			handleDrugMappingsSubmit(request);
 		
 		return "redirect:mappings.form";
 	}
-	
-	protected static Concept[] getConcepts(Integer[] conceptIds) {
-		Concept[] concepts = new Concept[conceptIds.length];
-		for (int c = 0; c < conceptIds.length; ++c)
-			concepts[c] = Context.getConceptService().getConcept(conceptIds[c]);
-		return concepts;
+
+	private void handleEntityMappingsSubmit(HttpServletRequest request, Mappings mappings) {
+		mappings.save();
+		request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Entity mappings saved");
 	}
 	
-	protected static Drug[] getDrugs(Integer[] drugIds) {
-		Drug[] drugs = new Drug[drugIds.length];
-		for (int d = 0; d < drugIds.length; ++d)
-			drugs[d] = Context.getConceptService().getDrug(drugIds[d]);
-		return drugs;
+	@SuppressWarnings("unchecked")
+	private void handleDrugMappingsSubmit(HttpServletRequest request) {
+		DrugMapping.clear();
+		
+		HttpSession httpSession = request.getSession();
+		List<String> iqDrugs = (List<String>)httpSession.getAttribute("iqDrugs");
+		
+		for (String param : (Set<String>)request.getParameterMap().keySet()) {
+			if (param.startsWith("drugs-")) {
+				// Get index and lookup up IQChart drug list to get drug name
+				int iqDrugID = Integer.parseInt(param.substring(6));
+				String iqDrug = iqDrugs.get(iqDrugID);
+				
+				// Get OpenMRS drug ids
+				String[] drugStrIds = request.getParameterValues(param);
+				List<Integer> drugIds = new ArrayList<Integer>(0);
+				for (String drugStrId : drugStrIds) {
+					int drugId = Integer.parseInt(drugStrId);
+					drugIds.add(drugId);
+				}
+				
+				DrugMapping.setDrugIds(iqDrug, drugIds);
+			}
+		}
+		
+		DrugMapping.save();
+		request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Drug mappings saved");
 	}
 }

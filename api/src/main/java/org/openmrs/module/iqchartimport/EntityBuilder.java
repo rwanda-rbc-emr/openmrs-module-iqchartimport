@@ -23,6 +23,7 @@ import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.Drug;
 import org.openmrs.DrugOrder;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
@@ -243,8 +244,11 @@ public class EntityBuilder {
 		List<Regimen> iqRegimens = session.getPatientRegimens(iqPatient);
 		for (Regimen regimen : iqRegimens) {
 			
+			// Map regimen components to OpenMRS drugs
+			List<Integer> drugIds = DrugMapping.getDrugIds(regimen.getRegimen());
+			
 			// Map regimen components to OpenMRS drug concepts
-			Integer[] drugConceptIds = DrugMapping.getRegimenConceptIds(regimen.getRegimen());
+			//Integer[] drugConceptIds = DrugMapping.getRegimenConceptIds(regimen.getRegimen());
 			
 			// Automatic end date if patient has exited care
 			Date endDate = (regimen.getEndDate() == null && patientExitDate != null) ? patientExitDate : regimen.getEndDate();
@@ -254,11 +258,13 @@ public class EntityBuilder {
 				conceptDiscontinued = cache.getConcept(regimen.getChangeCode().mappedConcept);
 			
 			// Create order for each drug
-			for (Integer drugConceptId : drugConceptIds) {
+			for (Integer drugId : drugIds) {
+				Drug drug = cache.getDrug(drugId);
 				DrugOrder order = new DrugOrder();
 				order.setOrderType(cache.getOrderType(1));
 				order.setPatient(patient);
-				order.setConcept(cache.getConcept(drugConceptId));
+				order.setDrug(drug);
+				order.setConcept(drug.getConcept());
 				order.setStartDate(regimen.getStartDate());
 				order.setDiscontinued(endDate != null);
 				order.setDiscontinuedDate(endDate);
@@ -270,24 +276,29 @@ public class EntityBuilder {
 			}
 		}
 		
-		// Get TB medications from IQChart and convert to OpenMRS drug orders (using concepts rather than actual drugs objects)
+		// Get TB medications from IQChart and convert to OpenMRS drug orders
 		List<TBMedication> iqTBMedications = session.getPatientTBMedications(iqPatient);
 		for (TBMedication tbMedication : iqTBMedications) {			
-			Integer drugConceptId = DrugMapping.getDrugConceptId(tbMedication.getDrug());
+			List<Integer> drugIds = DrugMapping.getDrugIds(tbMedication.getDrug());
 			
 			// Automatic end date if patient has exited care
 			Date endDate = (tbMedication.getEndDate() == null && patientExitDate != null) ? patientExitDate : tbMedication.getEndDate();
 
-			DrugOrder order = new DrugOrder();
-			order.setOrderType(cache.getOrderType(1));
-			order.setPatient(patient);
-			order.setConcept(cache.getConcept(drugConceptId));
-			order.setStartDate(tbMedication.getStartDate());
-			order.setDiscontinued(endDate != null);
-			order.setDiscontinuedDate(endDate);
-			order.setVoided(false);
-			
-			drugOrders.add(order);
+			// Create order for each drug
+			for (Integer drugId : drugIds) {
+				Drug drug = cache.getDrug(drugId);
+				DrugOrder order = new DrugOrder();
+				order.setOrderType(cache.getOrderType(1));
+				order.setPatient(patient);
+				order.setDrug(drug);
+				order.setConcept(drug.getConcept());
+				order.setStartDate(tbMedication.getStartDate());
+				order.setDiscontinued(endDate != null);
+				order.setDiscontinuedDate(endDate);
+				order.setVoided(false);
+				
+				drugOrders.add(order);
+			}
 		}
 		
 		return drugOrders;

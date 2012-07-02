@@ -30,6 +30,7 @@ public class Mappings {
 	protected int hivProgramId;
 	protected int tbProgramId;
 	protected int siteLocationId;
+	protected String drugMappings;
 	
 	/**
 	 * The default constructor
@@ -57,6 +58,7 @@ public class Mappings {
 		hivProgramId = loadIntOption(Constants.PROP_HIV_PROGRAM_ID, -1);
 		tbProgramId = loadIntOption(Constants.PROP_TB_PROGRAM_ID, -1);
 		siteLocationId = loadIntOption(Constants.PROP_SITE_LOCATION_ID, -1);
+		drugMappings = loadStringOption(Constants.PROP_DRUG_MAPPINGS, "");
 	}
 	
 	/**
@@ -68,6 +70,7 @@ public class Mappings {
 		saveOption(Constants.PROP_HIV_PROGRAM_ID, hivProgramId);
 		saveOption(Constants.PROP_TB_PROGRAM_ID, tbProgramId);
 		saveOption(Constants.PROP_SITE_LOCATION_ID, siteLocationId);
+		saveOption(Constants.PROP_DRUG_MAPPINGS, drugMappings);
 	}
 
 	/**
@@ -148,6 +151,22 @@ public class Mappings {
 	 */
 	public void setSiteLocationId(int siteLocationId) {
 		this.siteLocationId = siteLocationId;
+	}
+	
+	/**
+	 * Gets the drug mappings
+	 * @return the drug mappings
+	 */
+	public String getDrugMappings() {
+		return drugMappings;
+	}
+
+	/**
+	 * Sets the drug mappings
+	 * @param drugMappings the drug mappings
+	 */
+	public void setDrugMappings(String drugMappings) {
+		this.drugMappings = drugMappings;
 	}
 
 	/**

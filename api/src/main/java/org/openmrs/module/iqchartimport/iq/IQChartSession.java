@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -397,15 +399,35 @@ public class IQChartSession {
 	 * Gets the standard regimen names
 	 * @return the regimen names
 	 */
-	public List<String> getStdRegimens() {
-		List<String> stdRegimens = new ArrayList<String>();
+	public Set<String> getStdRegimens(boolean all) {
+		Set<String> stdRegimens = new TreeSet<String>();
 		try {
-			Table table = database.getTable(TABLE_STANDARD_REGIMEN);
+			String tableName = all ? TABLE_REGIMEN : TABLE_STANDARD_REGIMEN;
+			Table table = database.getTable(tableName);
 			
 			for (Map<String, Object> row : table)
 				stdRegimens.add((String)row.get("Regimen"));
 			
 			return stdRegimens;
+			
+		} catch (IOException e) {		
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the standard TB drug names
+	 * @return the TB drug names
+	 */
+	public Set<String> getStdTBDrugs() {
+		Set<String> stdDrugs = new TreeSet<String>();
+		try {
+			Table table = database.getTable(TABLE_TBMEDICATIONS);
+			
+			for (Map<String, Object> row : table)
+				stdDrugs.add((String)row.get("drug"));
+			
+			return stdDrugs;
 			
 		} catch (IOException e) {		
 		}

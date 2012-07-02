@@ -15,39 +15,25 @@
 package org.openmrs.module.iqchartimport;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.openmrs.util.OpenmrsUtil;
 
 /**
  * Drug mapping functions
  */
 public class DrugMapping {
 	
-	/**
-	 * Regimen of drugs
-	 */
-	static class Regimen {
+	private static Map<String, List<Integer>> mappings = new HashMap<String, List<Integer>>();
 
-		public Integer[] drugIds;
-		
-		public Regimen(Integer ... drugIds) {
-			this.drugIds = drugIds;
-		}
-	}
-	
-	/**
-	 * Drug mapping
-	 */
-	private static Map<String, Integer> conceptMap = new HashMap<String, Integer>();	
-	private static Map<String, Regimen> adultRegimens = new HashMap<String, Regimen>();
-	private static Map<String, Regimen> pedsRegimens = new HashMap<String, Regimen>();
-	
 	static {
 		/**
-		 * Adult ARV regimens
+		 * ARV regimens
 		 */
-		adultRegimens.put("AZT/3TC/EFV600", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_150_300, Drugs.EFAVIRENZ_600));
-		adultRegimens.put("AZT/3TC/EFV800", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_150_300, Drugs.EFAVIRENZ_600, Drugs.EFAVIRENZ_200));
-		adultRegimens.put("AZT/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_NEVIRAPINE_150_300_200));
+		/*setRegimenDrugIds("AZT / 3TC / EFV 600", new Integer[] {Drugs.LAMIVUDINE_ZIDOVUDINE_150_300, Drugs.EFAVIRENZ_600});
+		setRegimenDrugIds("AZT / 3TC / EFV 800", new Integer[] {Drugs.LAMIVUDINE_ZIDOVUDINE_150_300, Drugs.EFAVIRENZ_600, Drugs.EFAVIRENZ_200});
+		regimenMappings.put("AZT/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_NEVIRAPINE_150_300_200));
 		adultRegimens.put("D4T30/3TC/EFV600", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_30, Drugs.EFAVIRENZ_600));
 		adultRegimens.put("D4T30/3TC/EFV800", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_30, Drugs.EFAVIRENZ_600, Drugs.EFAVIRENZ_200));
 		adultRegimens.put("D4T30/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_NEVIRAPINE_150_30_200));
@@ -64,114 +50,80 @@ public class DrugMapping {
 		adultRegimens.put("D4T/3TC/KALETRA", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_30, Drugs.LOPINAVIR_RITONAVIR_200_50));
 		adultRegimens.put("TDF/3TC/EFV", new Regimen(Drugs.TENOFOVIR_LAMIVUDINE_EFAVIRENZ_300_300_600));
 		adultRegimens.put("TDF/3TC/KALETRA", new Regimen(Drugs.TENOFOVIR_LAMIVUDINE_300_300, Drugs.LOPINAVIR_RITONAVIR_200_50));
-		//adultRegimens.put("DDI/KALETRA", new Regimen()); // Typo missing 3TC
-		//adultRegimens.put("DDI/3TC/KALETRA", new Regimen());
 		adultRegimens.put("AZT/3TC/EFV", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_150_300, Drugs.EFAVIRENZ_600));
 		adultRegimens.put("ABC/3TC/KALETRA", new Regimen(Drugs.ABACAVIR_300, Drugs.LAMIVUDINE_150, Drugs.LOPINAVIR_RITONAVIR_200_50));
 		adultRegimens.put("TDF/3TC/ABC", new Regimen(Drugs.TENOFOVIR_LAMIVUDINE_300_300, Drugs.ABACAVIR_300));
 		adultRegimens.put("AZT/TDF/3TC/KALETRA", new Regimen(Drugs.ZIDOVUDINE_300, Drugs.TENOFOVIR_LAMIVUDINE_300_300, Drugs.LOPINAVIR_RITONAVIR_200_50));
 		adultRegimens.put("ABC/3TC/EFV", new Regimen(Drugs.ABACAVIR_300, Drugs.LAMIVUDINE_150, Drugs.EFAVIRENZ_600));
-		
-		/**
-		 * Pediatric ARV regimens
-		 */
-		pedsRegimens.put("AZT/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_NEVIRAPINE_30_60_50));
-		pedsRegimens.put("D4T20/3TC/NVP", new Regimen(Drugs.STAVUDINE_20, Drugs.LAMIVUDINE_10_ORAL, Drugs.NEVIRAPINE_10_ORAL));
-		pedsRegimens.put("D4T12/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_NEVIRAPINE_60_12_100));
-		pedsRegimens.put("D4T6/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_NEVIRAPINE_30_6_50));
-		
-		/**
-		 * ARV drugs
-		 */
-		conceptMap.put("ABC", Dictionary.ABACAVIR);
-		conceptMap.put("DDI", Dictionary.DIDANOSINE);
-		conceptMap.put("EFV", Dictionary.EFAVIRENZ);
-		conceptMap.put("IDV", Dictionary.INDINAVIR);
-		conceptMap.put("3TC", Dictionary.LAMIVUDINE);
-		conceptMap.put("LPVr", Dictionary.LOPINAVIR_AND_RITONAVIR);
-		conceptMap.put("LPV/r", Dictionary.LOPINAVIR_AND_RITONAVIR);
-		conceptMap.put("KALETRA", Dictionary.LOPINAVIR_AND_RITONAVIR);
-		conceptMap.put("NFV", Dictionary.NELFINAVIR);
-		conceptMap.put("NVP", Dictionary.NEVIRAPINE);
-		conceptMap.put("RTV", Dictionary.RITONAVIR);
-		conceptMap.put("D4T", Dictionary.STAVUDINE);
-		conceptMap.put("TDF", Dictionary.TENOFOVIR);
-		conceptMap.put("AZT", Dictionary.ZIDOVUDINE);
-				
-		/**
-		 * Drugs used for TB
-		 */
-		conceptMap.put("Bactrim", Dictionary.TRIMETHOPRIM_AND_SULFAMETHOXAZOLE);
-		conceptMap.put("Fluconazol", Dictionary.FLUCONAZOLE); // IQChart uses mispelling
-		conceptMap.put("Fluconazole", Dictionary.FLUCONAZOLE);
-		conceptMap.put("Dapsone", Dictionary.DAPSONE);
+		adultRegimens.put("D4T20/3TC/NVP", new Regimen(Drugs.STAVUDINE_20, Drugs.LAMIVUDINE_10_ORAL, Drugs.NEVIRAPINE_10_ORAL));
+		adultRegimens.put("D4T12/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_NEVIRAPINE_60_12_100));
+		adultRegimens.put("D4T6/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_NEVIRAPINE_30_6_50));
+		*/
 	}
 	
 	/**
-	 * Gets a list of OpenMRS drugs from an IQChart regimen
-	 * @param regimen the regimen, e.g. "AZT / D4T / EFV 600"
-	 * @param peds true if patient is a child
-	 * @param strict true if only drugs appropriate for age should be returned
-	 * @return the drugs ids
-	 * @throws IncompleteMappingException if a drug can't be found
+	 * Clears all drug mappings
 	 */
-	public static Integer[] getRegimenDrugIds(String regimen, boolean peds, boolean strict) {
-		String regimenClean = regimen.replace(" ", "");
-		
-		Map<String, Regimen> regimens1 = peds ? pedsRegimens : adultRegimens;
-		Map<String, Regimen> regimens2 = peds ? adultRegimens : pedsRegimens;
-		
-		if (regimens1.containsKey(regimenClean))
-			return regimens1.get(regimenClean).drugIds;
-		else if (!strict && regimens2.containsKey(regimenClean))
-			return regimens2.get(regimenClean).drugIds;
-		else
-			throw new IncompleteMappingException("Unrecognized regimen: '" + regimen + "'");			
+	public static void clear() {
+		mappings.clear();
 	}
 	
 	/**
-	 * Gets an OpenMRS drug concept ID from an IQChart drug name
-	 * @param component the drug name
-	 * @return the drug concept id or null
+	 * Loads drug mappings
 	 */
-	public static Integer getDrugConceptId(String drug) {
-		if (conceptMap.containsKey(drug))
-			return conceptMap.get(drug);
-		else
-			throw new IncompleteMappingException("Unrecognized drug: '" + drug + "'");
+	public static void load() {
+		clear();
+		Mappings.getInstance().load();
+		
+		String mappingsStr = Mappings.getInstance().getDrugMappings();
+		for (String line : mappingsStr.split("\\\n")) {
+			line = line.trim();
+			if (line.length() == 0)
+				continue;
+			
+			String[] tokens = line.split("\\|");
+			String regimen = tokens[0].trim();
+			String idsStr = tokens[1].trim();
+			List<Integer> drugIds = OpenmrsUtil.delimitedStringToIntegerList(idsStr, ",");
+			
+			mappings.put(regimen, drugIds);
+		}
 	}
 	
 	/**
-	 * Gets a list of OpenMRS drug concepts from an IQChart regimen
-	 * @param regimen the regimen, e.g. "AZT / D4T / EFV 600"
-	 * @return the drugs ids
-	 * @throws IncompleteMappingException if a drug can't be found
+	 * Saves drug mappings
 	 */
-	public static Integer[] getRegimenConceptIds(String regimen) {
-		String[] components = regimen.split("/");
-		Integer[] conceptIds = new Integer[components.length];
+	public static void save() {
+		StringBuilder mappingsStr = new StringBuilder();
 		
-		for (int c = 0; c < components.length; ++c) {
-			String component = trimEndNumerals(components[c].trim());
-			conceptIds[c] = getDrugConceptId(component);
+		for (String iqDrug : mappings.keySet()) {
+			String idsStr = OpenmrsUtil.join(mappings.get(iqDrug), ",");
+			mappingsStr.append(iqDrug + "|" + idsStr + "\n");
 		}
 		
-		return conceptIds;
+		Mappings.getInstance().setDrugMappings(mappingsStr.toString());
+		Mappings.getInstance().save();
 	}
 	
 	/**
-	 * Trims numeral characters from the end of a string
-	 * @param input the input sting
-	 * @return the input without trailing numerals
+	 * Gets a regimen of OpenMRS drugs from an IQChart regimen/drug name
+	 * @param regimen the regimen, e.g. "AZT / D4T / EFV 600"
+	 * @return the drugs ids
+	 * @throws IncompleteMappingException if a drug can't be found
 	 */
-	protected static String trimEndNumerals(String input) {
-		if (input == null || input.length() == 0)
-			return input;
-		
-		int last = input.length() - 1;
-		while (Character.isDigit(input.charAt(last)) || Character.isWhitespace(input.charAt(last)))
-			--last;
-		
-		return input.substring(0, last + 1);
+	public static List<Integer> getDrugIds(String name) {
+		if (mappings.containsKey(name))
+			return mappings.get(name);
+		else
+			throw new IncompleteMappingException("Unrecognized regimen: '" + name + "'");			
+	}
+	
+	/**
+	 * Maps a regimen of OpenMRS drugs to an IQChart regimen/drug name
+	 * @param name the regimen name, e.g. "AZT / D4T / EFV 600"
+	 * @param regimen the drugs ids
+	 */
+	public static void setDrugIds(String name, List<Integer> drugIds) {
+		mappings.put(name, drugIds);			
 	}
 }

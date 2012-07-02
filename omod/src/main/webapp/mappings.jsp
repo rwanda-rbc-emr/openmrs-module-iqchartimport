@@ -5,12 +5,37 @@
 <%@ include file="template/localHeader.jsp"%>
 
 <script type="text/javascript">
+
+var drugs = [<c:forEach items="${drugs}" var="drug">{ name: "${drug.name}", id: ${drug.drugId} },</c:forEach>];
+
 $(function() {
 	$("#createProviderButton").click(function() {
 		$("#createProvider").val("1");
 		$("#mappingsForm").submit();
 	});
+	
+	$(".drugs-select").each(function() {
+		var iqDrug = $(this).attr("iqDrug");
+		var mapping = drugMappings[iqDrug];
+		
+		// Add all drugs to the select box
+		for (var d = 0; d < drugs.length; d++) {
+			var drug = drugs[d];
+			var isMapped = (typeof mapping != 'undefined') && (mapping.indexOf(drug.id) > -1);
+			$(this).append(new Option(drug.name, drug.id, isMapped, isMapped));
+		}
+
+		// Activate chosen
+		$(this).chosen();
+	});
 });
+
+var drugMappings = {
+<c:forEach items="${drugMappings}" var="mapping">
+	"${mapping.key}" : [<c:forEach items="${mapping.value}" var="drugId">${drugId},</c:forEach>],	
+</c:forEach>
+};
+
 </script>
 
 <b class="boxHeader">
@@ -111,32 +136,24 @@ $(function() {
 </b>
 <form id="drugsForm" class="box">
 	<c:choose>
-		<c:when test="${regimens != null}">
+		<c:when test="${iqDrugs != null}">
 			<table width="100%">
 				<tr>
-					<th width="300"><spring:message code="iqchartimport.mappings.regimen" /></th>
-					<th><spring:message code="iqchartimport.mappings.mappedConcepts" /></th>
+					<th width="300"><spring:message code="iqchartimport.mappings.iqChartDrugs" /></th>
+					<th><spring:message code="iqchartimport.mappings.mappedDrugs" /></th>
 				</tr>
-				<c:forEach items="${regimens}" var="regimen" varStatus="rowStatus">
+				<c:forEach items="${iqDrugs}" var="iqDrug" varStatus="rowStatus">
 					<tr class="<c:choose><c:when test="${rowStatus.index % 2 == 0}">evenRow</c:when><c:otherwise>oddRow</c:otherwise></c:choose>">
 						<td>
-							${regimen}
+							<span id="iqdrug-${rowStatus.index}">${iqDrug}</span>
 						</td>
 						<td>
-							<c:choose>
-								<c:when test="${conceptMappings[regimen] == null}">
-									<c:out value="${conceptErrors[regimen]}" />
-								</c:when>
-								<c:otherwise>
-									<c:forEach items="${conceptMappings[regimen]}" var="concept">
-										<a href="${pageContext.request.contextPath}/dictionary/concept.htm?conceptId=${concept.conceptId}">${concept.name}</a>
-									</c:forEach>
-								</c:otherwise>
-							</c:choose>
+							<select id="drugs-${rowStatus.index}" data-placeholder="Choose drugs..." iqDrug="${iqDrug}" class="drugs-select" multiple style="width:600px;"></select>
 						</td>
 					</tr>
 				</c:forEach>
 			</table>
+			<input type="submit" value="<spring:message code="general.save" />" />
 		</c:when>
 		<c:otherwise>
 			No database loaded
