@@ -26,6 +26,11 @@
 		<defaultValue>Kigali Province,Northern Province/Amajyaruguru,Eastern Province/Uburasirazuba,Southern Province/Amajyepfo,Western Province/Uburengerazuba</defaultValue>
 		<description>CSV list of provinces that can be selected for imported patient addresses</description>
 	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.drugMappings</property>
+		<defaultValue></defaultValue>
+		<description>Mappings of IQChart drugs/regimens to OpenMRS drugs</description>
+	</globalProperty>
 	<messages>
 		<lang>en</lang>
 		<file>messages.properties</file>

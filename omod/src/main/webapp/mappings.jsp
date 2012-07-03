@@ -6,7 +6,7 @@
 
 <script type="text/javascript">
 
-var drugs = [<c:forEach items="${drugs}" var="drug">{ name: "${drug.name}", id: ${drug.drugId} },</c:forEach>];
+var drugs = [<c:forEach items="${drugs}" var="drug">{ name: "${drug.name}<c:if test="${not empty drug.doseStrength || not empty drug.units}"> [${drug.doseStrength} ${drug.units}]</c:if>", id: ${drug.drugId} },</c:forEach>];
 
 $(function() {
 	$("#createProviderButton").click(function() {
