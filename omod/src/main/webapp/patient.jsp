@@ -62,6 +62,19 @@ $(function() {
 				</c:choose>
 			</td>
 		</tr>
+		<tr>
+			<td style="font-weight: bold"><spring:message code="PersonAttributeType.CivilStatus" /></td>
+			<td>
+				<c:choose>
+					<c:when test="${civilStatus != null}">
+						<openmrs:format concept="${civilStatus}" /> (${civilStatus.conceptId})
+					</c:when>
+					<c:otherwise>
+						Unknown
+					</c:otherwise>
+				</c:choose>
+			</td>
+		</tr>
 	</table>
 </div>
 

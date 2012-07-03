@@ -26,6 +26,8 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientProgram;
+import org.openmrs.PersonAttribute;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.iqchartimport.EntityBuilder;
 import org.openmrs.module.iqchartimport.IncompleteMappingException;
@@ -72,6 +74,11 @@ public class PatientController {
 			// Find exit reason obs
 			List<Obs> exitObss = Utils.findObs(encounters, MappingUtils.getConcept(ExitCode.mappedQuestion));
 			Obs patientExitObs = exitObss.size() > 0 ? exitObss.get(0) : null;
+			
+			// Find civil status
+			PersonAttribute civilAttr = patient.getAttribute(Context.getPersonService().getPersonAttributeType(5));
+			if (civilAttr != null)
+				model.put("civilStatus", Context.getConceptService().getConcept(civilAttr.getValue()));
 			
 			model.put("patient", patient);
 			model.put("patientPrograms", patientPrograms);

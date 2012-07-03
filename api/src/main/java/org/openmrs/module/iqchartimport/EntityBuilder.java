@@ -34,6 +34,7 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PatientProgram;
 import org.openmrs.PersonAddress;
+import org.openmrs.PersonAttribute;
 import org.openmrs.PersonName;
 import org.openmrs.Program;
 import org.openmrs.api.APIException;
@@ -42,7 +43,6 @@ import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.module.iqchartimport.iq.IQPatient;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
 import org.openmrs.module.iqchartimport.iq.code.HIVStatusPartCode;
-import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
 import org.openmrs.module.iqchartimport.iq.code.ModeCode;
 import org.openmrs.module.iqchartimport.iq.code.SexCode;
 import org.openmrs.module.iqchartimport.iq.code.TBScreenCode;
@@ -314,15 +314,6 @@ public class EntityBuilder {
 		IQPatient iqPatient = session.getPatient(tracnetID);
 		Encounter encounter = encounterForDate(patient, iqPatient.getEnrollDate(), encounters);
 		
-		// Add 'civil status' obs
-		if (iqPatient.getMaritalStatusCode() != null) {
-			Concept conceptCivil = cache.getConcept(MaritalCode.mappedQuestion);
-			Concept conceptAns = cache.getConcept(iqPatient.getMaritalStatusCode().mappedAnswer);		
-			Obs obs = makeObs(patient, iqPatient.getEnrollDate(), conceptCivil);
-			obs.setValueCoded(conceptAns);
-			encounter.addObs(obs);
-		}
-		
 		// Add 'mode of admission' obs
 		if (iqPatient.getModeCode() != null) {		
 			Concept conceptEnroll = cache.getConcept(ModeCode.mappedQuestion);
@@ -513,6 +504,15 @@ public class EntityBuilder {
 		// Set living/dead
 		if (iqPatient.getExitCode() != null && iqPatient.getExitCode() == ExitCode.DECEASED)
 			patient.setDead(true);
+		
+		// Add 'civil status' person attribute
+		if (iqPatient.getMaritalStatusCode() != null) {
+			Concept conceptAns = cache.getConcept(iqPatient.getMaritalStatusCode().mappedAnswer);		
+			PersonAttribute civilAttr = new PersonAttribute();
+			civilAttr.setAttributeType(Context.getPersonService().getPersonAttributeType(5));
+			civilAttr.setValue(conceptAns.getConceptId().toString());
+			patient.addAttribute(civilAttr);
+		}
 		
 		return patient;
 	}
