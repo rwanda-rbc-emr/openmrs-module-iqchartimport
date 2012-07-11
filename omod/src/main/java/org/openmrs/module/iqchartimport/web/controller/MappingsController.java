@@ -60,6 +60,11 @@ public class MappingsController {
 
 	protected static final Log log = LogFactory.getLog(MappingsController.class);
 	
+	/**
+	 * Gets the list of all drugs/regimens from IQChart that need to be mapped
+	 * @param session the IQChart session
+	 * @return the list of drugs/regimens
+	 */
 	protected static List<String> getAllIQChartDrugs(IQChartSession session) {
 		Set<String> iqARVDrugs = session.getStdRegimens(true);
 		Set<String> iqTBDrugs = session.getStdTBDrugs();
@@ -201,7 +206,7 @@ public class MappingsController {
 					conceptIds.add(drugConceptId);
 				}
 				
-				DrugMapping.setConceptList(iqDrug, conceptIds);
+				DrugMapping.setConcepts(iqDrug, conceptIds);
 			}
 		}
 		

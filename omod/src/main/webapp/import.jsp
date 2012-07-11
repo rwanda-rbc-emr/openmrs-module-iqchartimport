@@ -19,63 +19,69 @@ function formatTime(time) {
  * Updates the page controls based on the currently running task
  */
 function updateTaskStatus() {
-    $.ajax({
-        url: 'status.form',
-        dataType: 'json',
-        success: function (data) {
-        	var task = data.task;
-			if (task == null) {
-				$('#importbutton').removeAttr('disabled');
-				$('#statusmsg').text('<spring:message code="@MODULE_ID@.import.ready" />');
-			}
-			else {
-				$('#timetaken').text(formatTime(task.timeTaken));
-				
-				if (task.timeTaken > 30 && task.progress > 0) {
-					var timeRem = (100 - task.progress) * (task.timeTaken / task.progress);
-					$('#timeremaining').text(formatTime(timeRem));
-				}
-				else
-					$('#timeremaining').text('');
-				
-				if (task.exception != null)	{
-					$('#exception').text(task.exception.clazz + (task.exception.message ? (' (' + task.exception.message + ')') : ''));
-					$('#exception').addClass('error');
-				}
-				else {
-					$('#exception').text('');
-					$('#exception').removeClass('error');
-				}
-				
-				if (task.completed) {
-					$('#importbutton').removeAttr('disabled');
-					
-					if (task.exception == null)				
-						$('#statusmsg').text('<spring:message code="@MODULE_ID@.import.finished" /> (' + task.importedPatients + ' patients imported)');
-					else			
-						$('#statusmsg').text('<spring:message code="@MODULE_ID@.import.failed" />');
-	        	}
-				else {
-					$('#progressbar').progressbar("value", task.progress);
-					$('#statusmsg').text(Math.floor(task.progress) + "%");
-					$('#importbutton').attr('disabled', 'disabled');
-				}
-				
-				$('#issues').empty();
-				for (var i = 0; i < task.issues.length; ++i) {
-					var issue = task.issues[i];
-					var patUrl = openmrsContextPath + "/patientDashboard.form?patientId=" + issue.patientId;
-					$('#issues').append('<a href="' + patUrl + '">Patient ' + issue.patientId + '</a>: ' + issue.message + '<br />');
-				}
-			}
-
-			setTimeout('updateTaskStatus()', 3000);
-        }
-    });
+	jQuery.ajax({ 
+		url: 'status.form', 
+		dataType: 'json', 
+		success: onStatusReceived,
+		error: function(jqXHR, textStatus, errorThrown) { alert(textStatus + ": " + errorThrown); }
+	});
 }
 
-$(function() {
-	$('#progressbar').progressbar();
+/**
+ * Called by jQuery when it receives a status JSON object
+ */
+function onStatusReceived(data, textStatus, jqXHR) {
+	var task = data.task;
+	if (task == null) {
+		jQuery('#importbutton').removeAttr('disabled');
+		jQuery('#statusmsg').text('<spring:message code="@MODULE_ID@.import.ready" />');
+	}
+	else {
+		jQuery('#timetaken').text(formatTime(task.timeTaken));
+		
+		if (task.timeTaken > 30 && task.progress > 0) {
+			var timeRem = (100 - task.progress) * (task.timeTaken / task.progress);
+			jQuery('#timeremaining').text(formatTime(timeRem));
+		}
+		else
+			jQuery('#timeremaining').text('');
+		
+		if (task.exception != null)	{
+			jQuery('#exception').text(task.exception.clazz + (task.exception.message ? (' (' + task.exception.message + ')') : ''));
+			jQuery('#exception').addClass('error');
+		}
+		else {
+			jQuery('#exception').text('');
+			jQuery('#exception').removeClass('error');
+		}
+		
+		if (task.completed) {
+			jQuery('#importbutton').removeAttr('disabled');
+			
+			if (task.exception == null)				
+				jQuery('#statusmsg').text('<spring:message code="@MODULE_ID@.import.finished" /> (' + task.importedPatients + ' patients imported)');
+			else			
+				jQuery('#statusmsg').text('<spring:message code="@MODULE_ID@.import.failed" />');
+    	}
+		else {
+			jQuery('#progressbar').progressbar("value", task.progress);
+			jQuery('#statusmsg').text(Math.floor(task.progress) + "%");
+			jQuery('#importbutton').attr('disabled', 'disabled');
+		}
+		
+		jQuery('#issues').empty();
+		for (var i = 0; i < task.issues.length; ++i) {
+			var issue = task.issues[i];
+			var patUrl = openmrsContextPath + "/patientDashboard.form?patientId=" + issue.patientId;
+			jQuery('#issues').append('<a href="' + patUrl + '">Patient ' + issue.patientId + '</a>: ' + issue.message + '<br />');
+		}
+	}
+
+	setTimeout('updateTaskStatus()', 3000);
+}
+
+jQuery(function() {
+	jQuery('#progressbar').progressbar();
 	
 	updateTaskStatus();
 });

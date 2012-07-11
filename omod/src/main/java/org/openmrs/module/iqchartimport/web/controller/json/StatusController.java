@@ -54,26 +54,26 @@ public class StatusController {
 			if (task.getException() != null) {
 				String clazz = "'" + task.getException().getClass().getName() + "'";
 				String message = (task.getException().getMessage() != null) ? ("'" + task.getException().getMessage().replace("'", "\\'") + "'") : "null";
-				exception = "{ clazz: " + clazz + ", message: " + message + " }";		
+				exception = "{ \"clazz\": " + clazz + ", \"message\": " + message + " }";		
 			}
 			else
 				exception = "null";
 			
 			json.append("{\n");
-			json.append("  task: {\n");
-			json.append("    completed: " + completed + ",\n");
-			json.append("    exception: " + exception + ",\n");
-			json.append("    progress: " + task.getProgress() + ",\n");
-			json.append("    timeTaken: " + task.getTimeTaken() + ",\n");
-			json.append("    importedPatients: " + task.getImportedPatients() + ",\n");
-			json.append("    importedEncounters: " + task.getImportedEncounters() + ",\n");
-			json.append("    importedObservations: " + task.getImportedObservations() + ",\n");
-			json.append("    importedOrders: " + task.getImportedOrders() + ",\n");
-			json.append("    cache: { hitCount: " + builder.getCache().getHitCount() + ", missCount: " + builder.getCache().getMissCount() + " },\n");
-			json.append("    issues: [\n");
+			json.append("  \"task\": {\n");
+			json.append("    \"completed\": " + completed + ",\n");
+			json.append("    \"exception\": " + exception + ",\n");
+			json.append("    \"progress\": " + task.getProgress() + ",\n");
+			json.append("    \"timeTaken\": " + task.getTimeTaken() + ",\n");
+			json.append("    \"importedPatients\": " + task.getImportedPatients() + ",\n");
+			json.append("    \"importedEncounters\": " + task.getImportedEncounters() + ",\n");
+			json.append("    \"importedObservations\": " + task.getImportedObservations() + ",\n");
+			json.append("    \"importedOrders\": " + task.getImportedOrders() + ",\n");
+			json.append("    \"cache\": { \"hitCount\": " + builder.getCache().getHitCount() + ", \"missCount\": " + builder.getCache().getMissCount() + " },\n");
+			json.append("    \"issues\": [\n");
 			
 			for (ImportIssue issue : task.getIssues()) {
-				json.append("      { patientId: " + issue.getPatient().getPatientId() + ", message: \"" + issue.getMessage() + "\" },\n");
+				json.append("      { \"patientId\": " + issue.getPatient().getPatientId() + ", \"message\": \"" + issue.getMessage() + "\" },\n");
 			}
 			
 			json.append("    ]\n");
@@ -81,7 +81,7 @@ public class StatusController {
 			json.append("}");
 		}
 		else
-			json.append("{ task: null, issues: null }");
+			json.append("{ \"task\": null, \"issues\": null }");
 		
 		response.setContentType("application/json");			
 		response.getWriter().write(json.toString());
