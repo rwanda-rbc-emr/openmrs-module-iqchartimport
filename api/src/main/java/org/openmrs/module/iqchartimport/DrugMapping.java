@@ -15,7 +15,6 @@
 package org.openmrs.module.iqchartimport;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +45,7 @@ public class DrugMapping {
 		components.put("LPVr", Dictionary.LOPINAVIR_AND_RITONAVIR);
 		components.put("LPV/r", Dictionary.LOPINAVIR_AND_RITONAVIR);
 		components.put("KALETRA", Dictionary.LOPINAVIR_AND_RITONAVIR);
+		components.put("KARETRA", Dictionary.LOPINAVIR_AND_RITONAVIR);
 		components.put("NFV", Dictionary.NELFINAVIR);
 		components.put("NVP", Dictionary.NEVIRAPINE);
 		components.put("RTV", Dictionary.RITONAVIR);
@@ -75,12 +75,9 @@ public class DrugMapping {
 			
 			List<Integer> conceptIds = new ArrayList<Integer>();
 			
-			log.info("Parsing regimen: " + name);
-			
 			// Lookup each component in the mappings
 			for (String component : comps) {
-				log.info(" > Parsing regimen component: " + component);
-				
+
 				component = trimEndNumerals(component.trim());
 				if (components.containsKey(component))
 					conceptIds.add(components.get(component));
@@ -151,35 +148,8 @@ public class DrugMapping {
 		// Try complete regimen/drug name
 		if (mappings.containsKey(name))
 			return mappings.get(name);
-		
-		// Try breaking down into components
-		if (name.contains("\\") || name.contains("+")) {
-			String[] components = name.split("[\\\\+]");
-			
-			List<Integer> conceptIds = new ArrayList<Integer>();
-			
-			// Lookup each component in the mappings
-			for (String component : components) {
-				component = component.trim();
-				if (component.length() == 0)
-					continue;
-				
-				component = trimEndNumerals(component);		
-				conceptIds.addAll(getConcepts(component));
-			}
-		}
 
 		throw new IncompleteMappingException("Unrecognized drug/regimen: '" + name + "'");			
-	}
-	
-	/**
-	 * Maps an IQChart regimen/drug name to an OpenMRS drug concept
-	 * @param name the regimen name, e.g. "AZT / D4T / EFV 600"
-	 * @param regimen the concept ids
-	 */
-	public static void setConcept(String name, Integer conceptId) {
-		name = name.trim();
-		mappings.put(name, Collections.singletonList(conceptId));			
 	}
 	
 	/**
@@ -187,7 +157,7 @@ public class DrugMapping {
 	 * @param name the regimen name, e.g. "AZT / D4T / EFV 600"
 	 * @param regimen the concept ids
 	 */
-	public static void setConceptList(String name, List<Integer> conceptIds) {
+	public static void setConcepts(String name, List<Integer> conceptIds) {
 		name = name.trim();
 		mappings.put(name, conceptIds);			
 	}
