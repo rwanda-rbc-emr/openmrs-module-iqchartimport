@@ -27,7 +27,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Drug;
+import org.openmrs.Concept;
+import org.openmrs.ConceptClass;
 import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Program;
@@ -59,6 +60,15 @@ public class MappingsController {
 
 	protected static final Log log = LogFactory.getLog(MappingsController.class);
 	
+	protected static List<String> getAllIQChartDrugs(IQChartSession session) {
+		Set<String> iqARVDrugs = session.getStdRegimens(true);
+		Set<String> iqTBDrugs = session.getStdTBDrugs();
+		Set<String> allIQDrugSet = new TreeSet<String>();
+		allIQDrugSet.addAll(iqARVDrugs);
+		allIQDrugSet.addAll(iqTBDrugs);
+		return new ArrayList<String>(allIQDrugSet);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public String showPage(HttpServletRequest request, ModelMap model) throws IOException {
@@ -71,22 +81,18 @@ public class MappingsController {
 			IQChartSession session = new IQChartSession(database);
 			
 			// Get set of all ARV and TB drugs/regimens
-			Set<String> iqARVDrugs = session.getStdRegimens(true);
-			Set<String> iqTBDrugs = session.getStdTBDrugs();
-			Set<String> allIQDrugSet = new TreeSet<String>();
-			allIQDrugSet.addAll(iqARVDrugs);
-			allIQDrugSet.addAll(iqTBDrugs);
-			List<String> iqDrugs = new ArrayList<String>(allIQDrugSet);
+			List<String> iqDrugs = getAllIQChartDrugs(session);
 			
-			List<Drug> drugs = Context.getConceptService().getAllDrugs();
+			ConceptClass drugClass = Context.getConceptService().getConceptClassByName("Drug");
+			List<Concept> drugConcepts = Context.getConceptService().getConceptsByClass(drugClass);
 			Map<String, List<Integer>> drugMappings = new HashMap<String, List<Integer>>();
 			
 			DrugMapping.load();
 			
 			for (String iqDrug : iqDrugs) {
 				try {
-					List<Integer> drugIds = DrugMapping.getDrugIds(iqDrug);
-					drugMappings.put(iqDrug, drugIds);
+					List<Integer> conceptIds = DrugMapping.getConcepts(iqDrug);
+					drugMappings.put(iqDrug, conceptIds);
 				}
 				catch (IncompleteMappingException ex) {}
 			}
@@ -95,7 +101,7 @@ public class MappingsController {
 			HttpSession httpSession = request.getSession();
 			httpSession.setAttribute("iqDrugs", iqDrugs);
 				
-			model.put("drugs", drugs);
+			model.put("drugConcepts", drugConcepts);
 			model.put("iqDrugs", iqDrugs);
 			model.put("drugMappings", drugMappings);
 			
@@ -120,7 +126,7 @@ public class MappingsController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public String handleSubmit(HttpServletRequest request, @ModelAttribute("mappings") Mappings mappings, @RequestParam(required = false) Boolean createProvider) {
+	public String handleSubmit(HttpServletRequest request, @ModelAttribute("mappings") Mappings mappings, @RequestParam(required = false) Boolean createProvider) throws IOException {
 		Utils.checkSuperUser();
 		
 		if (createProvider != null && createProvider) {
@@ -128,24 +134,57 @@ public class MappingsController {
 			request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Provider created");
 		}
 		else if (request.getParameter("siteLocationId") != null) {
-			handleEntityMappingsSubmit(request, mappings);
+			handleEntityMappingsSave(request, mappings);
+		}
+		else if ("1".equals(request.getParameter("guessDrugs"))) {
+			handleDrugMappingsGuess(request);
 		}
 		else
-			handleDrugMappingsSubmit(request);
+			handleDrugMappingsSave(request);
 		
 		return "redirect:mappings.form";
 	}
 
-	private void handleEntityMappingsSubmit(HttpServletRequest request, Mappings mappings) {
+	/**
+	 * Handles a save request on the entities form
+	 * @param request
+	 * @param mappings
+	 */
+	private void handleEntityMappingsSave(HttpServletRequest request, Mappings mappings) {
 		mappings.save();
 		request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Entity mappings saved");
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void handleDrugMappingsSubmit(HttpServletRequest request) {
+	/**
+	 * Handles a guess request on the drugs form
+	 * @param request
+	 * @throws IOException
+	 */
+	private void handleDrugMappingsGuess(HttpServletRequest request) throws IOException {
 		DrugMapping.clear();
 		
-		HttpSession httpSession = request.getSession();
+		IQChartDatabase database = IQChartDatabase.load(request.getSession(), Constants.SESSION_ATTR_DATABASE);
+		IQChartSession session = new IQChartSession(database);
+		
+		// Get set of all ARV and TB drugs/regimens
+		List<String> iqDrugs = getAllIQChartDrugs(session);
+		DrugMapping.guess(iqDrugs);
+		
+		session.close();
+		
+		DrugMapping.save();
+		request.getSession().setAttribute(WebConstants.OPENMRS_MSG_ATTR, "Drug mappings guessed");
+	}
+	
+	/**
+	 * Handles a save request on the drugs form
+	 * @param request
+	 */
+	@SuppressWarnings("unchecked")
+	private void handleDrugMappingsSave(HttpServletRequest request) {
+		DrugMapping.clear();
+
+		HttpSession httpSession = request.getSession();	
 		List<String> iqDrugs = (List<String>)httpSession.getAttribute("iqDrugs");
 		
 		for (String param : (Set<String>)request.getParameterMap().keySet()) {
@@ -154,15 +193,15 @@ public class MappingsController {
 				int iqDrugID = Integer.parseInt(param.substring(6));
 				String iqDrug = iqDrugs.get(iqDrugID);
 				
-				// Get OpenMRS drug ids
-				String[] drugStrIds = request.getParameterValues(param);
-				List<Integer> drugIds = new ArrayList<Integer>(0);
-				for (String drugStrId : drugStrIds) {
-					int drugId = Integer.parseInt(drugStrId);
-					drugIds.add(drugId);
+				// Get OpenMRS drug concept ids
+				String[] conceptStrIds = request.getParameterValues(param);
+				List<Integer> conceptIds = new ArrayList<Integer>(0);
+				for (String conceptStrId : conceptStrIds) {
+					int drugConceptId = Integer.parseInt(conceptStrId);
+					conceptIds.add(drugConceptId);
 				}
 				
-				DrugMapping.setDrugIds(iqDrug, drugIds);
+				DrugMapping.setConceptList(iqDrug, conceptIds);
 			}
 		}
 		

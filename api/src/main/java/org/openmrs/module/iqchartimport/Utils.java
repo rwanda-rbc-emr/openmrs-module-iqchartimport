@@ -54,4 +54,11 @@ public class Utils {
 		
 		return obss;
 	}
+	
+	public static String filterRegimen(String name) {
+		name = name.trim();
+		if (name.contains("/"))
+			name = name.replace(" ", "");
+		return name;
+	}
 }

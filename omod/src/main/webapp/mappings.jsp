@@ -6,7 +6,7 @@
 
 <script type="text/javascript">
 
-var drugs = [<c:forEach items="${drugs}" var="drug">{ name: "${drug.name}<c:if test="${not empty drug.doseStrength || not empty drug.units}"> [${drug.doseStrength} ${drug.units}]</c:if>", id: ${drug.drugId} },</c:forEach>];
+var drugConcepts = [<c:forEach items="${drugConcepts}" var="drugConcept">{ name: "${fn:replace(drugConcept.name, '"', '')}", id: ${drugConcept.conceptId} },</c:forEach>];
 
 $(function() {
 	$("#createProviderButton").click(function() {
@@ -14,13 +14,20 @@ $(function() {
 		$("#mappingsForm").submit();
 	});
 	
+	$("#guessDrugsButton").click(function() {
+		if (confirm("This will reset any mappings you've made already?")) {
+			$("#guessDrugs").val("1");
+			$("#drugsForm").submit();
+		}
+	});
+	
 	$(".drugs-select").each(function() {
 		var iqDrug = $(this).attr("iq-drug");
 		var mapping = drugMappings[iqDrug];
 		
-		// Add all drugs to the select box
-		for (var d = 0; d < drugs.length; d++) {
-			var drug = drugs[d];
+		// Add all drug concepts to the select box
+		for (var d = 0; d < drugConcepts.length; d++) {
+			var drug = drugConcepts[d];
 			var isMapped = (typeof mapping != 'undefined') && (mapping.indexOf(drug.id) > -1);
 			$(this).append(new Option(drug.name, drug.id, isMapped, isMapped));
 		}
@@ -135,23 +142,25 @@ var drugMappings = {
 	<spring:message code="iqchartimport.mappings.drugMappings" />
 </b>
 <form id="drugsForm" class="box" method="post">
+	<input type="hidden" name="guessDrugs" id="guessDrugs" value="0" />
 	<c:choose>
 		<c:when test="${iqDrugs != null}">
 			<table width="100%">
 				<tr>
 					<th width="300"><spring:message code="iqchartimport.mappings.iqChartDrugs" /></th>
-					<th><spring:message code="iqchartimport.mappings.mappedDrugs" /></th>
+					<th><spring:message code="iqchartimport.mappings.mappedConcepts" /></th>
 				</tr>
 				<c:forEach items="${iqDrugs}" var="iqDrug" varStatus="rowStatus">
 					<tr class="<c:choose><c:when test="${rowStatus.index % 2 == 0}">evenRow</c:when><c:otherwise>oddRow</c:otherwise></c:choose>">
 						<td>${iqDrug}</td>
 						<td>
-							<select name="drugs-${rowStatus.index}" data-placeholder="Choose drugs..." iq-drug="${iqDrug}" class="drugs-select" multiple style="width:600px;"></select>
+							<select name="drugs-${rowStatus.index}" data-placeholder="Choose concepts..." iq-drug="${iqDrug}" class="drugs-select" multiple style="width:600px;"></select>
 						</td>
 					</tr>
 				</c:forEach>
 			</table>
 			<input type="submit" value="<spring:message code="general.save" />" />
+			<input type="button" value="<spring:message code="iqchartimport.mappings.guess" />" id="guessDrugsButton" />
 		</c:when>
 		<c:otherwise>
 			No database loaded

@@ -406,7 +406,7 @@ public class IQChartSession {
 			Table table = database.getTable(tableName);
 			
 			for (Map<String, Object> row : table)
-				stdRegimens.add((String)row.get("Regimen"));
+				stdRegimens.add(((String)row.get("Regimen")).trim());
 			
 			return stdRegimens;
 			
@@ -425,7 +425,7 @@ public class IQChartSession {
 			Table table = database.getTable(TABLE_TBMEDICATIONS);
 			
 			for (Map<String, Object> row : table)
-				stdDrugs.add((String)row.get("drug"));
+				stdDrugs.add(((String)row.get("drug")).trim());
 			
 			return stdDrugs;
 			

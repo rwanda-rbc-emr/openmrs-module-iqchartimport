@@ -14,10 +14,14 @@
 
 package org.openmrs.module.iqchartimport;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.util.OpenmrsUtil;
 
 /**
@@ -25,40 +29,67 @@ import org.openmrs.util.OpenmrsUtil;
  */
 public class DrugMapping {
 	
+	protected static final Log log = LogFactory.getLog(DrugMapping.class);
+	
+	private static Map<String, Integer> components = new HashMap<String, Integer>();
 	private static Map<String, List<Integer>> mappings = new HashMap<String, List<Integer>>();
 
 	static {
 		/**
-		 * ARV regimens
+		 * ARV drugs	
 		 */
-		/*setRegimenDrugIds("AZT / 3TC / EFV 600", new Integer[] {Drugs.LAMIVUDINE_ZIDOVUDINE_150_300, Drugs.EFAVIRENZ_600});
-		setRegimenDrugIds("AZT / 3TC / EFV 800", new Integer[] {Drugs.LAMIVUDINE_ZIDOVUDINE_150_300, Drugs.EFAVIRENZ_600, Drugs.EFAVIRENZ_200});
-		regimenMappings.put("AZT/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_NEVIRAPINE_150_300_200));
-		adultRegimens.put("D4T30/3TC/EFV600", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_30, Drugs.EFAVIRENZ_600));
-		adultRegimens.put("D4T30/3TC/EFV800", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_30, Drugs.EFAVIRENZ_600, Drugs.EFAVIRENZ_200));
-		adultRegimens.put("D4T30/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_NEVIRAPINE_150_30_200));
-		adultRegimens.put("D4T40/3TC/EFV600", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_40, Drugs.EFAVIRENZ_600));
-		adultRegimens.put("D4T40/3TC/EFV800", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_40, Drugs.EFAVIRENZ_600, Drugs.EFAVIRENZ_200));
-		adultRegimens.put("D4T40/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_NEVIRAPINE_150_40_200));
-		adultRegimens.put("D4T30/3TC/ABC", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_30, Drugs.ABACAVIR_300));
-		adultRegimens.put("D4T40/3TC/ABC", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_40, Drugs.ABACAVIR_300)); 
-		adultRegimens.put("TDF/3TC/NVP", new Regimen(Drugs.TENOFOVIR_LAMIVUDINE_300_300, Drugs.NEVIRAPINE_200));
-		adultRegimens.put("ABC/3TC/NVP", new Regimen(Drugs.ABACAVIR_300, Drugs.LAMIVUDINE_150, Drugs.NEVIRAPINE_200));
-		adultRegimens.put("AZT/3TC/KALETRA", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_150_300, Drugs.LOPINAVIR_RITONAVIR_200_50));
-		adultRegimens.put("D4T/DDI/LPVr", new Regimen(Drugs.STAVUDINE_20, Drugs.STAVUDINE_20, Drugs.DIDANOSINE_400, Drugs.LOPINAVIR_RITONAVIR_200_50));
-		adultRegimens.put("AZT/3TC/ABC", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_150_300, Drugs.ABACAVIR_300));
-		adultRegimens.put("D4T/3TC/KALETRA", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_150_30, Drugs.LOPINAVIR_RITONAVIR_200_50));
-		adultRegimens.put("TDF/3TC/EFV", new Regimen(Drugs.TENOFOVIR_LAMIVUDINE_EFAVIRENZ_300_300_600));
-		adultRegimens.put("TDF/3TC/KALETRA", new Regimen(Drugs.TENOFOVIR_LAMIVUDINE_300_300, Drugs.LOPINAVIR_RITONAVIR_200_50));
-		adultRegimens.put("AZT/3TC/EFV", new Regimen(Drugs.LAMIVUDINE_ZIDOVUDINE_150_300, Drugs.EFAVIRENZ_600));
-		adultRegimens.put("ABC/3TC/KALETRA", new Regimen(Drugs.ABACAVIR_300, Drugs.LAMIVUDINE_150, Drugs.LOPINAVIR_RITONAVIR_200_50));
-		adultRegimens.put("TDF/3TC/ABC", new Regimen(Drugs.TENOFOVIR_LAMIVUDINE_300_300, Drugs.ABACAVIR_300));
-		adultRegimens.put("AZT/TDF/3TC/KALETRA", new Regimen(Drugs.ZIDOVUDINE_300, Drugs.TENOFOVIR_LAMIVUDINE_300_300, Drugs.LOPINAVIR_RITONAVIR_200_50));
-		adultRegimens.put("ABC/3TC/EFV", new Regimen(Drugs.ABACAVIR_300, Drugs.LAMIVUDINE_150, Drugs.EFAVIRENZ_600));
-		adultRegimens.put("D4T20/3TC/NVP", new Regimen(Drugs.STAVUDINE_20, Drugs.LAMIVUDINE_10_ORAL, Drugs.NEVIRAPINE_10_ORAL));
-		adultRegimens.put("D4T12/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_NEVIRAPINE_60_12_100));
-		adultRegimens.put("D4T6/3TC/NVP", new Regimen(Drugs.LAMIVUDINE_STAVUDINE_NEVIRAPINE_30_6_50));
-		*/
+		components.put("ABC", Dictionary.ABACAVIR);
+		components.put("DDI", Dictionary.DIDANOSINE);
+		components.put("EFV", Dictionary.EFAVIRENZ);
+		components.put("IDV", Dictionary.INDINAVIR);
+		components.put("3TC", Dictionary.LAMIVUDINE);
+		components.put("LPVr", Dictionary.LOPINAVIR_AND_RITONAVIR);
+		components.put("LPV/r", Dictionary.LOPINAVIR_AND_RITONAVIR);
+		components.put("KALETRA", Dictionary.LOPINAVIR_AND_RITONAVIR);
+		components.put("NFV", Dictionary.NELFINAVIR);
+		components.put("NVP", Dictionary.NEVIRAPINE);
+		components.put("RTV", Dictionary.RITONAVIR);
+		components.put("D4T", Dictionary.STAVUDINE);
+		components.put("TDF", Dictionary.TENOFOVIR);
+		components.put("AZT", Dictionary.ZIDOVUDINE);
+		
+		/**
+		 * Drugs used for TB	
+		 */
+		components.put("Bactrim", Dictionary.TRIMETHOPRIM_AND_SULFAMETHOXAZOLE);
+		components.put("Fluconazol", Dictionary.FLUCONAZOLE); // IQChart uses mispelling
+		components.put("Fluconazole", Dictionary.FLUCONAZOLE);
+		components.put("Dapsone", Dictionary.DAPSONE);
+	}
+	
+	/**
+	 *
+	 */
+	public static void guess(List<String> names) {		
+		// Try to make a mapping for each given drug/regimen
+		// by breaking it down into components
+		for (String name : names) {
+			
+			// Components can be separated by '/' '\' or '+'
+			String[] comps = name.split("[\\\\/+]");
+			
+			List<Integer> conceptIds = new ArrayList<Integer>();
+			
+			log.info("Parsing regimen: " + name);
+			
+			// Lookup each component in the mappings
+			for (String component : comps) {
+				log.info(" > Parsing regimen component: " + component);
+				
+				component = trimEndNumerals(component.trim());
+				if (components.containsKey(component))
+					conceptIds.add(components.get(component));
+				else
+					continue;
+			}
+			
+			mappings.put(name, conceptIds);
+		}		
 	}
 	
 	/**
@@ -82,11 +113,14 @@ public class DrugMapping {
 				continue;
 			
 			String[] tokens = line.split("\\|");
-			String regimen = tokens[0].trim();
-			String idsStr = tokens[1].trim();
-			List<Integer> drugIds = OpenmrsUtil.delimitedStringToIntegerList(idsStr, ",");
+			if (tokens.length != 2)
+				continue;
 			
-			mappings.put(regimen, drugIds);
+			String name = tokens[0].trim();
+			String idsStr = tokens[1].trim();
+			List<Integer> conceptIds = OpenmrsUtil.delimitedStringToIntegerList(idsStr, ",");
+			
+			mappings.put(name, conceptIds);
 		}
 	}
 	
@@ -106,24 +140,71 @@ public class DrugMapping {
 	}
 	
 	/**
-	 * Gets a regimen of OpenMRS drugs from an IQChart regimen/drug name
+	 * Gets a list of OpenMRS concepts from an IQChart regimen/drug name
 	 * @param regimen the regimen, e.g. "AZT / D4T / EFV 600"
-	 * @return the drugs ids
-	 * @throws IncompleteMappingException if a drug can't be found
+	 * @return the concept ids
+	 * @throws IncompleteMappingException if a drug/regimen can't be found
 	 */
-	public static List<Integer> getDrugIds(String name) {
+	public static List<Integer> getConcepts(String name) {
+		name = name.trim();
+		
+		// Try complete regimen/drug name
 		if (mappings.containsKey(name))
 			return mappings.get(name);
-		else
-			throw new IncompleteMappingException("Unrecognized regimen: '" + name + "'");			
+		
+		// Try breaking down into components
+		if (name.contains("\\") || name.contains("+")) {
+			String[] components = name.split("[\\\\+]");
+			
+			List<Integer> conceptIds = new ArrayList<Integer>();
+			
+			// Lookup each component in the mappings
+			for (String component : components) {
+				component = component.trim();
+				if (component.length() == 0)
+					continue;
+				
+				component = trimEndNumerals(component);		
+				conceptIds.addAll(getConcepts(component));
+			}
+		}
+
+		throw new IncompleteMappingException("Unrecognized drug/regimen: '" + name + "'");			
 	}
 	
 	/**
-	 * Maps a regimen of OpenMRS drugs to an IQChart regimen/drug name
+	 * Maps an IQChart regimen/drug name to an OpenMRS drug concept
 	 * @param name the regimen name, e.g. "AZT / D4T / EFV 600"
-	 * @param regimen the drugs ids
+	 * @param regimen the concept ids
 	 */
-	public static void setDrugIds(String name, List<Integer> drugIds) {
-		mappings.put(name, drugIds);			
+	public static void setConcept(String name, Integer conceptId) {
+		name = name.trim();
+		mappings.put(name, Collections.singletonList(conceptId));			
+	}
+	
+	/**
+	 * Maps an IQChart regimen/drug name to a regimen of OpenMRS concepts
+	 * @param name the regimen name, e.g. "AZT / D4T / EFV 600"
+	 * @param regimen the concept ids
+	 */
+	public static void setConceptList(String name, List<Integer> conceptIds) {
+		name = name.trim();
+		mappings.put(name, conceptIds);			
+	}
+	
+	/**
+	 * Trims numeral characters from the end of a string
+	 * @param input the input sting	
+	 * @return the input without trailing numerals	
+	 */
+	protected static String trimEndNumerals(String input) {
+		if (input == null || input.length() == 0)
+			return input;
+
+		int last = input.length() - 1;	
+		while (Character.isDigit(input.charAt(last)) || Character.isWhitespace(input.charAt(last)))	
+			--last;
+		
+		return input.substring(0, last + 1);	
 	}
 }
