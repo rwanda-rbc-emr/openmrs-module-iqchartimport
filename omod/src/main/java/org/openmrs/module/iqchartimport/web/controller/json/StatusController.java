@@ -52,8 +52,8 @@ public class StatusController {
 			String completed = task.isCompleted() ? "true" : "false";
 			String exception;
 			if (task.getException() != null) {
-				String clazz = "'" + task.getException().getClass().getName() + "'";
-				String message = (task.getException().getMessage() != null) ? ("'" + task.getException().getMessage().replace("'", "\\'") + "'") : "null";
+				String clazz = "\"" + task.getException().getClass().getName() + "\"";
+				String message = (task.getException().getMessage() != null) ? ("\"" + task.getException().getMessage().replace("\"", "\\\"") + "\"") : "null";
 				exception = "{ \"clazz\": " + clazz + ", \"message\": " + message + " }";		
 			}
 			else
