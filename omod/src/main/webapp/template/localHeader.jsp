@@ -12,7 +12,7 @@
 	<li <c:if test='<%= request.getRequestURI().contains("/mappings") %>'>class="active"</c:if>>
 		<a href="mappings.form"><spring:message code="@MODULE_ID@.menu.mappings"/></a>
 	</li>
-	<c:if test="${not empty sessionScope['iqchartimport_database']}">
+	<c:if test="${database != null}">
 		<li <c:if test='<%= request.getRequestURI().contains("/preview") || request.getRequestURI().contains("/patient") %>'>class="active"</c:if>>
 			<a href="preview.form"><spring:message code="@MODULE_ID@.menu.preview"/></a>
 		</li>

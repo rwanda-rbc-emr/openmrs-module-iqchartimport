@@ -22,7 +22,6 @@ import java.util.UUID;
 public class Constants {
 	
 	public static final String MODULE_ID = "iqchartimport";
-	public static final String SESSION_ATTR_DATABASE = "iqchartimport_database";
 	public static final int ADULT_START_AGE = 15;
 	public static final UUID IQCHART_PROVIDER_UUID = UUID.fromString("882DA70A-546B-4641-8AE0-8EF3B30490CB");
 	

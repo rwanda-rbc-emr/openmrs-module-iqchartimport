@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,7 +28,6 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientProgram;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.context.UserContext;
 import org.openmrs.module.iqchartimport.DrugMapping;
 import org.openmrs.module.iqchartimport.EntityBuilder;
 import org.openmrs.module.iqchartimport.Mappings;
@@ -41,7 +41,6 @@ public class ImportTask implements Runnable {
 
 	protected static final Log log = LogFactory.getLog(ImportTask.class);
 			
-	private UserContext userContext;
 	private IQChartDatabase database;
 	private EntityBuilder builder;
 	private Date startTime = null;
@@ -62,7 +61,6 @@ public class ImportTask implements Runnable {
 	 * @param full true for full import, false for just patients
 	 */
 	protected ImportTask(IQChartDatabase database, boolean full) {
-		this.userContext = Context.getUserContext();
 		this.database = database;
 		this.full = full;
 	}
@@ -78,7 +76,10 @@ public class ImportTask implements Runnable {
 			session = new IQChartSession(database);
 			
 			Context.openSession();
-			Context.setUserContext(userContext);
+			
+			// Authenticate as the scheduler user
+			Properties props = Context.getRuntimeProperties();
+			Context.authenticate(props.getProperty("scheduler.username"), props.getProperty("scheduler.password"));
 			
 			doImport(session);
 			

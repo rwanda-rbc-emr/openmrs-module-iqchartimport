@@ -98,7 +98,8 @@ public class TestUtils {
 			// Extract embedded test database
 			tempZipFile = copyResource("/HIVData.mdb.zip");
 			tempMdbFile = extractZipEntry(tempZipFile, "HIVData.mdb");	
-			database = new IQChartDatabase("HIVData.mdb", tempMdbFile.getAbsolutePath());
+			IQChartDatabase.createInstance("HIVData.mdb", tempMdbFile.getAbsolutePath());
+			database = IQChartDatabase.getInstance();
 		}
 		
 		return database;

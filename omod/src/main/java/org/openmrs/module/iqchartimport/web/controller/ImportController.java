@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.iqchartimport.Utils;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.task.TaskEngine;
@@ -43,10 +42,11 @@ public class ImportController {
 		Utils.checkSuperUser();
 		
 		// Get uploaded database
-		IQChartDatabase database = IQChartDatabase.load(request.getSession(), Constants.SESSION_ATTR_DATABASE);
+		IQChartDatabase database = IQChartDatabase.getInstance();
 		if (database == null)
 			return "redirect:upload.form";
 		
+		model.put("database", database);
 		model.put("task", TaskEngine.getCurrentTask());
 		
 		// Developer hack - end users shouldn't be stopping imports once they've started
@@ -61,7 +61,7 @@ public class ImportController {
 		Utils.checkSuperUser();
 		
 		// Get uploaded database
-		IQChartDatabase database = IQChartDatabase.load(request.getSession(), Constants.SESSION_ATTR_DATABASE);
+		IQChartDatabase database = IQChartDatabase.getInstance();
 		if (database == null)
 			return "redirect:upload.form";
 		

@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.iqchartimport.EntityBuilder;
 import org.openmrs.module.iqchartimport.IncompleteMappingException;
 import org.openmrs.module.iqchartimport.Utils;
@@ -46,7 +45,7 @@ public class PreviewController {
 	public String showPage(HttpServletRequest request, ModelMap model) throws IOException {
 		Utils.checkSuperUser();
 		
-		IQChartDatabase database = IQChartDatabase.load(request.getSession(), Constants.SESSION_ATTR_DATABASE);
+		IQChartDatabase database = IQChartDatabase.getInstance();
 		if (database == null)
 			return "redirect:upload.form";
 		

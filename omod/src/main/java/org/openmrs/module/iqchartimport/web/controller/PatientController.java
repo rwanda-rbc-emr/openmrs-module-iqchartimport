@@ -28,7 +28,6 @@ import org.openmrs.Patient;
 import org.openmrs.PatientProgram;
 import org.openmrs.PersonAttribute;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.iqchartimport.EntityBuilder;
 import org.openmrs.module.iqchartimport.IncompleteMappingException;
 import org.openmrs.module.iqchartimport.MappingUtils;
@@ -57,7 +56,7 @@ public class PatientController {
 	public String showPage(HttpServletRequest request, @RequestParam("tracnetID") Integer tracnetID, ModelMap model) throws IOException {
 		Utils.checkSuperUser();
 		
-		IQChartDatabase database = IQChartDatabase.load(request.getSession(), Constants.SESSION_ATTR_DATABASE);
+		IQChartDatabase database = IQChartDatabase.getInstance();
 		if (database == null)
 			return "redirect:upload.form";
 		

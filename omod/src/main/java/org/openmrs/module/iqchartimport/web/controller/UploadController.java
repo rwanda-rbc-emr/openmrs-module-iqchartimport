@@ -18,11 +18,9 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.iqchartimport.Utils;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
@@ -47,8 +45,7 @@ public class UploadController {
 	public String showForm(HttpServletRequest request, ModelMap model) {
 		Utils.checkSuperUser();
 		
-		HttpSession session = request.getSession();
-		IQChartDatabase database = IQChartDatabase.load(session, Constants.SESSION_ATTR_DATABASE);
+		IQChartDatabase database = IQChartDatabase.getInstance();
 		
 		if (database != null) {
 			model.put("database", database);
@@ -74,7 +71,7 @@ public class UploadController {
 		DefaultMultipartHttpServletRequest multipart = (DefaultMultipartHttpServletRequest)request;
 		MultipartFile uploadFile = multipart.getFile("mdbfile");
 		
-		request.getSession().removeAttribute(Constants.SESSION_ATTR_DATABASE);
+		IQChartDatabase.clearInstance();
 		
 		// Process uploaded database if there is one
 		if (uploadFile != null) {		
@@ -83,9 +80,8 @@ public class UploadController {
 				File tempMDBFile = File.createTempFile(uploadFile.getOriginalFilename(), ".temp");
 				uploadFile.transferTo(tempMDBFile);
 				
-				// Store upload in session
-				IQChartDatabase upload = new IQChartDatabase(uploadFile.getOriginalFilename(), tempMDBFile.getAbsolutePath());
-				upload.save(request.getSession(), Constants.SESSION_ATTR_DATABASE);
+				// Store uploaded database as singleton
+				IQChartDatabase.createInstance(uploadFile.getOriginalFilename(), tempMDBFile.getAbsolutePath());
 				
 			} catch (IOException e) {
 				model.put("uploaderror", "Unable to upload database file");

@@ -14,17 +14,17 @@
 
 package org.openmrs.module.iqchartimport.iq;
 
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * An IQChart MDB database file
+ * An IQChart MDB database file - singleton
  */
 public class IQChartDatabase {
 	
 	protected static final Log log = LogFactory.getLog(IQChartDatabase.class);
+	
+	protected static IQChartDatabase instance;
 	
 	private String name;
 	private String path;
@@ -33,7 +33,7 @@ public class IQChartDatabase {
 	 * @param name
 	 * @param path
 	 */
-	public IQChartDatabase(String name, String path) {
+	protected IQChartDatabase(String name, String path) {
 		this.name = name;
 		this.path = path;
 	}
@@ -55,27 +55,26 @@ public class IQChartDatabase {
 	}
 	
 	/**
-	 * Loads database as string attribute in session
-	 * @param session the session
-	 * @param key the attribute key
-	 * @return the upload object or null
+	 * Gets the singleton instance
+	 * @return
 	 */
-	public static IQChartDatabase load(HttpSession session, String key) {
-		String val = (String)session.getAttribute(key);
-		if (val != null) {
-			String[] tokens = val.split("\\|");
-			if (tokens.length == 2)
-				return new IQChartDatabase(tokens[0], tokens[1]);
-		}
-		return null;
+	public static IQChartDatabase getInstance() {
+		return instance;
 	}
 	
 	/**
-	 * Saves datebase as string attribute in session
-	 * @param session the session
-	 * @param key the attribute key
+	 * Creates the singleton instance
+	 * @param name
+	 * @param path
 	 */
-	public void save(HttpSession session, String key) {
-		session.setAttribute(key, name + "|" + path);
+	public static void createInstance(String name, String path) {
+		instance = new IQChartDatabase(name, path);
+	}
+	
+	/**
+	 * Clears the singleton instance
+	 */
+	public static void clearInstance() {
+		instance = null;
 	}
 }

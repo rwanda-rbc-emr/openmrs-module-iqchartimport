@@ -79,7 +79,7 @@ public class MappingsController {
 	public String showPage(HttpServletRequest request, ModelMap model) throws IOException {
 		Utils.checkSuperUser();
 		
-		IQChartDatabase database = IQChartDatabase.load(request.getSession(), Constants.SESSION_ATTR_DATABASE);
+		IQChartDatabase database = IQChartDatabase.getInstance();
 		
 		// If database is loaded then show drug mappings
 		if (database != null) {
@@ -105,7 +105,8 @@ public class MappingsController {
 			// Store the IQChart drug list in the session
 			HttpSession httpSession = request.getSession();
 			httpSession.setAttribute("iqDrugs", iqDrugs);
-				
+			
+			model.put("database", IQChartDatabase.getInstance());
 			model.put("drugConcepts", drugConcepts);
 			model.put("iqDrugs", iqDrugs);
 			model.put("drugMappings", drugMappings);
@@ -168,7 +169,7 @@ public class MappingsController {
 	private void handleDrugMappingsGuess(HttpServletRequest request) throws IOException {
 		DrugMapping.clear();
 		
-		IQChartDatabase database = IQChartDatabase.load(request.getSession(), Constants.SESSION_ATTR_DATABASE);
+		IQChartDatabase database = IQChartDatabase.getInstance();
 		IQChartSession session = new IQChartSession(database);
 		
 		// Get set of all ARV and TB drugs/regimens
