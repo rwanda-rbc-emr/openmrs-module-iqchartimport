@@ -23,7 +23,7 @@ function updateTaskStatus() {
 		url: 'status.form', 
 		dataType: 'json', 
 		success: onStatusReceived,
-		error: function(jqXHR, textStatus, errorThrown) { alert(textStatus + ": " + errorThrown); }
+		error: function(jqXHR, textStatus, errorThrown) { console.log(textStatus + ": " + errorThrown); }
 	});
 }
 
