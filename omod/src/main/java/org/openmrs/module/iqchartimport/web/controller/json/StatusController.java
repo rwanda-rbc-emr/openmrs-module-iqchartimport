@@ -59,6 +59,9 @@ public class StatusController {
 			else
 				exception = "null";
 			
+			int cacheHitCount = (builder != null) ? builder.getCache().getHitCount() : 0;
+			int cacheMissCount = (builder != null) ? builder.getCache().getMissCount() : 0;
+			
 			json.append("{\n");
 			json.append("  \"task\": {\n");
 			json.append("    \"completed\": " + completed + ",\n");
@@ -69,14 +72,17 @@ public class StatusController {
 			json.append("    \"importedEncounters\": " + task.getImportedEncounters() + ",\n");
 			json.append("    \"importedObservations\": " + task.getImportedObservations() + ",\n");
 			json.append("    \"importedOrders\": " + task.getImportedOrders() + ",\n");
-			json.append("    \"cache\": { \"hitCount\": " + builder.getCache().getHitCount() + ", \"missCount\": " + builder.getCache().getMissCount() + " },\n");
+			json.append("    \"cache\": { \"hitCount\": " + cacheHitCount + ", \"missCount\": " + cacheMissCount + " },\n");
 			json.append("    \"issues\": [\n");
 			
-			for (ImportIssue issue : task.getIssues()) {
-				json.append("      { \"patientId\": " + issue.getPatient().getPatientId() + ", \"message\": \"" + issue.getMessage() + "\" },\n");
+			for (int i = 0; i < task.getIssues().size(); ++i) {
+				ImportIssue issue = task.getIssues().get(i);
+				if (i > 0)
+					json.append(",\n");
+				json.append("      { \"patientId\": " + issue.getPatient().getPatientId() + ", \"message\": \"" + issue.getMessage() + "\" }");		
 			}
 			
-			json.append("    ]\n");
+			json.append("\n    ]\n");
 			json.append("  }\n");
 			json.append("}");
 		}
