@@ -63,7 +63,7 @@ public class DrugMapping {
 	}
 	
 	/**
-	 *
+	 * Adds guesses based on the provided list of drugs/regimens
 	 */
 	public static void guess(List<String> names) {		
 		// Try to make a mapping for each given drug/regimen
@@ -77,8 +77,9 @@ public class DrugMapping {
 			
 			// Lookup each component in the mappings
 			for (String component : comps) {
-
-				component = trimEndNumerals(component.trim());
+				// Trim numbers and convert to uppercase
+				component = trimEndNumerals(component.trim().toUpperCase());
+				
 				if (components.containsKey(component))
 					conceptIds.add(components.get(component));
 				else
@@ -148,6 +149,8 @@ public class DrugMapping {
 		// Try complete regimen/drug name
 		if (mappings.containsKey(name))
 			return mappings.get(name);
+		
+		log.error("Can't find '" + name + "' in " + mappings.toString());
 
 		throw new IncompleteMappingException("Unrecognized drug/regimen: '" + name + "'");			
 	}
