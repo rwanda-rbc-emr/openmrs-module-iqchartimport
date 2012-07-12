@@ -28,7 +28,9 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientProgram;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
+import org.openmrs.module.iqchartimport.DrugMapping;
 import org.openmrs.module.iqchartimport.EntityBuilder;
+import org.openmrs.module.iqchartimport.Mappings;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 
@@ -105,6 +107,10 @@ public class ImportTask implements Runnable {
 	 */
 	private void doImport(IQChartSession session) {
 		builder = new EntityBuilder(session);
+		
+		// Load mappings
+		Mappings.getInstance().load();
+		DrugMapping.load();
 		
 		List<Patient> patients = builder.getPatients();
 		totalPatients = patients.size();
