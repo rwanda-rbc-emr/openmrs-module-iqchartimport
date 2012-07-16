@@ -41,9 +41,12 @@ public class DrugMapping {
 		components.put("DDI", Dictionary.DIDANOSINE);
 		components.put("EFV", Dictionary.EFAVIRENZ);
 		components.put("IDV", Dictionary.INDINAVIR);
+		components.put("CRIX", Dictionary.INDINAVIR);
+		components.put("CRIXIVAN", Dictionary.INDINAVIR);
 		components.put("3TC", Dictionary.LAMIVUDINE);
 		components.put("LPVR", Dictionary.LOPINAVIR_AND_RITONAVIR);
 		components.put("LPV/R", Dictionary.LOPINAVIR_AND_RITONAVIR);
+		components.put("KLT", Dictionary.LOPINAVIR_AND_RITONAVIR);
 		components.put("KALETRA", Dictionary.LOPINAVIR_AND_RITONAVIR);
 		components.put("KARETRA", Dictionary.LOPINAVIR_AND_RITONAVIR);
 		components.put("NFV", Dictionary.NELFINAVIR);
@@ -57,9 +60,12 @@ public class DrugMapping {
 		 * Drugs used for TB	
 		 */
 		components.put("BACTRIM", Dictionary.TRIMETHOPRIM_AND_SULFAMETHOXAZOLE);
+		components.put("BACTRIM SP", Dictionary.TRIMETHOPRIM_AND_SULFAMETHOXAZOLE);
 		components.put("FLUCONAZOL", Dictionary.FLUCONAZOLE); // IQChart uses mispelling
 		components.put("FLUCONAZOLE", Dictionary.FLUCONAZOLE);
+		components.put("DIFLUCAN", Dictionary.FLUCONAZOLE);
 		components.put("DAPSONE", Dictionary.DAPSONE);
+		components.put("DAPSON", Dictionary.DAPSONE);
 	}
 	
 	/**
@@ -68,6 +74,7 @@ public class DrugMapping {
 	public static void guess(List<String> names) {		
 		// Try to make a mapping for each given drug/regimen
 		// by breaking it down into components
+		each_regimen:
 		for (String name : names) {
 			
 			// Components can be separated by '/' '\' or '+'
@@ -83,7 +90,7 @@ public class DrugMapping {
 				if (components.containsKey(component))
 					conceptIds.add(components.get(component));
 				else
-					continue;
+					continue each_regimen;
 			}
 			
 			mappings.put(name, conceptIds);
@@ -166,18 +173,21 @@ public class DrugMapping {
 	}
 	
 	/**
-	 * Trims numeral characters from the end of a string
+	 * Trims numeral/space/bracket characters from the end of a string
 	 * @param input the input sting	
-	 * @return the input without trailing numerals	
+	 * @return the input without trailing numeral/space/bracket characters	
 	 */
 	protected static String trimEndNumerals(String input) {
 		if (input == null || input.length() == 0)
 			return input;
 
 		int last = input.length() - 1;	
-		while (Character.isDigit(input.charAt(last)) || Character.isWhitespace(input.charAt(last)))	
+		while (last >= 0 && (Character.isDigit(input.charAt(last)) || Character.isWhitespace(input.charAt(last)) || input.charAt(last) == '(' || input.charAt(last) == ')'))	
 			--last;
 		
-		return input.substring(0, last + 1);	
+		if (last > 0)
+			return input.substring(0, last + 1);
+		else
+			return "";
 	}
 }
