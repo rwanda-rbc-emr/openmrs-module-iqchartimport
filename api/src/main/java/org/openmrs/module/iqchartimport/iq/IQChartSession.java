@@ -39,6 +39,7 @@ import org.openmrs.module.iqchartimport.iq.code.TBScreenCode;
 import org.openmrs.module.iqchartimport.iq.code.WHOStageCode;
 import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 import org.openmrs.module.iqchartimport.iq.model.Hospitalization;
+import org.openmrs.module.iqchartimport.iq.model.PhyAdherence;
 import org.openmrs.module.iqchartimport.iq.model.Pregnancy;
 import org.openmrs.module.iqchartimport.iq.model.Regimen;
 import org.openmrs.module.iqchartimport.iq.model.TBMedication;
@@ -73,6 +74,7 @@ public class IQChartSession {
 	private static final String TABLE_TBMEDICATIONS = "dtl_meds";
 	private static final String TABLE_PREGNANCY = "dtl_pregnancy";
 	private static final String TABLE_HOSPITALIZATION = "dtl_hosp";
+	private static final String TABLE_PHYADHERENCE = "dtl_phyadh";
 	private static final String TABLE_REGIMEN = "dtl_regimen";
 	private static final String TABLE_WHOSTAGE = "dtl_who";
 	private static final String TABLE_STANDARD_REGIMEN = "lst_stdregimen";
@@ -389,6 +391,28 @@ public class IQChartSession {
 				}
 			}
 			return tbMedications;
+			
+		} catch (IOException e) {		
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the physical adherence records for the given patient
+	 * @param patient the patient
+	 * @return the physical adherence records
+	 */
+	public List<PhyAdherence> getPatientPhyAdherence(IQPatient patient) {
+		List<PhyAdherence> phyAdherences = new ArrayList<PhyAdherence>();
+		try {
+			Table table = database.getTable(TABLE_PHYADHERENCE);
+			
+			for (Map<String, Object> row : table) {
+				if ((Integer)row.get(PATIENT_KEY) == patient.getTracnetID()) {
+					phyAdherences.add(new PhyAdherence((Date)row.get("date"), (Integer)row.get("DoseMiss7"), (Integer)row.get("pillsremain"), (Boolean)row.get("visitrespected")));
+				}
+			}
+			return phyAdherences;
 			
 		} catch (IOException e) {		
 		}

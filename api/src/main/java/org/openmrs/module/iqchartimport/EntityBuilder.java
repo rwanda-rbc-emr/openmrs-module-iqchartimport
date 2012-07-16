@@ -47,6 +47,7 @@ import org.openmrs.module.iqchartimport.iq.code.SexCode;
 import org.openmrs.module.iqchartimport.iq.code.TBScreenCode;
 import org.openmrs.module.iqchartimport.iq.code.TransferCode;
 import org.openmrs.module.iqchartimport.iq.code.WHOStageCode;
+import org.openmrs.module.iqchartimport.iq.model.PhyAdherence;
 import org.openmrs.module.iqchartimport.iq.model.Pregnancy;
 import org.openmrs.module.iqchartimport.iq.model.Regimen;
 import org.openmrs.module.iqchartimport.iq.model.TBMedication;
@@ -214,6 +215,7 @@ public class EntityBuilder {
 		
 		makePatientInitialEncounter(patient, tracnetID, encounters);
 		makePatientObsEncounters(patient, tracnetID, encounters);
+		makePatientPharmacyEncounters(patient, tracnetID, encounters);
 		
 		if (iqPatient.getExitDate() != null)
 			makePatientExitEncounter(patient, tracnetID, encounters);
@@ -384,6 +386,28 @@ public class EntityBuilder {
 
 			if (obs.getConcept() != null)
 				encounter.addObs(obs);
+		}
+	}
+	
+	/**
+	 * Makes the pharmacy encounters for a patient
+	 * @param patient the patient
+	 * @param tracnetID the patient TRACnet ID
+	 * @param encounters the existing encounters
+	 */
+	protected void makePatientPharmacyEncounters(Patient patient, int tracnetID, Map<Date, Encounter> encounters) {
+		IQPatient iqPatient = session.getPatient(tracnetID);
+		List<PhyAdherence> iqPhyAdhs = session.getPatientPhyAdherence(iqPatient);
+		
+		for (PhyAdherence iqPhyAdh : iqPhyAdhs) {
+			Encounter encounter = encounterForDate(patient, iqPhyAdh.getDate(), encounters);		
+			
+			// Add 'reason for visit' = 'pharmacy visit' obs
+			Concept conceptReasonForVisit = cache.getConcept(Dictionary.REASON_FOR_VISIT);
+			Concept conceptPharmacyVisit = cache.getConcept(Dictionary.PHARMACY_VISIT);
+			Obs obs = makeObs(patient, iqPatient.getEnrollDate(), conceptReasonForVisit);
+			obs.setValueCoded(conceptPharmacyVisit);
+			encounter.addObs(obs);
 		}
 	}
 	

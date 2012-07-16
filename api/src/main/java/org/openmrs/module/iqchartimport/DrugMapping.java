@@ -42,8 +42,8 @@ public class DrugMapping {
 		components.put("EFV", Dictionary.EFAVIRENZ);
 		components.put("IDV", Dictionary.INDINAVIR);
 		components.put("3TC", Dictionary.LAMIVUDINE);
-		components.put("LPVr", Dictionary.LOPINAVIR_AND_RITONAVIR);
-		components.put("LPV/r", Dictionary.LOPINAVIR_AND_RITONAVIR);
+		components.put("LPVR", Dictionary.LOPINAVIR_AND_RITONAVIR);
+		components.put("LPV/R", Dictionary.LOPINAVIR_AND_RITONAVIR);
 		components.put("KALETRA", Dictionary.LOPINAVIR_AND_RITONAVIR);
 		components.put("KARETRA", Dictionary.LOPINAVIR_AND_RITONAVIR);
 		components.put("NFV", Dictionary.NELFINAVIR);
@@ -56,10 +56,10 @@ public class DrugMapping {
 		/**
 		 * Drugs used for TB	
 		 */
-		components.put("Bactrim", Dictionary.TRIMETHOPRIM_AND_SULFAMETHOXAZOLE);
-		components.put("Fluconazol", Dictionary.FLUCONAZOLE); // IQChart uses mispelling
-		components.put("Fluconazole", Dictionary.FLUCONAZOLE);
-		components.put("Dapsone", Dictionary.DAPSONE);
+		components.put("BACTRIM", Dictionary.TRIMETHOPRIM_AND_SULFAMETHOXAZOLE);
+		components.put("FLUCONAZOL", Dictionary.FLUCONAZOLE); // IQChart uses mispelling
+		components.put("FLUCONAZOLE", Dictionary.FLUCONAZOLE);
+		components.put("DAPSONE", Dictionary.DAPSONE);
 	}
 	
 	/**

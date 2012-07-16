@@ -30,6 +30,7 @@ public class Dictionary {
 	public static final int REASON_FOR_EXITING_CARE = 1811;
 	public static final int TB_SCREENING = 2136;
 	public static final int TESTING_STATUS_OF_PARTNER = 3082;
+	public static final int REASON_FOR_VISIT = 6189;
 
 	/**
 	 * Answers
@@ -44,6 +45,7 @@ public class Dictionary {
 	public static final int OTHER_NON_CODED = 5622;
 	public static final int PATIENT_DIED = 1742;
 	public static final int NO_TEST = 3083;
+	public static final int PHARMACY_VISIT = 6191;
 	
 	/**
 	 * Drugs
