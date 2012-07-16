@@ -22,8 +22,8 @@ import java.util.Date;
 public class PhyAdherence {
 
 	protected Date date;
-	protected Integer doseMiss7;
-	protected Integer pillsRemain;
+	protected Short doseMiss7;
+	protected Short pillsRemain;
 	protected Boolean visitRespected;
 	
 	/**
@@ -32,7 +32,7 @@ public class PhyAdherence {
 	 * @param pillsRemain
 	 * @param visitRespected
 	 */
-	public PhyAdherence(Date date, Integer DoseMiss7, Integer pillsRemain, Boolean visitRespected) {
+	public PhyAdherence(Date date, Short DoseMiss7, Short pillsRemain, Boolean visitRespected) {
 		this.date = date;
 		this.doseMiss7 = DoseMiss7;
 		this.pillsRemain = pillsRemain;
@@ -43,11 +43,11 @@ public class PhyAdherence {
 		return date;
 	}
 
-	public Integer getDoseMiss7() {
+	public Short getDoseMiss7() {
 		return doseMiss7;
 	}
 
-	public Integer getPillsRemain() {
+	public Short getPillsRemain() {
 		return pillsRemain;
 	}
 

@@ -409,7 +409,7 @@ public class IQChartSession {
 			
 			for (Map<String, Object> row : table) {
 				if ((Integer)row.get(PATIENT_KEY) == patient.getTracnetID()) {
-					phyAdherences.add(new PhyAdherence((Date)row.get("date"), (Integer)row.get("DoseMiss7"), (Integer)row.get("pillsremain"), (Boolean)row.get("visitrespected")));
+					phyAdherences.add(new PhyAdherence((Date)row.get("date"), (Short)row.get("DoseMiss7"), (Short)row.get("pillsremain"), (Boolean)row.get("visitrespected")));
 				}
 			}
 			return phyAdherences;
