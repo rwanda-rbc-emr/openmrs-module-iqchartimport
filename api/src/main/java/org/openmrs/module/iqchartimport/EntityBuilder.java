@@ -42,6 +42,7 @@ import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.module.iqchartimport.iq.IQPatient;
 import org.openmrs.module.iqchartimport.iq.code.ExitCode;
 import org.openmrs.module.iqchartimport.iq.code.HIVStatusPartCode;
+import org.openmrs.module.iqchartimport.iq.code.MaritalCode;
 import org.openmrs.module.iqchartimport.iq.code.ModeCode;
 import org.openmrs.module.iqchartimport.iq.code.SexCode;
 import org.openmrs.module.iqchartimport.iq.code.TBScreenCode;
@@ -226,6 +227,17 @@ public class EntityBuilder {
 		List<Encounter> sorted = new ArrayList<Encounter>();
 		for (Date date : encounters.keySet())
 			sorted.add(encounters.get(date));
+		
+		// Add 'civil status' to last encounter. It will also be added as a person attribute
+		if (iqPatient.getMaritalStatusCode() != null) {
+			Encounter lastEncounter = sorted.get(sorted.size() - 1);
+			
+			Concept conceptCivil = cache.getConcept(MaritalCode.mappedQuestion);
+			Concept conceptAns = cache.getConcept(iqPatient.getMaritalStatusCode().mappedAnswer);		
+			Obs obs = makeObs(patient, lastEncounter.getEncounterDatetime(), conceptCivil);
+			obs.setValueCoded(conceptAns);
+			lastEncounter.addObs(obs);
+		}
 				
 		return sorted;
 	}
