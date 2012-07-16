@@ -144,7 +144,7 @@ var drugMappings = {
 <form id="drugsForm" class="box" method="post">
 	<input type="hidden" name="guessDrugs" id="guessDrugs" value="0" />
 	<c:choose>
-		<c:when test="${iqDrugs != null}">
+		<c:when test="${database != null}">
 			<table width="100%">
 				<tr>
 					<th width="300"><spring:message code="iqchartimport.mappings.iqChartDrugs" /></th>
