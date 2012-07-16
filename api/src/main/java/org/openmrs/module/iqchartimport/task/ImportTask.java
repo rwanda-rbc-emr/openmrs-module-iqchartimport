@@ -137,14 +137,8 @@ public class ImportTask implements Runnable {
 				for (PatientProgram patientProgram : builder.getPatientPrograms(patient, tracnetID)) 					
 					Context.getProgramWorkflowService().savePatientProgram(patientProgram);
 				
-				// Check for patients where initial encounter is not the first
-				List<Encounter> encounters = builder.getPatientEncounters(patient, tracnetID);
-				if (!encounters.get(0).getEncounterType().getName().endsWith("INITIAL")) {
-					issues.add(new ImportIssue(patient, "First encounter is not the initial encounter."));
-				}
-				
 				// Save patient encounters
-				for (Encounter encounter : encounters) {	
+				for (Encounter encounter : builder.getPatientEncounters(patient, tracnetID)) {	
 					Context.getEncounterService().saveEncounter(encounter);		
 					++importedEncounters;
 					importedObservations += encounter.getObs().size();
