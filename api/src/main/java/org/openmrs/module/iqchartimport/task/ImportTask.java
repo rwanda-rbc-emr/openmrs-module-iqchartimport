@@ -30,6 +30,7 @@ import org.openmrs.PatientProgram;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.DrugMapping;
 import org.openmrs.module.iqchartimport.EntityBuilder;
+import org.openmrs.module.iqchartimport.IncompleteMappingException;
 import org.openmrs.module.iqchartimport.Mappings;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
@@ -145,16 +146,21 @@ public class ImportTask implements Runnable {
 				}
 				
 				// Save drug orders
-				for (DrugOrder order : builder.getPatientDrugOrders(patient, tracnetID)) {
-					Date discontinuedDate = order.getDiscontinuedDate();
-					if (discontinuedDate != null && order.getStartDate().after(discontinuedDate)) {
-						issues.add(new ImportIssue(patient, "Drug order discontinued date before start date. Removing."));
-						order.setDiscontinuedDate(null);
+				try {
+					for (DrugOrder order : builder.getPatientDrugOrders(patient, tracnetID)) {
+						Date discontinuedDate = order.getDiscontinuedDate();
+						if (discontinuedDate != null && order.getStartDate().after(discontinuedDate)) {
+							issues.add(new ImportIssue(patient, "Drug order discontinued date before start date. Removing discontinued date."));
+							order.setDiscontinuedDate(null);
+						}
+						else
+							Context.getOrderService().saveOrder(order);
+						
+						++importedOrders;
 					}
-					else
-						Context.getOrderService().saveOrder(order);
-					
-					++importedOrders;
+				}
+				catch (IncompleteMappingException ex) {
+					issues.add(new ImportIssue(patient, "Error while importing drug orders: " + ex.getMessage()));
 				}
 			}
 			
