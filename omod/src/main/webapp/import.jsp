@@ -73,7 +73,7 @@ function onStatusReceived(data, textStatus, jqXHR) {
 		for (var i = 0; i < task.issues.length; ++i) {
 			var issue = task.issues[i];
 			var patUrl = openmrsContextPath + "/patientDashboard.form?patientId=" + issue.patientId;
-			jQuery('#issues').append('<a href="' + patUrl + '">Patient ' + issue.patientId + '</a>: ' + issue.message + '<br />');
+			jQuery('#issues').append('<a href="' + patUrl + '">Patient ' + issue.tracID + '</a>: ' + issue.message + '<br />');
 		}
 	}
 

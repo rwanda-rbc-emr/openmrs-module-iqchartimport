@@ -22,10 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.iqchartimport.EntityBuilder;
-import org.openmrs.module.iqchartimport.Utils;
 import org.openmrs.module.iqchartimport.task.ImportIssue;
 import org.openmrs.module.iqchartimport.task.TaskEngine;
 import org.openmrs.module.iqchartimport.task.ImportTask;
+import org.openmrs.module.iqchartimport.util.Utils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -79,7 +79,7 @@ public class StatusController {
 				ImportIssue issue = task.getIssues().get(i);
 				if (i > 0)
 					json.append(",\n");
-				json.append("      { \"patientId\": " + issue.getPatient().getPatientId() + ", \"message\": \"" + issue.getMessage() + "\" }");		
+				json.append("      { \"patientId\": " + issue.getPatient().getPatientId() + ", \"tracID\": " + issue.getPatient().getPatientIdentifier().getIdentifier() + ", \"message\": \"" + issue.getMessage() + "\" }");		
 			}
 			
 			json.append("\n    ]\n");
