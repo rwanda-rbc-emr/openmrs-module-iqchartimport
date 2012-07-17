@@ -87,7 +87,10 @@ public class DrugMapping {
 				// Trim numbers and convert to uppercase
 				component = trimEndNumerals(component.trim().toUpperCase());
 				
-				if (components.containsKey(component))
+				// Ignore syrup marker which isn't a component
+				if (component.equals("SP") || component.equals("SIROP") || component.equals("SYRUP"))
+					continue;
+				else if (components.containsKey(component))
 					conceptIds.add(components.get(component));
 				else
 					continue each_regimen;
