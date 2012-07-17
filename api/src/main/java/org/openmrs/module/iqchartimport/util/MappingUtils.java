@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport;
+package org.openmrs.module.iqchartimport.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,6 +21,8 @@ import org.openmrs.EncounterType;
 import org.openmrs.Person;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.iqchartimport.Constants;
+import org.openmrs.module.iqchartimport.IncompleteMappingException;
 
 /**
  * Mapping utility functions

@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.iqchartimport;
+package org.openmrs.module.iqchartimport.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,12 +53,5 @@ public class Utils {
 		}
 		
 		return obss;
-	}
-	
-	public static String filterRegimen(String name) {
-		name = name.trim();
-		if (name.contains("/"))
-			name = name.replace(" ", "");
-		return name;
 	}
 }
