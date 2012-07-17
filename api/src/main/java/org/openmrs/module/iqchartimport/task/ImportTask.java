@@ -164,6 +164,10 @@ public class ImportTask implements Runnable {
 				}
 			}
 			
+			// Clear out Hibernate session to prevent things getting clogged up
+			Context.flushSession();
+			Context.clearSession();
+			
 			// Break cleanly if thread has been interrupted
 			if (Thread.currentThread().isInterrupted())
 				break;
