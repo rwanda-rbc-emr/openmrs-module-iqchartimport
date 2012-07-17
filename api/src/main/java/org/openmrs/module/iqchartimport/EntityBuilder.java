@@ -59,6 +59,7 @@ import org.openmrs.module.iqchartimport.iq.obs.HeightObs;
 import org.openmrs.module.iqchartimport.iq.obs.TBScreenObs;
 import org.openmrs.module.iqchartimport.iq.obs.WHOStageObs;
 import org.openmrs.module.iqchartimport.iq.obs.WeightObs;
+import org.openmrs.module.iqchartimport.util.MappingUtils;
 
 /**
  * Builder which creates OpenMRS entities from IQChart objects equivalents

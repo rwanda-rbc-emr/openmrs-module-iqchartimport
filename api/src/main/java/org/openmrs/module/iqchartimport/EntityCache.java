@@ -23,6 +23,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.OrderType;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.iqchartimport.util.MappingUtils;
 
 /**
  * Caching layer for loaded OpenMRS entities
