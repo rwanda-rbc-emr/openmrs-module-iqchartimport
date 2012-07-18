@@ -4,7 +4,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>iqchartimport</artifactId>
-	<version>1.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>IQChart Import</name>
 	<description>Imports IQChart data into OpenMRS</description>
@@ -22,9 +22,9 @@
 	</organization>
 
 	<scm>
-		<connection>scm:svn:http://svn.openmrs.org/openmrs-modules/iqchartimport/trunk/</connection>
-		<developerConnection>scm:svn:http://svn.openmrs.org/openmrs-modules/iqchartimport/trunk/</developerConnection>
-		<url>http://svn.openmrs.org/openmrs-modules/iqchartimport/trunk/</url>
+		<connection>scm:git:git@github.com:rwandamoh-emr/openmrs-module-iqchartimport.git</connection>
+		<developerConnection>scm:git:git@github.com:rwandamoh-emr/openmrs-module-iqchartimport.git</developerConnection>
+		<url>scm:git:git@github.com:rwandamoh-emr/openmrs-module-iqchartimport.git</url>
 	</scm>
 
 	<modules>
