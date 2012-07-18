@@ -148,13 +148,15 @@ public class ImportTask implements Runnable {
 				// Save drug orders
 				try {
 					for (DrugOrder order : builder.getPatientDrugOrders(patient, tracnetID)) {
+						
+						// Check incorrect discontinued dates
 						Date discontinuedDate = order.getDiscontinuedDate();
 						if (discontinuedDate != null && order.getStartDate().after(discontinuedDate)) {
 							issues.add(new ImportIssue(patient, "Drug order discontinued date before start date. Removing discontinued date."));
 							order.setDiscontinuedDate(null);
 						}
-						else
-							Context.getOrderService().saveOrder(order);
+						
+						Context.getOrderService().saveOrder(order);
 						
 						++importedOrders;
 					}
