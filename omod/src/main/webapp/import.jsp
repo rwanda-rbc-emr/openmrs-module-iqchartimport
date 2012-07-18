@@ -4,7 +4,10 @@
 <%@ include file="template/localInclude.jsp"%>
 <%@ include file="template/localHeader.jsp"%>
 
-<script type="text/javascript">	
+<script type="text/javascript">
+
+// Keeps track of number of issues so we can avoid updating div unless it changes
+var currentIssueCount = 0;
 
 /**
  * Formats a seconds value into a string like 'X mins Y secs'
@@ -69,12 +72,17 @@ function onStatusReceived(data, textStatus, jqXHR) {
 			jQuery('#importbutton').attr('disabled', 'disabled');
 		}
 		
-		jQuery('#issues').empty();
-		for (var i = 0; i < task.issues.length; ++i) {
-			var issue = task.issues[i];
-			var patUrl = openmrsContextPath + "/patientDashboard.form?patientId=" + issue.patientId;
-			jQuery('#issues').append('<a href="' + patUrl + '">Patient ' + issue.tracID + '</a>: ' + issue.message + '<br />');
+		// Only update when number of issues has changed
+		if (currentIssueCount != task.issues.length) {
+			jQuery('#issues').empty();
+			for (var i = 0; i < task.issues.length; ++i) {
+				var issue = task.issues[i];
+				var patUrl = openmrsContextPath + "/patientDashboard.form?patientId=" + issue.patientId;
+				jQuery('#issues').append('<a href="' + patUrl + '">Patient ' + issue.tracID + '</a>: ' + issue.message + '<br />');
+			}
 		}
+		
+		currentIssueCount = task.issues.length;
 	}
 
 	setTimeout('updateTaskStatus()', 3000);
