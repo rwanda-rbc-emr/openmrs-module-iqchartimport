@@ -459,6 +459,19 @@ public class IQChartSession {
 	}
 	
 	/**
+	 * Gets the list of all drugs/regimens from IQChart
+	 * @return the list of drugs/regimens
+	 */
+	public List<String> getAllDrugs() {
+		Set<String> iqARVDrugs = getStdRegimens(true);
+		Set<String> iqTBDrugs = getStdTBDrugs();
+		Set<String> allIQDrugSet = new TreeSet<String>();
+		allIQDrugSet.addAll(iqARVDrugs);
+		allIQDrugSet.addAll(iqTBDrugs);
+		return new ArrayList<String>(allIQDrugSet);
+	}
+	
+	/**
 	 * Gets a patient from a row
 	 * @param row the row
 	 * @return the patient

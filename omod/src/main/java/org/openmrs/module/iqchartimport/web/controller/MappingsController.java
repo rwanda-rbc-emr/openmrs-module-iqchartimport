@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -60,20 +59,6 @@ public class MappingsController {
 
 	protected static final Log log = LogFactory.getLog(MappingsController.class);
 	
-	/**
-	 * Gets the list of all drugs/regimens from IQChart that need to be mapped
-	 * @param session the IQChart session
-	 * @return the list of drugs/regimens
-	 */
-	protected static List<String> getAllIQChartDrugs(IQChartSession session) {
-		Set<String> iqARVDrugs = session.getStdRegimens(true);
-		Set<String> iqTBDrugs = session.getStdTBDrugs();
-		Set<String> allIQDrugSet = new TreeSet<String>();
-		allIQDrugSet.addAll(iqARVDrugs);
-		allIQDrugSet.addAll(iqTBDrugs);
-		return new ArrayList<String>(allIQDrugSet);
-	}
-	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public String showPage(HttpServletRequest request, ModelMap model) throws IOException {
@@ -86,7 +71,7 @@ public class MappingsController {
 			IQChartSession session = new IQChartSession(database);
 			
 			// Get set of all ARV and TB drugs/regimens
-			List<String> iqDrugs = getAllIQChartDrugs(session);
+			List<String> iqDrugs = session.getAllDrugs();
 			
 			ConceptClass drugClass = Context.getConceptService().getConceptClassByName("Drug");
 			List<Concept> drugConcepts = Context.getConceptService().getConceptsByClass(drugClass);
@@ -173,7 +158,7 @@ public class MappingsController {
 		IQChartSession session = new IQChartSession(database);
 		
 		// Get set of all ARV and TB drugs/regimens
-		List<String> iqDrugs = getAllIQChartDrugs(session);
+		List<String> iqDrugs = session.getAllDrugs();
 		DrugMapping.guess(iqDrugs);
 		
 		session.close();

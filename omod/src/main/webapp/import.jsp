@@ -132,6 +132,13 @@ jQuery(function() {
 	    </tr>
 	</table>
 	<input type="submit" id="importbutton" value="<spring:message code="@MODULE_ID@.import.start" />" />
+	
+	<c:if test="${!drugMappingsComplete}">
+		<span style="background-color: #FFC">
+			<img src="${pageContext.request.contextPath}/images/alert.gif" />
+			<spring:message code="@MODULE_ID@.import.drugMappingWarning" />
+		</span>
+	</c:if>
 </form>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>

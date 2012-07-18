@@ -14,11 +14,16 @@
 
 package org.openmrs.module.iqchartimport.web.controller;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.iqchartimport.DrugMapping;
+import org.openmrs.module.iqchartimport.IncompleteMappingException;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
+import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.module.iqchartimport.task.TaskEngine;
 import org.openmrs.module.iqchartimport.task.ImportTask;
 import org.openmrs.module.iqchartimport.util.Utils;
@@ -38,7 +43,7 @@ public class ImportController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public String showForm(HttpServletRequest request, ModelMap model) {
+	public String showForm(HttpServletRequest request, ModelMap model) throws IOException {
 		Utils.checkSuperUser();
 		
 		// Get uploaded database
@@ -46,8 +51,14 @@ public class ImportController {
 		if (database == null)
 			return "redirect:upload.form";
 		
+		// Check drug mappings
+		IQChartSession session = new IQChartSession(database);
+		boolean drugMappingsComplete = checkDrugMappings(session);
+		session.close();
+		
 		model.put("database", database);
 		model.put("task", TaskEngine.getCurrentTask());
+		model.put("drugMappingsComplete", drugMappingsComplete);
 		
 		// Developer hack - end users shouldn't be stopping imports once they've started
 		if (request.getParameter("stop") != null)
@@ -57,7 +68,7 @@ public class ImportController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public String handleSubmit(HttpServletRequest request, ModelMap model) {
+	public String handleSubmit(HttpServletRequest request, ModelMap model) throws IOException {
 		Utils.checkSuperUser();
 		
 		// Get uploaded database
@@ -71,5 +82,26 @@ public class ImportController {
 			TaskEngine.startImport(database, true);
 	
 		return showForm(request, model);
+	}
+	
+	/**
+	 * Checks that all drugs in IQChart have a mapping
+	 * @param session the IQChart session
+	 * @return true if all drugs are mapped
+	 */
+	private boolean checkDrugMappings(IQChartSession session) {
+		DrugMapping.load();
+		
+		// Check all ARV and TB drugs/regimens
+		for (String iqDrug : session.getAllDrugs()) {
+			try {
+				DrugMapping.getConcepts(iqDrug);
+			}
+			catch (IncompleteMappingException ex) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }
