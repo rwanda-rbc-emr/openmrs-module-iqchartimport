@@ -87,6 +87,7 @@ public class EntityCache {
 		++missCount;
 		Concept concept = (identifier instanceof String) ? MappingUtils.getConcept((String)identifier) : MappingUtils.getConcept((Integer)identifier);
 		concepts.put(identifier, concept);
+		
 		return concept;
 	}
 	

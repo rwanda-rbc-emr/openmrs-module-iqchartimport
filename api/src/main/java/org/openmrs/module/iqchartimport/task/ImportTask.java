@@ -17,13 +17,16 @@ package org.openmrs.module.iqchartimport.task;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.DrugOrder;
 import org.openmrs.Encounter;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientProgram;
@@ -139,7 +142,26 @@ public class ImportTask implements Runnable {
 					Context.getProgramWorkflowService().savePatientProgram(patientProgram);
 				
 				// Save patient encounters
-				for (Encounter encounter : builder.getPatientEncounters(patient, tracnetID)) {	
+				for (Encounter encounter : builder.getPatientEncounters(patient, tracnetID)) {
+					
+					// Check for null value obss
+					Iterator<Obs> iter = encounter.getObs().iterator();
+					while (iter.hasNext()) {
+						Obs obs = iter.next();
+						
+						String dataType = obs.getConcept().getDatatype().getHl7Abbreviation();
+						boolean isNumeric = dataType.equals("NM") || dataType.equals("SN");
+						boolean isCoded = dataType.equals("CWE");
+						
+						if ((isNumeric && obs.getValueNumeric() == null) || (isCoded && obs.getValueCoded() == null)) {
+							// Refetch the concept as the cached concepts' session is closed
+							Concept concept = Context.getConceptService().getConcept(obs.getConcept().getConceptId());
+							
+							issues.add(new ImportIssue(patient, "Null obs value for " + concept.getName().getName() + " on " + Context.getDateFormat().format(encounter.getEncounterDatetime()) +  ". Removing obs"));
+							iter.remove();
+						}
+					}
+					
 					Context.getEncounterService().saveEncounter(encounter);		
 					++importedEncounters;
 					importedObservations += encounter.getObs().size();

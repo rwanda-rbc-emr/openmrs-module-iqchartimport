@@ -370,15 +370,15 @@ public class EntityBuilder {
 			
 			if (iqObs instanceof HeightObs) {
 				obs.setConcept(cache.getConcept(Dictionary.HEIGHT_CM));
-				obs.setValueNumeric((double)((HeightObs)iqObs).getHeight());		
+				obs.setValueNumeric(safeDouble(((HeightObs)iqObs).getHeight()));		
 			}
 			else if (iqObs instanceof WeightObs) {
 				obs.setConcept(cache.getConcept(Dictionary.WEIGHT_KG));
-				obs.setValueNumeric((double)((WeightObs)iqObs).getWeight());		
+				obs.setValueNumeric(safeDouble(((WeightObs)iqObs).getWeight()));		
 			}
 			else if (iqObs instanceof CD4Obs) {
 				obs.setConcept(cache.getConcept(Dictionary.CD4_COUNT));
-				obs.setValueNumeric((double)((CD4Obs)iqObs).getCd4Count());		
+				obs.setValueNumeric(safeDouble(((CD4Obs)iqObs).getCd4Count()));		
 			}
 			else if (iqObs instanceof TBScreenObs) {
 				Concept conceptAns = cache.getConcept(((TBScreenObs)iqObs).getCode().mappedAnswer);
@@ -616,5 +616,14 @@ public class EntityBuilder {
 		obs.setObsDatetime(date);
 		obs.setConcept(concept);
 		return obs;
+	}
+	
+	/**
+	 * Casts a number to a double safely
+	 * @param number the number
+	 * @return the double or null
+	 */
+	protected static Double safeDouble(Number number) {
+		return (number != null) ? number.doubleValue() : null;
 	}
 }

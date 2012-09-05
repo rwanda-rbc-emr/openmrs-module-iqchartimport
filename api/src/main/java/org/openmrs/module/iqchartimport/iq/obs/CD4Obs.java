@@ -18,15 +18,15 @@ import java.util.Date;
 
 public class CD4Obs extends BaseIQObs {
 
-	private short cd4Count;
+	private Short cd4Count;
 	private String testType;
 	
-	public CD4Obs(Date date, short cd4Count) {
+	public CD4Obs(Date date, Short cd4Count) {
 		super(date);
 		this.cd4Count = cd4Count;
 	}
 	
-	public short getCd4Count() {
+	public Short getCd4Count() {
 		return cd4Count;
 	}
 	

@@ -21,14 +21,14 @@ import java.util.Date;
  */
 public class WeightObs extends BaseIQObs {
 	
-	private short weight;
+	private Short weight;
 	
-	public WeightObs(Date date, short weight) {
+	public WeightObs(Date date, Short weight) {
 		super(date);
 		this.weight = weight;
 	}
 
-	public short getWeight() {
+	public Short getWeight() {
 		return weight;
 	}
 }

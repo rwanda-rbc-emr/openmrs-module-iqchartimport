@@ -21,14 +21,14 @@ import java.util.Date;
  */
 public class HeightObs extends BaseIQObs {
 
-	private short height;
+	private Short height;
 	
-	public HeightObs(Date date, short height) {
+	public HeightObs(Date date, Short height) {
 		super(date);
 		this.height = height;
 	}
 
-	public short getHeight() {
+	public Short getHeight() {
 		return height;
 	}
 }
