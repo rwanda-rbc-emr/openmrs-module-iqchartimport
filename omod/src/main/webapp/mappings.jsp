@@ -21,6 +21,10 @@ $(function() {
 		}
 	});
 	
+	$("#exportDrugsButton").click(function() {
+		location.href="exportDrugs.list";
+	});
+	
 	$(".drugs-select").each(function() {
 		var iqDrug = $(this).attr("iq-drug");
 		var mapping = drugMappings[iqDrug];
@@ -161,6 +165,7 @@ var drugMappings = {
 			</table>
 			<input type="submit" value="<spring:message code="general.save" />" />
 			<input type="button" value="<spring:message code="iqchartimport.mappings.guess" />" id="guessDrugsButton" />
+			<input type="button" value="<spring:message code="iqchartimport.mappings.exportCSV" />" id="exportDrugsButton" />
 		</c:when>
 		<c:otherwise>
 			No database loaded
