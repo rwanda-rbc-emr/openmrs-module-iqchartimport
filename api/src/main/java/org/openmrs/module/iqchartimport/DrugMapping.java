@@ -30,6 +30,7 @@ public class DrugMapping {
 	
 	protected static final Log log = LogFactory.getLog(DrugMapping.class);
 	
+	private static List<String> suffixes = new ArrayList<String>();
 	private static Map<String, Integer> components = new HashMap<String, Integer>();
 	private static Map<String, List<Integer>> mappings = new HashMap<String, List<Integer>>();
 
@@ -60,12 +61,20 @@ public class DrugMapping {
 		 * Drugs used for TB	
 		 */
 		components.put("BACTRIM", Dictionary.TRIMETHOPRIM_AND_SULFAMETHOXAZOLE);
-		components.put("BACTRIM SP", Dictionary.TRIMETHOPRIM_AND_SULFAMETHOXAZOLE);
 		components.put("FLUCONAZOL", Dictionary.FLUCONAZOLE); // IQChart uses mispelling
 		components.put("FLUCONAZOLE", Dictionary.FLUCONAZOLE);
 		components.put("DIFLUCAN", Dictionary.FLUCONAZOLE);
 		components.put("DAPSONE", Dictionary.DAPSONE);
 		components.put("DAPSON", Dictionary.DAPSONE);
+		
+		/**
+		 * Suffixes to be stripped
+		 */
+		suffixes.add("PROPHYLAXIE");
+		suffixes.add("PROPHYLAXIS");
+		suffixes.add("SIROP");
+		suffixes.add("SYRUP");
+		suffixes.add("SP");
 	}
 	
 	/**
@@ -74,26 +83,42 @@ public class DrugMapping {
 	public static void guess(List<String> names) {		
 		// Try to make a mapping for each given drug/regimen
 		// by breaking it down into components
-		each_regimen:
+		next_regimen:
 		for (String name : names) {
+			String cleanName = name.trim().toUpperCase();
+			
+			// Remove a suffix if there is ones
+			for (String suffix : suffixes) {
+				if (cleanName.endsWith(suffix)) {
+					cleanName = cleanName.substring(0, cleanName.length() - suffix.length());
+					break;
+				}
+			}
 			
 			// Components can be separated by '/' '\' or '+'
-			String[] comps = name.split("[\\\\/+]");
+			String[] comps = cleanName.split("[\\\\/+]");
 			
 			List<Integer> conceptIds = new ArrayList<Integer>();
 			
 			// Lookup each component in the mappings
 			for (String component : comps) {
-				// Trim numbers and convert to uppercase
-				component = trimEndNumerals(component.trim().toUpperCase());
+				component = component.trim();
 				
-				// Ignore syrup marker which isn't a component
-				if (component.equals("SP") || component.equals("SIROP") || component.equals("SYRUP"))
+				// Skip over empty components
+				if (component.length() == 0)
 					continue;
-				else if (components.containsKey(component))
+				
+				// Trim numbers
+				component = trimEndNumerals(component);
+				
+				// Lookup component
+				if (components.containsKey(component))
 					conceptIds.add(components.get(component));
-				else
-					continue each_regimen;
+				else {
+					log.error("Failed to guess regimen '" + name + "'. Could not map component '" + component + "'");
+					
+					continue next_regimen;
+				}
 			}
 			
 			mappings.put(name, conceptIds);
@@ -160,7 +185,7 @@ public class DrugMapping {
 		if (mappings.containsKey(name))
 			return mappings.get(name);
 		
-		log.error("Can't find '" + name + "' in " + mappings.toString());
+		//log.error("Can't find '" + name + "' in " + mappings.toString());
 
 		throw new IncompleteMappingException("Unrecognized drug/regimen: '" + name + "'");			
 	}
