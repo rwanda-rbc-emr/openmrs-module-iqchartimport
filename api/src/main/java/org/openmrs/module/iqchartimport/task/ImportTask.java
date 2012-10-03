@@ -16,6 +16,8 @@ package org.openmrs.module.iqchartimport.task;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +31,7 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.PatientProgram;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.DrugMapping;
@@ -37,6 +40,7 @@ import org.openmrs.module.iqchartimport.IncompleteMappingException;
 import org.openmrs.module.iqchartimport.Mappings;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
+import org.openmrs.util.OpenmrsUtil;
 
 /**
  * Database import task
@@ -49,7 +53,6 @@ public class ImportTask implements Runnable {
 	private EntityBuilder builder;
 	private Date startTime = null;
 	private Date endTime = null;
-	private boolean full = false;
 	private int totalPatients = 0;
 	private int processedPatients = 0;
 	private int importedPatients = 0;
@@ -62,11 +65,9 @@ public class ImportTask implements Runnable {
 	/**
 	 * Creates a new import task
 	 * @param database the database to import from
-	 * @param full true for full import, false for just patients
 	 */
-	protected ImportTask(IQChartDatabase database, boolean full) {
+	protected ImportTask(IQChartDatabase database) {
 		this.database = database;
-		this.full = full;
 	}
 	
 	@Override
@@ -120,6 +121,9 @@ public class ImportTask implements Runnable {
 		List<Patient> patients = builder.getPatients();
 		totalPatients = patients.size();
 		
+		// Get the TracNet ID type
+		PatientIdentifierType tracnetIdType = builder.getTRACnetIDType();
+		
 		// Import each patient
 		for (Patient patient : patients) {
 			++processedPatients;
@@ -128,66 +132,32 @@ public class ImportTask implements Runnable {
 			PatientIdentifier tracnetIdentifier = patient.getPatientIdentifier();
 			int tracnetID = Integer.parseInt(tracnetIdentifier.getIdentifier());
 			
-			if (Context.getPatientService().isIdentifierInUseByAnotherPatient(tracnetIdentifier)) {
-				log.info("Duplicate patient not imported: " + tracnetID);
-				continue;
+			// Look for existing patients
+			List<Patient> existingPatients = Context.getPatientService().getPatients(
+					null, tracnetIdentifier.getIdentifier(), Collections.singletonList(tracnetIdType), true
+			);
+			
+			Collection<PatientProgram> existingPatientPrograms = null;
+			List<Encounter> existingEncounters = null;
+			List<DrugOrder> existingDrugOrders = null;
+			
+			if (existingPatients.size() > 0) {
+				log.info("Found existing patient with identifier '" + tracnetID + "'");
+				
+				patient = existingPatients.get(0);
+				existingPatientPrograms = Context.getProgramWorkflowService().getPatientPrograms(patient, null, null, null, null, null, true);
+				existingEncounters = Context.getEncounterService().getEncountersByPatient(patient);
+				existingDrugOrders = Context.getOrderService().getDrugOrdersByPatient(patient);
+			}
+			else {
+				// Save patient to database
+				Context.getPatientService().savePatient(patient);
 			}
 			
-			// Save patient to database
-			Context.getPatientService().savePatient(patient);
-			
-			if (full) {			
-				// Save patient programs
-				for (PatientProgram patientProgram : builder.getPatientPrograms(patient, tracnetID)) 					
-					Context.getProgramWorkflowService().savePatientProgram(patientProgram);
-				
-				// Save patient encounters
-				for (Encounter encounter : builder.getPatientEncounters(patient, tracnetID)) {
-					
-					// Check for null value obss
-					Iterator<Obs> iter = encounter.getObs().iterator();
-					while (iter.hasNext()) {
-						Obs obs = iter.next();
-						
-						String dataType = obs.getConcept().getDatatype().getHl7Abbreviation();
-						boolean isNumeric = dataType.equals("NM") || dataType.equals("SN");
-						boolean isCoded = dataType.equals("CWE");
-						
-						if ((isNumeric && obs.getValueNumeric() == null) || (isCoded && obs.getValueCoded() == null)) {
-							// Refetch the concept as the cached concepts' session is closed
-							Concept concept = Context.getConceptService().getConcept(obs.getConcept().getConceptId());
-							
-							issues.add(new ImportIssue(patient, "Null obs value for " + concept.getName().getName() + " on " + Context.getDateFormat().format(encounter.getEncounterDatetime()) +  ". Removing obs"));
-							iter.remove();
-						}
-					}
-					
-					Context.getEncounterService().saveEncounter(encounter);		
-					++importedEncounters;
-					importedObservations += encounter.getObs().size();
-				}
-				
-				// Save drug orders
-				try {
-					for (DrugOrder order : builder.getPatientDrugOrders(patient, tracnetID)) {
-						
-						// Check incorrect discontinued dates
-						Date discontinuedDate = order.getDiscontinuedDate();
-						if (discontinuedDate != null && order.getStartDate().after(discontinuedDate)) {
-							issues.add(new ImportIssue(patient, "Drug order discontinued date before start date. Removing discontinued date."));
-							order.setDiscontinuedDate(null);
-						}
-						
-						Context.getOrderService().saveOrder(order);
-						
-						++importedOrders;
-					}
-				}
-				catch (IncompleteMappingException ex) {
-					issues.add(new ImportIssue(patient, "Error while importing drug orders: " + ex.getMessage()));
-				}
-			}
-			
+			savePatientPrograms(patient, tracnetID, existingPatientPrograms);
+			savePatientEncounters(patient, tracnetID, existingEncounters);
+			savePatientDrugOrders(patient, tracnetID, existingDrugOrders);
+		
 			// Clear out Hibernate session to prevent things getting clogged up
 			Context.flushSession();
 			Context.clearSession();
@@ -197,6 +167,105 @@ public class ImportTask implements Runnable {
 				break;
 			
 			++importedPatients;
+		}
+	}
+	
+	/**
+	 * @param patient
+	 * @param tracnetID
+	 * @param existingPatientPrograms 
+	 */
+	private void savePatientPrograms(Patient patient, int tracnetID, Collection<PatientProgram> existingPatientPrograms) {
+		// Save patient programs
+		for (PatientProgram patientProgram : builder.getPatientPrograms(patient, tracnetID)) {
+			
+			// Check for existing duplicates
+			if (existingPatientPrograms != null) {
+				for (PatientProgram existingPatientProgram : existingPatientPrograms) {
+					if (existingPatientProgram.getProgram().equals(patientProgram.getProgram())
+							&& OpenmrsUtil.nullSafeEquals(existingPatientProgram.getDateEnrolled(), patientProgram.getDateEnrolled())
+							&& OpenmrsUtil.nullSafeEquals(existingPatientProgram.getDateCompleted(), patientProgram.getDateCompleted()))
+						continue;
+				}
+			}
+			
+			Context.getProgramWorkflowService().savePatientProgram(patientProgram);
+		}
+	}
+
+	/**
+	 * @param patient
+	 * @param tracnetID
+	 * @param existingEncounters 
+	 */
+	private void savePatientEncounters(Patient patient, int tracnetID, List<Encounter> existingEncounters) {
+		for (Encounter encounter : builder.getPatientEncounters(patient, tracnetID)) {
+			
+			// Check for existing duplicates
+			if (existingEncounters != null) {
+				for (Encounter existingEncounter : existingEncounters) {
+					if (existingEncounter.getEncounterDatetime().equals(encounter.getEncounterDatetime()))
+						continue;
+				}
+			}
+			
+			// Check for null value obss
+			Iterator<Obs> iter = encounter.getObs().iterator();
+			while (iter.hasNext()) {
+				Obs obs = iter.next();
+				
+				String dataType = obs.getConcept().getDatatype().getHl7Abbreviation();
+				boolean isNumeric = dataType.equals("NM") || dataType.equals("SN");
+				boolean isCoded = dataType.equals("CWE");
+				
+				if ((isNumeric && obs.getValueNumeric() == null) || (isCoded && obs.getValueCoded() == null)) {
+					// Refetch the concept as the cached concepts' session is closed
+					Concept concept = Context.getConceptService().getConcept(obs.getConcept().getConceptId());
+					
+					issues.add(new ImportIssue(patient, "Null obs value for " + concept.getName().getName() + " on " + Context.getDateFormat().format(encounter.getEncounterDatetime()) +  ". Removing obs"));
+					iter.remove();
+				}
+			}
+			
+			Context.getEncounterService().saveEncounter(encounter);		
+			++importedEncounters;
+			importedObservations += encounter.getObs().size();
+		}
+	}
+	
+	/**
+	 * @param patient
+	 * @param tracnetID
+	 * @param existingDrugOrders 
+	 */
+	private void savePatientDrugOrders(Patient patient, int tracnetID, List<DrugOrder> existingDrugOrders) {
+		try {
+			for (DrugOrder order : builder.getPatientDrugOrders(patient, tracnetID)) {
+				
+				// Check for existing duplicates
+				if (existingDrugOrders != null) {
+					for (DrugOrder existingDrugOrder : existingDrugOrders) {
+						if (existingDrugOrder.getConcept().equals(order.getConcept())
+								&& OpenmrsUtil.nullSafeEquals(existingDrugOrder.getStartDate(), order.getStartDate())
+								&& OpenmrsUtil.nullSafeEquals(existingDrugOrder.getDiscontinuedDate(), order.getDiscontinuedDate()))
+							continue;
+					}
+				}
+				
+				// Check incorrect discontinued dates
+				Date discontinuedDate = order.getDiscontinuedDate();
+				if (discontinuedDate != null && order.getStartDate().after(discontinuedDate)) {
+					issues.add(new ImportIssue(patient, "Drug order discontinued date before start date. Removing discontinued date."));
+					order.setDiscontinuedDate(null);
+				}
+				
+				Context.getOrderService().saveOrder(order);
+				
+				++importedOrders;
+			}
+		}
+		catch (IncompleteMappingException ex) {
+			issues.add(new ImportIssue(patient, "Error while importing drug orders: " + ex.getMessage()));
 		}
 	}
 	

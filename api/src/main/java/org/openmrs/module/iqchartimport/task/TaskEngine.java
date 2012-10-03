@@ -27,14 +27,13 @@ public class TaskEngine {
 	/**
 	 * Creates and starts a new import task
 	 * @param database the database to import
-	 * @param full true for full import, false for just patients
 	 * @return true if successful, else false if a task is already running
 	 */
-	public static synchronized boolean startImport(IQChartDatabase database, boolean full) {
+	public static synchronized boolean startImport(IQChartDatabase database) {
 		if (task != null && !task.isCompleted())
 			return false;
 		
-		task = new ImportTask(database, full);
+		task = new ImportTask(database);
 		thread = new Thread(task);
 		thread.start();
 		return true;

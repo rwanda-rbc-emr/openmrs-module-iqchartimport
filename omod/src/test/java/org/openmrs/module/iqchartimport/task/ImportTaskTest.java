@@ -50,7 +50,7 @@ public class ImportTaskTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void startImport() throws InterruptedException, IOException {
-		ImportTask task = new ImportTask(TestUtils.getDatabase(), false);
+		ImportTask task = new ImportTask(TestUtils.getDatabase());
 		
 		// Get number of existing patients
 		PatientService patientSvc = Context.getPatientService();
