@@ -128,6 +128,9 @@ jQuery(function() {
 	    	<td style="font-weight: bold; vertical-align: top;" width="300"><spring:message code="@MODULE_ID@.import.issues" /></td>
 	    	<td>
 	    		<div id="issues" style="background-color: #EEE; font-style: italic"></div>
+	    		<div>
+	    			<input type="button" value="<spring:message code="@MODULE_ID@.mappings.exportCSV" />" onclick="location.href='exportIssues.list'" />
+	    		</div>
 	    	</td>
 	    </tr>
 	</table>
