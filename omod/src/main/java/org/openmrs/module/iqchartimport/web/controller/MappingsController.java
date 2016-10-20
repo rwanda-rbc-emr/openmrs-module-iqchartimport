@@ -24,17 +24,15 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.iqchartimport.IncompleteMappingException;
 import org.openmrs.module.iqchartimport.Constants;
 import org.openmrs.module.iqchartimport.DrugMapping;
+import org.openmrs.module.iqchartimport.IncompleteMappingException;
 import org.openmrs.module.iqchartimport.Mappings;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
@@ -57,8 +55,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @SessionAttributes({"mappings"})
 public class MappingsController {
 
-	protected static final Log log = LogFactory.getLog(MappingsController.class);
-	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public String showPage(HttpServletRequest request, ModelMap model) throws IOException {

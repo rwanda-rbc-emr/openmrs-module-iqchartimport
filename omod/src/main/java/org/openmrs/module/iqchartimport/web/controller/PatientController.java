@@ -19,8 +19,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.DrugOrder;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -48,8 +46,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller("iqChartImportPatientController")
 @RequestMapping("/module/iqchartimport/patient")
 public class PatientController {
-	
-	protected final Log log = LogFactory.getLog(getClass());
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

@@ -20,8 +20,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.module.iqchartimport.EntityBuilder;
@@ -42,8 +40,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller("iqChartImportObservationsController")
 @RequestMapping("/module/iqchartimport/observations")
 public class ObservationsController {
-	
-	protected static final Log log = LogFactory.getLog(ObservationsController.class);
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

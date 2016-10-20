@@ -18,8 +18,6 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.iqchartimport.EntityBuilder;
 import org.openmrs.module.iqchartimport.IncompleteMappingException;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
@@ -37,8 +35,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller("iqChartImportPreviewController")
 @RequestMapping("/module/iqchartimport/preview")
 public class PreviewController {
-	
-	protected static final Log log = LogFactory.getLog(PreviewController.class);
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

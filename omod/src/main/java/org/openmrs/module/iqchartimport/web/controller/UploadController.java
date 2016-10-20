@@ -19,8 +19,6 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
 import org.openmrs.module.iqchartimport.util.Utils;
@@ -37,8 +35,6 @@ import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequ
 @Controller("iqChartImportUploadController")
 @RequestMapping("/module/iqchartimport/upload")
 public class UploadController {
-	
-	protected final Log log = LogFactory.getLog(getClass());
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
