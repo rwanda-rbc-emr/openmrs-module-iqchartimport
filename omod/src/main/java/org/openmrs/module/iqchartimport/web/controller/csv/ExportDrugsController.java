@@ -21,8 +21,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.Location;
 import org.openmrs.api.context.Context;
@@ -44,8 +42,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/module/iqchartimport/exportDrugs")
 public class ExportDrugsController {
 
-	protected static final Log log = LogFactory.getLog(ExportDrugsController.class);
-	
 	@RequestMapping(method = RequestMethod.GET)
 	public void getMappings(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Utils.checkSuperUser();

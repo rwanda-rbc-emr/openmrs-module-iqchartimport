@@ -19,15 +19,13 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.EntityBuilder;
 import org.openmrs.module.iqchartimport.Mappings;
 import org.openmrs.module.iqchartimport.task.ImportIssue;
-import org.openmrs.module.iqchartimport.task.TaskEngine;
 import org.openmrs.module.iqchartimport.task.ImportTask;
+import org.openmrs.module.iqchartimport.task.TaskEngine;
 import org.openmrs.module.iqchartimport.util.Utils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,8 +38,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/module/iqchartimport/exportIssues")
 public class ExportIssuesController {
 
-	protected static final Log log = LogFactory.getLog(ExportIssuesController.class);
-	
 	@RequestMapping(method = RequestMethod.GET)
 	public void getProgress(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Utils.checkSuperUser();
