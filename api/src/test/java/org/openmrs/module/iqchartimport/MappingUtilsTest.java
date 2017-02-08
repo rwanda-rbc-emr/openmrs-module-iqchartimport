@@ -14,10 +14,9 @@
 
 package org.openmrs.module.iqchartimport;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.iqchartimport.util.MappingUtils;
@@ -28,8 +27,6 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
  */
 public class MappingUtilsTest extends BaseModuleContextSensitiveTest {
 
-	protected static final Log log = LogFactory.getLog(MappingUtilsTest.class);
-	
 	@Before
 	public void setup() throws Exception {
 		executeDataSet("TestingDataset.xml");

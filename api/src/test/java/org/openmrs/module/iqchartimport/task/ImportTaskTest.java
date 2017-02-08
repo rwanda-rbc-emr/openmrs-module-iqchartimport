@@ -14,13 +14,12 @@
 
 package org.openmrs.module.iqchartimport.task;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -28,7 +27,6 @@ import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.iqchartimport.TestUtils;
-import org.openmrs.module.iqchartimport.task.ImportTask;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
@@ -38,8 +36,6 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 @Ignore
 public class ImportTaskTest extends BaseModuleContextSensitiveTest {
 
-	protected static final Log log = LogFactory.getLog(ImportTaskTest.class);
-	
 	// IDs of patients from test DB to check
 	private int[] testIDs = { 235001, 185568 };
 	

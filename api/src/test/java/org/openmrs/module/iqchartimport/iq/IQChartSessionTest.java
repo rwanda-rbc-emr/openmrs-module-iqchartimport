@@ -14,14 +14,15 @@
 
 package org.openmrs.module.iqchartimport.iq;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,8 +42,6 @@ import org.openmrs.module.iqchartimport.iq.model.TBTreatment;
  */
 public class IQChartSessionTest {
 	
-	protected static final Log log = LogFactory.getLog(IQChartSessionTest.class);
-
 	private IQChartSession session;
 	
 	@Before

@@ -14,13 +14,14 @@
 
 package org.openmrs.module.iqchartimport;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertSame;
+import static junit.framework.Assert.fail;
 
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,8 +39,6 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
  * Test class for EntityBuilder
  */
 public class EntityBuilderTest extends BaseModuleContextSensitiveTest {
-
-	protected static final Log log = LogFactory.getLog(EntityBuilderTest.class);
 
 	private IQChartSession session;
 	private EntityBuilder builder;

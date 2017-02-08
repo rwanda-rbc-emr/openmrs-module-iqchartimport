@@ -278,11 +278,10 @@ public class EntityBuilder {
 				order.setPatient(patient);
 				order.setDrug(null);
 				order.setConcept(cache.getConcept(conceptId));
-				order.setStartDate(regimen.getStartDate());
-				order.setDiscontinued(endDate != null);
-				order.setDiscontinuedDate(endDate);
-				order.setDiscontinuedReason(conceptDiscontinued);
-				order.setDiscontinuedReasonNonCoded(regimen.getOtherDetails());
+				order.setDateActivated(regimen.getStartDate());
+				order.setAutoExpireDate(endDate);
+				order.setOrderReason(conceptDiscontinued);
+				order.setOrderReasonNonCoded(regimen.getOtherDetails());
 				order.setVoided(false);
 				
 				drugOrders.add(order);
@@ -304,9 +303,8 @@ public class EntityBuilder {
 				order.setPatient(patient);
 				order.setDrug(null);
 				order.setConcept(cache.getConcept(conceptId));
-				order.setStartDate(tbMedication.getStartDate());
-				order.setDiscontinued(endDate != null);
-				order.setDiscontinuedDate(endDate);
+				order.setDateActivated(tbMedication.getStartDate());
+				order.setAutoExpireDate(endDate);
 				order.setVoided(false);
 				
 				drugOrders.add(order);

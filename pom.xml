@@ -33,7 +33,8 @@
 	</modules>
 	
 	<properties>
-		<openMRSVersion>1.6.5</openMRSVersion>
+		<openMRSVersion>1.11.5</openMRSVersion>
+		<mohorderentrybridgeVersion>1.0.2</mohorderentrybridgeVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -48,7 +49,8 @@
 			    <scope>compile</scope>
 			</dependency>
 			
-			<dependency>
+			<!-- Start OpenMRS Core -->
+				<dependency>
 				<groupId>org.openmrs.api</groupId>
 				<artifactId>openmrs-api</artifactId>
 				<version>${openMRSVersion}</version>
@@ -63,15 +65,30 @@
 				<type>jar</type>
 				<scope>provided</scope>
 			</dependency>
+						
+			<dependency>
+				<groupId>org.openmrs.api</groupId>
+				<artifactId>openmrs-api</artifactId>
+				<version>${openMRSVersion}</version>
+				<type>test-jar</type>
+				<scope>test</scope>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.openmrs.web</groupId>
+				<artifactId>openmrs-web</artifactId>
+				<version>${openMRSVersion}</version>
+				<type>test-jar</type>
+				<scope>test</scope>
+			</dependency>
 			
 			<dependency>
 				<groupId>org.openmrs.test</groupId>
 				<artifactId>openmrs-test</artifactId>
 				<version>${openMRSVersion}</version>
-				<type>jar</type>
+				<type>pom</type>
 				<scope>test</scope>
 			</dependency>
-						
 			<!-- End OpenMRS core -->
 
 		</dependencies>

@@ -40,6 +40,7 @@ import org.openmrs.module.iqchartimport.IncompleteMappingException;
 import org.openmrs.module.iqchartimport.Mappings;
 import org.openmrs.module.iqchartimport.iq.IQChartDatabase;
 import org.openmrs.module.iqchartimport.iq.IQChartSession;
+import org.openmrs.module.mohorderentrybridge.api.MoHOrderEntryBridgeService;
 import org.openmrs.util.OpenmrsUtil;
 
 /**
@@ -147,7 +148,7 @@ public class ImportTask implements Runnable {
 				patient = existingPatients.get(0);
 				existingPatientPrograms = Context.getProgramWorkflowService().getPatientPrograms(patient, null, null, null, null, null, true);
 				existingEncounters = Context.getEncounterService().getEncountersByPatient(patient);
-				existingDrugOrders = Context.getOrderService().getDrugOrdersByPatient(patient);
+				existingDrugOrders = Context.getService(MoHOrderEntryBridgeService.class).getDrugOrdersByPatient(patient);
 			}
 			else {
 				// Save patient to database
@@ -246,20 +247,20 @@ public class ImportTask implements Runnable {
 				if (existingDrugOrders != null) {
 					for (DrugOrder existingDrugOrder : existingDrugOrders) {
 						if (existingDrugOrder.getConcept().equals(order.getConcept())
-								&& OpenmrsUtil.nullSafeEquals(existingDrugOrder.getStartDate(), order.getStartDate())
-								&& OpenmrsUtil.nullSafeEquals(existingDrugOrder.getDiscontinuedDate(), order.getDiscontinuedDate()))
+								&& OpenmrsUtil.nullSafeEquals(existingDrugOrder.getEffectiveStartDate(), order.getEffectiveStartDate())
+								&& OpenmrsUtil.nullSafeEquals(existingDrugOrder.getEffectiveStopDate(), order.getEffectiveStopDate()))
 							continue;
 					}
 				}
 				
 				// Check incorrect discontinued dates
-				Date discontinuedDate = order.getDiscontinuedDate();
-				if (discontinuedDate != null && order.getStartDate().after(discontinuedDate)) {
+				Date discontinuedDate = order.getEffectiveStopDate();
+				if (discontinuedDate != null && order.getEffectiveStartDate().after(discontinuedDate)) {
 					issues.add(new ImportIssue(patient, "Drug order discontinued date before start date. Removing discontinued date."));
-					order.setDiscontinuedDate(null);
+					order.setAutoExpireDate(null);
 				}
 				
-				Context.getOrderService().saveOrder(order);
+				Context.getOrderService().saveOrder(order, null);
 				
 				++importedOrders;
 			}
